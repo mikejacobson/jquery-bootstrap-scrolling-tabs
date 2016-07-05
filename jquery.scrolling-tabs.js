@@ -1,6 +1,6 @@
 /**
  * jquery-bootstrap-scrolling-tabs
- * @version v0.0.3
+ * @version v0.0.4
  * @link https://github.com/mikejacobson/jquery-bootstrap-scrolling-tabs
  * @author Mike Jacobson <michaeljjacobson1@gmail.com>
  * @license MIT License, http://www.opensource.org/licenses/MIT
@@ -37,6 +37,9 @@
  *
  *            $('.nav-tabs').scrollingTabs();
  *
+ *      On window resize, the tabs should refresh themselves, but to force a refresh:
+ *
+ *            $('.nav-tabs').scrollingTabs('refresh');
  *
  *
  *    Use Case #2: Data-driven tabs
@@ -121,7 +124,12 @@
                                                 // make mousedown continous scrolling faster
     SCROLL_OFFSET_FRACTION: 6, // each click moves the container this fraction of the fixed container--decrease
                                // to make the tabs scroll farther per click
-    DATA_KEY_IS_MOUSEDOWN: 'ismousedown'
+    DATA_KEY_IS_MOUSEDOWN: 'ismousedown',
+
+    EVENTS: {
+      FORCE_REFRESH: 'forcerefresh.scrtabs',
+      WINDOW_RESIZE: 'resize.scrtabs'
+    }
   };
 
   // smartresize from Paul Irish (debounced window resize)
@@ -147,7 +155,7 @@
         timeout = setTimeout(delayed, threshold || 100);
       };
     };
-    $.fn[sr] = function (fn) { return fn ? this.bind('resize.scrtabs', debounce(fn)) : this.trigger(sr); };
+    $.fn[sr] = function (fn) { return fn ? this.bind(CONSTANTS.EVENTS.WINDOW_RESIZE, debounce(fn)) : this.trigger(sr); };
 
   })('smartresize');
 
@@ -329,6 +337,7 @@
 
         stc.$win.smartresize(function (e) { evh.handleWindowResize.call(evh, e); });
 
+        $('body').on(CONSTANTS.EVENTS.FORCE_REFRESH, stc.elementsHandler.refreshAllElementSizes.bind(stc.elementsHandler));
       };
 
       p.setFixedContainerWidth = function () {
@@ -1169,9 +1178,12 @@
     }
 
     $targetElInstance.removeData('scrtabs');
+
+    $(window).off(CONSTANTS.EVENTS.WINDOW_RESIZE);
+    $('body').off(CONSTANTS.EVENTS.FORCE_REFRESH);
   }
 
-  function refreshTargetElementInstance($container, options) {
+  function refreshDataDrivenTabs($container, options) {
     var instanceData = $container.data().scrtabs,
         scroller = instanceData.scroller,
         $navTabs = $container.find('.scrtabs-tab-container .nav-tabs'),
@@ -1188,6 +1200,9 @@
           $currTabContentPanes: $currTabContentPanesContainer.find('.tab-pane')
         };
 
+    // to preserve the tab positions if we're just adding or removing
+    // a tab, don't completely rebuild the tab structure, but check
+    // for differences between the new tabs array and the old
     if (checkForTabAdded(refreshData)) {
       isInitTabsRequired = true;
     }
@@ -1202,6 +1217,16 @@
 
     if (isInitTabsRequired) {
       scroller.initTabs();
+    }
+
+    return isInitTabsRequired;
+  }
+
+  function refreshTargetElementInstance($container, options) {
+    // force a refresh if the tabs are static html or they're data-driven
+    // but the data didn't change so we didn't call initTabs()
+    if ($container.data('scrtabs').isWrapperOnly || !refreshDataDrivenTabs($container, options)) {
+      $('body').trigger(CONSTANTS.EVENTS.FORCE_REFRESH);
     }
   }
 
@@ -1228,7 +1253,7 @@
     destroy: function() {
       var $targetEls = this;
 
-      $targetEls.each(destroyPlugin);
+      return $targetEls.each(destroyPlugin);
     },
 
     init: function(options) {
@@ -1261,10 +1286,7 @@
       var $targetEls = this,
           settings = $.extend({}, $.fn.scrollingTabs.defaults, options || {});
 
-      // to preserve the tab positions if we're just adding or removing
-      // a tab, don't completely rebuild the tab structure, but check
-      // for differences between the new tabs array and the old
-      $targetEls.each(function () {
+      return $targetEls.each(function () {
         refreshTargetElementInstance($(this), settings);
       });
     }

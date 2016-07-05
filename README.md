@@ -10,8 +10,8 @@ Here's what they look like:
 
 And here are plunks showing them working with:
 
-* <a href="http://plnkr.co/edit/thyD0grCxIjyU4PoTt4x?p=preview" target="_blank">HTML-defined Tabs</a>
-* <a href="http://plnkr.co/edit/MWBjLnTvJeetjU3NEimg?p=preview" target="_blank">Data-driven Tabs</a>
+* <a href="http://plnkr.co/edit/8i9i0qYKeggGzmR3Fv8X?p=preview" target="_blank">HTML-defined Tabs</a>
+* <a href="http://plnkr.co/edit/4SCaNOWyB8IsZSVlRXIz?p=preview" target="_blank">Data-driven Tabs</a>
 
 Use Cases
 ---------
@@ -81,6 +81,15 @@ $('.nav-tabs').scrollingTabs({
 });
 ```
 This will force the scrolling to always end with a tab edge aligned with the left scroll arrow. More details [here](#ft1).
+
+
+##### Forcing a Refresh
+
+The scrolling container should automatically refresh itself on window resize, but to manually force a refresh you can call the plugin's `refresh` method:
+```javascript
+$('.nav-tabs').scrollingTabs('refresh');
+```
+
 
 
 #### <a id="uc2"></a>Use Case #2: Data-driven Tabs
