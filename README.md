@@ -72,6 +72,7 @@ you can wrap the tabs in the scroller like this:
 $('.nav-tabs').scrollingTabs();
 ```
 
+
 ##### scrollToTabEdge Option
 
 You can also pass in the `scrollToTabEdge` option:
@@ -81,6 +82,27 @@ $('.nav-tabs').scrollingTabs({
 });
 ```
 This will force the scrolling to always end with a tab edge aligned with the left scroll arrow. More details [here](#ft1).
+
+
+
+##### Preventing Flash of Unwrapped Tabs
+
+To prevent a flash of the tabs on page load/refresh before they get wrapped
+inside the scroller, you can hide your `.nav-tabs` and `.tab-content` with
+some CSS (`display: none`).
+
+The plugin will automatically unhide the `.nav-tabs` when they're ready,
+and you can hook into the [`ready.scrtabs` event](#events) (which gets fired when
+the tabs are ready) to unhide your `.tab-content`:
+
+```javascript
+$('.nav-tabs')
+  .scrollingTabs()
+  .on('ready.scrtabs', function() {
+    $('.tab-content').show();
+  });
+```
+
 
 
 ##### Forcing a Refresh
@@ -226,6 +248,25 @@ $.fn.scrollingTabs.defaults.tabs = myTabs;
 $.fn.scrollingTabs.defaults.forceActiveTab = true;
 $.fn.scrollingTabs.defaults.scrollToTabEdge = true;
 ```
+
+#### <a id="events"></a>Events
+The plugin triggers event `ready.scrtabs` when the tabs have been wrapped in
+the scroller and are ready for viewing:
+
+```javascript
+$('.nav-tabs')
+  .scrollingTabs()
+  .on('ready.scrtabs', function() {
+    // tabs ready, do my other stuff...
+  });
+
+$('#tabs-inside-here')
+  .scrollingTabs({ tabs: tabs })
+  .on('ready.scrtabs', function() {
+    // tabs ready, do my other stuff...
+  });
+```
+
 
 #### Destroying the Plugin
 To destroy the plugin, call its `destroy` method:

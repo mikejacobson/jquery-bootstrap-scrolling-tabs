@@ -1,6 +1,6 @@
 /**
  * jquery-bootstrap-scrolling-tabs
- * @version v0.0.5
+ * @version v0.0.6
  * @link https://github.com/mikejacobson/jquery-bootstrap-scrolling-tabs
  * @author Mike Jacobson <michaeljjacobson1@gmail.com>
  * @license MIT License, http://www.opensource.org/licenses/MIT
@@ -107,12 +107,34 @@
  *             $.fn.scrollingTabs.defaults.scrollToTabEdge = true;
  *
  *
- *      To destroy:
+ *    Events
+ *    -----------------------------
+ *    The plugin triggers event 'ready.scrtabs' when the tabs have
+ *    been wrapped in the scroller and are ready for viewing:
  *
- *            $('#tabs-inside-here').scrollingTabs('destroy');
+ *      $('.nav-tabs')
+ *        .scrollingTabs()
+ *        .on('ready.scrtabs', function() {
+ *          // tabs ready, do my other stuff...
+ *        });
  *
- *      If you were wrapping markup, the markup will be restored; if your tabs
- *      were data-driven, the tabs will be destroyed along with the plugin.
+ *      $('#tabs-inside-here')
+ *        .scrollingTabs({ tabs: tabs })
+ *        .on('ready.scrtabs', function() {
+ *          // tabs ready, do my other stuff...
+ *        });
+ *
+ *
+ *    Destroying
+ *    -----------------------------
+ *    To destroy:
+ *
+ *      $('.nav-tabs').scrollingTabs('destroy');
+ *
+ *      $('#tabs-inside-here').scrollingTabs('destroy');
+ *
+ *    If you were wrapping markup, the markup will be restored; if your tabs
+ *    were data-driven, the tabs will be destroyed along with the plugin.
  *
  */
 ;(function ($, window) {
@@ -128,7 +150,8 @@
 
     EVENTS: {
       FORCE_REFRESH: 'forcerefresh.scrtabs',
-      WINDOW_RESIZE: 'resize.scrtabs'
+      WINDOW_RESIZE: 'resize.scrtabs',
+      TABS_READY: 'ready.scrtabs'
     }
   };
 
@@ -176,60 +199,7 @@
         var ehd = this;
 
         ehd.setElementReferences();
-
-        if (options.isWrappingAngularUITabset) {
-          ehd.moveTabContentOutsideScrollContainer(options);
-        }
-
         ehd.setEventListeners();
-      };
-
-      p.moveTabContentOutsideScrollContainer = function (options) {
-        var ehd = this,
-            stc = ehd.stc,
-            $tabsContainer = stc.$tabsContainer,
-            tabContentCloneCssClass = 'scrtabs-tab-content-clone',
-            tabContentHiddenCssClass = 'scrtabs-tab-content-hidden',
-            $tabContent = $tabsContainer.find('.tab-content').not('.' + tabContentCloneCssClass),
-            $currTcClone,
-            $newTcClone;
-
-        // if the tabs won't be changing, we can just move the
-        // the .tab-content outside the scrolling container right now
-        if (!options.isWatchingTabs) {
-          $tabContent.appendTo($tabsContainer);
-          return;
-        }
-
-        /* if we're watching the tabs for changes, we can't just
-         * move the .tab-content outside the scrolling container because
-         * that will break the angular-ui directive dependencies, and
-         * an error will be thrown as soon as the tabs change;
-         * so we leave the .tab-content where it is but hide it, then
-         * make a clone and move the clone outside the scroll container,
-         * which will be the visible .tab-content.
-         */
-
-        // hide the original .tab-content if it's not already hidden
-        if (!$tabContent.hasClass(tabContentHiddenCssClass)) {
-          $tabContent.addClass(tabContentHiddenCssClass);
-        }
-
-        // create new clone
-        $newTcClone = $tabContent
-                        .clone()
-                        .removeClass(tabContentHiddenCssClass)
-                        .addClass(tabContentCloneCssClass);
-
-        // get the current clone, if it exists
-        $currTcClone = $tabsContainer.find('.' + tabContentCloneCssClass);
-
-        if ($currTcClone.length) { // already a clone there so replace it
-          $currTcClone.replaceWith($newTcClone);
-        } else {
-          $tabsContainer.append($newTcClone);
-        }
-
       };
 
       p.refreshAllElementSizes = function () {
@@ -715,7 +685,7 @@
 
   // prototype methods
   (function (p) {
-    p.initTabs = function (options) {
+    p.initTabs = function (options, $scroller, readyCallback, attachTabContentToDomCallback) {
       var stc = this,
           elementsHandler = stc.elementsHandler,
           scrollMovement = stc.scrollMovement;
@@ -724,8 +694,16 @@
         stc.scrollToTabEdge = true;
       }
 
-      setTimeout(function __initTabsAfterTimeout() {
+      setTimeout(initTabsAfterTimeout, 100);
+
+      function initTabsAfterTimeout() {
         var actionsTaken;
+
+        // if we're just wrapping non-data-driven tabs, the user might
+        // have the .nav-tabs hidden to prevent the clunky flash of
+        // multi-line tabs on page refresh, so we need to make sure
+        // they're visible before trying to wrap them
+        $scroller.find('.nav-tabs').show();
 
         elementsHandler.initElements(options);
         actionsTaken = elementsHandler.refreshAllElementSizes();
@@ -736,8 +714,16 @@
           });
         }
 
+        $scroller.css('visibility', 'visible');
 
-      }, 100);
+        if (attachTabContentToDomCallback) {
+          attachTabContentToDomCallback();
+        }
+
+        if (readyCallback) {
+          readyCallback();
+        }
+      }
     };
 
 
@@ -900,7 +886,7 @@
   }()); // tabUtils
 
 
-  function buildNavTabsAndTabContentForTargetElementInstance($targetElInstance, settings) {
+  function buildNavTabsAndTabContentForTargetElementInstance($targetElInstance, settings, readyCallback) {
     var tabs = settings.tabs,
         propNames = {
           paneId: settings.propPaneId,
@@ -911,9 +897,12 @@
         },
         ignoreTabPanes = settings.ignoreTabPanes,
         hasTabContent = tabs.length && tabs[0][propNames.content] !== undefined,
-        $navTabs = tabElements.getNewElNavTabs().appendTo($targetElInstance),
+        $navTabs = tabElements.getNewElNavTabs(),
         $tabContent = tabElements.getNewElTabContent(),
-        $scroller;
+        $scroller,
+        attachTabContentToDomCallback = ignoreTabPanes ? null : function() {
+          $scroller.after($tabContent);
+        };
 
     if (!tabs.length) {
       return;
@@ -933,7 +922,12 @@
       }
     });
 
-    $scroller = wrapNavTabsInstanceInScroller($navTabs, settings).after($tabContent);
+    $scroller = wrapNavTabsInstanceInScroller($navTabs,
+                                              settings,
+                                              readyCallback,
+                                              attachTabContentToDomCallback);
+
+    $scroller.appendTo($targetElInstance);
 
     $targetElInstance.data({
       scrtabs: {
@@ -1230,14 +1224,17 @@
     }
   }
 
-  function wrapNavTabsInstanceInScroller($navTabsInstance, settings) {
+  function wrapNavTabsInstanceInScroller($navTabsInstance, settings, readyCallback, attachTabContentToDomCallback) {
     var $scroller = tabElements.getNewElScrollerElementWrappingNavTabsInstance($navTabsInstance.clone(true)), // use clone because we replaceWith later
         scrollingTabsControl = new ScrollingTabsControl($scroller);
 
-    $navTabsInstance.replaceWith($scroller);
+    $navTabsInstance.replaceWith($scroller.css('visibility', 'hidden'));
 
     $scroller.initTabs = function () {
-      scrollingTabsControl.initTabs(settings);
+      scrollingTabsControl.initTabs(settings,
+                                    $scroller,
+                                    readyCallback,
+                                    attachTabContentToDomCallback);
     };
 
     $scroller.initTabs();
@@ -1258,27 +1255,35 @@
 
     init: function(options) {
       var $targetEls = this,
+          targetElsLastIndex = $targetEls.length - 1,
           settings = $.extend({}, $.fn.scrollingTabs.defaults, options || {});
 
       // ---- tabs NOT data-driven -------------------------
       if (!settings.tabs) {
 
         // just wrap the selected .nav-tabs element(s) in the scroller
-        return $targetEls.each(function() {
+        return $targetEls.each(function(index) {
+          var dataObj = {
+                isWrapperOnly: true
+              },
+              $targetEl = $(this).data({ scrtabs: dataObj }),
+              readyCallback = (index < targetElsLastIndex) ? null : function() {
+                $targetEls.trigger(CONSTANTS.EVENTS.TABS_READY);
+              };
 
-          wrapNavTabsInstanceInScroller($(this).data({
-            scrtabs: {
-              isWrapperOnly: true
-            }
-          }), settings);
-
+          wrapNavTabsInstanceInScroller($targetEl, settings, readyCallback);
         });
+
       }
 
-
       // ---- tabs data-driven -------------------------
-      return $targetEls.each(function () {
-        buildNavTabsAndTabContentForTargetElementInstance($(this), settings);
+      return $targetEls.each(function (index) {
+        var $targetEl = $(this),
+            readyCallback = (index < targetElsLastIndex) ? null : function() {
+              $targetEls.trigger(CONSTANTS.EVENTS.TABS_READY);
+            };
+
+        buildNavTabsAndTabContentForTargetElementInstance($targetEl, settings, readyCallback);
       });
     },
 
