@@ -1,6 +1,6 @@
 /**
  * jquery-bootstrap-scrolling-tabs
- * @version v0.0.6
+ * @version v0.0.7
  * @link https://github.com/mikejacobson/jquery-bootstrap-scrolling-tabs
  * @author Mike Jacobson <michaeljjacobson1@gmail.com>
  * @license MIT License, http://www.opensource.org/licenses/MIT
@@ -62,7 +62,8 @@
  *               propDisabled: 'disabled', // optional
  *               propContent: 'content', // optional
  *               ignoreTabPanes: false, // optional
- *               scrollToTabEdge: false // optional
+ *               scrollToTabEdge: false, // optional
+ *               disableScrollArrowsOnFullyScrolled: false // optional
  *             });
  *
  *      Settings/Options:
@@ -84,7 +85,13 @@
  *                          scrolling stops with only half a tab showing,
  *                          it will snap the tab to its edge so the full tab
  *                          shows.
- *
+ *        disableScrollArrowsOnFullyScrolled:
+ *                          set to true if you want the left scroll arrow to
+ *                          disable when the tabs are scrolled fully left,
+ *                          and the right scroll arrow to disable when the tabs
+ *                          are scrolled fully right.
+ * 
+ * 
  *
  *      On tabs data change:
  *
@@ -105,6 +112,7 @@
  *             $.fn.scrollingTabs.defaults.tabs = tabs;
  *             $.fn.scrollingTabs.defaults.forceActiveTab = true;
  *             $.fn.scrollingTabs.defaults.scrollToTabEdge = true;
+ *             $.fn.scrollingTabs.defaults.disableScrollArrowsOnFullyScrolled = true;
  *
  *
  *    Events
@@ -148,6 +156,10 @@
                                // to make the tabs scroll farther per click
     DATA_KEY_IS_MOUSEDOWN: 'ismousedown',
 
+    CSS_CLASSES: {
+      SCROLL_ARROW_DISABLE: 'scrtabs-disable'
+    },
+    
     EVENTS: {
       FORCE_REFRESH: 'forcerefresh.scrtabs',
       WINDOW_RESIZE: 'resize.scrtabs',
@@ -210,6 +222,7 @@
             actionsTaken = {
               didScrollToActiveTab: false
             },
+            isPerformingSlideAnim = false,
             minPos;
 
         ehd.setElementWidths();
@@ -231,7 +244,7 @@
             if (stc.movableContainerLeftPos < minPos) {
               smv.incrementScrollRight(minPos);
             } else {
-              smv.scrollToActiveTab({
+              isPerformingSlideAnim = smv.scrollToActiveTab({
                 isOnWindowResize: true
               });
 
@@ -242,6 +255,10 @@
             stc.movableContainerLeftPos = 0;
             smv.slideMovableContainerToLeftPos();
           }
+        }
+
+        if (!isPerformingSlideAnim) {
+          smv.refreshScrollArrowsDisabledState();
         }
 
         return actionsTaken;
@@ -514,6 +531,50 @@
       }
     };
 
+    p.disableLeftScrollArrow = function () {
+      var smv = this,
+          stc = smv.stc;
+      
+      if (!stc.disableScrollArrowsOnFullyScrolled || !stc.scrollArrowsVisible) {
+        return;
+      }
+      
+      stc.$leftScrollArrow.addClass(CONSTANTS.CSS_CLASSES.SCROLL_ARROW_DISABLE);
+    };
+
+    p.disableRightScrollArrow = function () {
+      var smv = this,
+          stc = smv.stc;
+      
+      if (!stc.disableScrollArrowsOnFullyScrolled || !stc.scrollArrowsVisible) {
+        return;
+      }
+      
+      stc.$rightScrollArrow.addClass(CONSTANTS.CSS_CLASSES.SCROLL_ARROW_DISABLE);
+    };
+
+    p.enableLeftScrollArrow = function () {
+      var smv = this,
+          stc = smv.stc;
+      
+      if (!stc.disableScrollArrowsOnFullyScrolled || !stc.scrollArrowsVisible) {
+        return;
+      }
+      
+      stc.$leftScrollArrow.removeClass(CONSTANTS.CSS_CLASSES.SCROLL_ARROW_DISABLE);
+    };
+
+    p.enableRightScrollArrow = function () {
+      var smv = this,
+          stc = smv.stc;
+      
+      if (!stc.disableScrollArrowsOnFullyScrolled || !stc.scrollArrowsVisible) {
+        return;
+      }
+      
+      stc.$rightScrollArrow.removeClass(CONSTANTS.CSS_CLASSES.SCROLL_ARROW_DISABLE);
+    };
+
     p.getMinPos = function () {
       var smv = this,
           stc = smv.stc;
@@ -545,7 +606,8 @@
       }
 
       smv.slideMovableContainerToLeftPos();
-
+      smv.enableRightScrollArrow();
+      
       return (stc.movableContainerLeftPos === 0); // indicates scroll limit reached
     };
 
@@ -556,7 +618,33 @@
       smv.decrementMovableContainerLeftPos(minPos);
       smv.slideMovableContainerToLeftPos();
 
+      if (stc.movableContainerLeftPos !== 0) {
+        smv.enableLeftScrollArrow();
+      }
+
       return (stc.movableContainerLeftPos === minPos);
+    };
+    
+    p.refreshScrollArrowsDisabledState = function() {
+      var smv = this,
+          stc = smv.stc;
+          
+      if (!stc.disableScrollArrowsOnFullyScrolled || !stc.scrollArrowsVisible) {
+        return;
+      }
+      
+      if (!stc.movableContainerLeftPos) {
+        smv.disableLeftScrollArrow();
+        smv.enableRightScrollArrow();
+      } else {
+        smv.enableLeftScrollArrow();
+        
+        if (stc.movableContainerLeftPos <= smv.getMinPos()) {
+          smv.disableRightScrollArrow();
+        } else {
+          smv.enableRightScrollArrow();
+        }
+      }
     };
 
     p.scrollToActiveTab = function (options) {
@@ -566,7 +654,9 @@
           activeTabWidth,
           activeTabLeftPos,
           rightArrowLeftPos,
-          overlap;
+          overlap,
+          $allLi,
+          isActiveTabLastTab;
 
       // if the active tab is not fully visible, scroll till it is
       if (!stc.scrollArrowsVisible) {
@@ -579,6 +669,15 @@
         return;
       }
 
+      $allLi = stc.$tabsUl.find('li');
+      isActiveTabLastTab = $activeTab[0] === $allLi[$allLi.length - 1];
+      
+      if (isActiveTabLastTab) {
+        stc.movableContainerLeftPos = smv.getMinPos();
+        smv.slideMovableContainerToLeftPos();
+        return true;
+      }
+        
       activeTabWidth = $activeTab.outerWidth();
       activeTabLeftPos = $activeTab.offset().left;
 
@@ -588,7 +687,10 @@
       if (overlap > 0) {
         stc.movableContainerLeftPos = (options.isOnWindowResize || options.isOnTabsRefresh) ? (stc.movableContainerLeftPos - overlap) : -overlap;
         smv.slideMovableContainerToLeftPos();
+        return true;
       }
+      
+      return false;
     };
 
     p.setMovableContainerLeftPosToTabEdge = function (scrollArrowClicked) {
@@ -627,7 +729,17 @@
         // quickly--move back into position
         if (stc.movableContainerLeftPos < newMinPos) {
           smv.decrementMovableContainerLeftPos(newMinPos);
-          stc.$movableContainer.stop().animate({ left: smv.getMovableContainerCssLeftVal() }, 'fast');
+          stc.$movableContainer.stop().animate({ left: smv.getMovableContainerCssLeftVal() }, 'fast', function() {
+            smv.disableRightScrollArrow();
+          });
+        } else if (stc.movableContainerLeftPos === newMinPos) {
+          smv.disableRightScrollArrow();
+        } else {
+          smv.enableRightScrollArrow();
+          
+          if (!stc.movableContainerLeftPos) {
+            smv.disableLeftScrollArrow();
+          }
         }
       });
     };
@@ -677,6 +789,7 @@
     stc.movableContainerLeftPos = 0;
     stc.scrollArrowsVisible = true;
     stc.scrollToTabEdge = false;
+    stc.disableScrollArrowsOnFullyScrolled = false;
 
     stc.scrollMovement = new ScrollMovement(stc);
     stc.eventHandlers = new EventHandlers(stc);
@@ -692,6 +805,10 @@
 
       if (options.scrollToTabEdge) {
         stc.scrollToTabEdge = true;
+      }
+
+      if (options.disableScrollArrowsOnFullyScrolled) {
+        stc.disableScrollArrowsOnFullyScrolled = true;
       }
 
       setTimeout(initTabsAfterTimeout, 100);
@@ -725,7 +842,6 @@
         }
       }
     };
-
 
   }(ScrollingTabsControl.prototype));
 
@@ -1318,6 +1434,7 @@
     propContent: 'content',
     ignoreTabPanes: false,
     scrollToTabEdge: false,
+    disableScrollArrowsOnFullyScrolled: false,
     forceActiveTab: false
   };
 

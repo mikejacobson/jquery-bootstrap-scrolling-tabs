@@ -1,6 +1,6 @@
 /**
  * jquery-bootstrap-scrolling-tabs
- * @version v0.0.6
+ * @version v0.0.7
  * @link https://github.com/mikejacobson/jquery-bootstrap-scrolling-tabs
  * @author Mike Jacobson <michaeljjacobson1@gmail.com>
  * @license MIT License, http://www.opensource.org/licenses/MIT
@@ -52,15 +52,14 @@ $background-color-bootstrap-gray-hover: rgb(238, 238, 238);
   }
 }
 
+.scrtabs-tab-scroll-arrow.scrtabs-disable {
+  color: #ddd;
+  cursor: default
+}
+
 .scrtabs-tabs-fixed-container ul.nav-tabs {
   height: $tabs-height - 1;
   > li {
     white-space: nowrap;
-  }
-}
-
-.scrtabs-tab-content-outside-movable-container {
-  .nav-tabs {
-    display: none;
   }
 }

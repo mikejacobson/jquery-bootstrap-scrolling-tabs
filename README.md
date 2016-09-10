@@ -22,9 +22,9 @@ Use Cases
 
 Optional Features
 -----------------
-There is also an optional feature available:
+There are also optional features available:
 * [Force Scroll to Tab Edge](#ft1)
-
+* [Disable Scroll Arrows on Fully Scrolled](#ft2)
 
 
 Usage
@@ -82,6 +82,17 @@ $('.nav-tabs').scrollingTabs({
 });
 ```
 This will force the scrolling to always end with a tab edge aligned with the left scroll arrow. More details [here](#ft1).
+
+
+##### disableScrollArrowsOnFullyScrolled Option
+
+You can also pass in the `disableScrollArrowsOnFullyScrolled` option:
+```javascript
+$('.nav-tabs').scrollingTabs({
+  disableScrollArrowsOnFullyScrolled: true  
+});
+```
+This will cause the left scroll arrow to disable when the tabs are scrolled fully left, and the right scroll arrow to disable when the tabs are scrolled fully right.
 
 
 
@@ -209,6 +220,15 @@ $('#tabs-inside-here').scrollingTabs({
 });
 ```
 
+You can also pass in the `disableScrollArrowsOnFullyScrolled` option if you want the scroll arrow to disable when the tabs are fully scrolled in that direction:
+
+```javascript
+$('#tabs-inside-here').scrollingTabs({
+  tabs: myTabs,
+  disableScrollArrowsOnFullyScrolled: true  
+});
+```
+
 
 ##### Refreshing after Tab Data Change
 
@@ -241,12 +261,26 @@ $('#tabs-inside-here').scrollingTabs({
 There's no way to guarantee the left *and* right edges will be full tabs because that's dependent on the the width of the tabs and the window. So this just makes sure the left side will be a full tab.
 
 
+#### <a id="ft2"></a>Disable Scroll Arrows on Fully Scrolled
+
+If you want the left scroll arrow to disable when the tabs are scrolled fully left, and the right scroll arrow to disable when the tabs are scrolled fully right, pass in option `disableScrollArrowsOnFullyScrolled: true`:
+
+```javascript
+$('#tabs-inside-here').scrollingTabs({
+  tabs: myTabs,
+  disableScrollArrowsOnFullyScrolled: true  
+});
+```
+
+
+
 #### Setting Defaults
 Any options that can be passed into the plugin can also be set on the plugin's `defaults` object:
 ```javascript
 $.fn.scrollingTabs.defaults.tabs = myTabs;
 $.fn.scrollingTabs.defaults.forceActiveTab = true;
 $.fn.scrollingTabs.defaults.scrollToTabEdge = true;
+$.fn.scrollingTabs.defaults.disableScrollArrowsOnFullyScrolled = true;
 ```
 
 #### <a id="events"></a>Events
