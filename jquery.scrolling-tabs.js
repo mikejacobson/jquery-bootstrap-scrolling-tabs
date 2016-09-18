@@ -1,6 +1,6 @@
 /**
  * jquery-bootstrap-scrolling-tabs
- * @version v0.0.7
+ * @version v0.0.8
  * @link https://github.com/mikejacobson/jquery-bootstrap-scrolling-tabs
  * @author Mike Jacobson <michaeljjacobson1@gmail.com>
  * @license MIT License, http://www.opensource.org/licenses/MIT
@@ -90,8 +90,8 @@
  *                          disable when the tabs are scrolled fully left,
  *                          and the right scroll arrow to disable when the tabs
  *                          are scrolled fully right.
- * 
- * 
+ *
+ *
  *
  *      On tabs data change:
  *
@@ -152,20 +152,27 @@
     CONTINUOUS_SCROLLING_TIMEOUT_INTERVAL: 50, // timeout interval for repeatedly moving the tabs container
                                                 // by one increment while the mouse is held down--decrease to
                                                 // make mousedown continous scrolling faster
+    SCROLL_ARROW_WIDTH: 20,
     SCROLL_OFFSET_FRACTION: 6, // each click moves the container this fraction of the fixed container--decrease
                                // to make the tabs scroll farther per click
-    DATA_KEY_IS_MOUSEDOWN: 'ismousedown',
+
+    DATA_KEY_DDMENU_MODIFIED: 'scrtabsddmenumodified',
+    DATA_KEY_IS_MOUSEDOWN: 'scrtabsismousedown',
 
     CSS_CLASSES: {
       SCROLL_ARROW_DISABLE: 'scrtabs-disable'
     },
-    
+
     EVENTS: {
+      CLICK: 'click.scrtabs',
+      DROPDOWN_MENU_HIDE: 'hide.bs.dropdown.scrtabs',
+      DROPDOWN_MENU_SHOW: 'show.bs.dropdown.scrtabs',
       FORCE_REFRESH: 'forcerefresh.scrtabs',
       WINDOW_RESIZE: 'resize.scrtabs',
       TABS_READY: 'ready.scrtabs'
     }
   };
+
 
   // smartresize from Paul Irish (debounced window resize)
   (function (sr) {
@@ -534,44 +541,44 @@
     p.disableLeftScrollArrow = function () {
       var smv = this,
           stc = smv.stc;
-      
+
       if (!stc.disableScrollArrowsOnFullyScrolled || !stc.scrollArrowsVisible) {
         return;
       }
-      
+
       stc.$leftScrollArrow.addClass(CONSTANTS.CSS_CLASSES.SCROLL_ARROW_DISABLE);
     };
 
     p.disableRightScrollArrow = function () {
       var smv = this,
           stc = smv.stc;
-      
+
       if (!stc.disableScrollArrowsOnFullyScrolled || !stc.scrollArrowsVisible) {
         return;
       }
-      
+
       stc.$rightScrollArrow.addClass(CONSTANTS.CSS_CLASSES.SCROLL_ARROW_DISABLE);
     };
 
     p.enableLeftScrollArrow = function () {
       var smv = this,
           stc = smv.stc;
-      
+
       if (!stc.disableScrollArrowsOnFullyScrolled || !stc.scrollArrowsVisible) {
         return;
       }
-      
+
       stc.$leftScrollArrow.removeClass(CONSTANTS.CSS_CLASSES.SCROLL_ARROW_DISABLE);
     };
 
     p.enableRightScrollArrow = function () {
       var smv = this,
           stc = smv.stc;
-      
+
       if (!stc.disableScrollArrowsOnFullyScrolled || !stc.scrollArrowsVisible) {
         return;
       }
-      
+
       stc.$rightScrollArrow.removeClass(CONSTANTS.CSS_CLASSES.SCROLL_ARROW_DISABLE);
     };
 
@@ -607,7 +614,7 @@
 
       smv.slideMovableContainerToLeftPos();
       smv.enableRightScrollArrow();
-      
+
       return (stc.movableContainerLeftPos === 0); // indicates scroll limit reached
     };
 
@@ -624,21 +631,21 @@
 
       return (stc.movableContainerLeftPos === minPos);
     };
-    
+
     p.refreshScrollArrowsDisabledState = function() {
       var smv = this,
           stc = smv.stc;
-          
+
       if (!stc.disableScrollArrowsOnFullyScrolled || !stc.scrollArrowsVisible) {
         return;
       }
-      
+
       if (!stc.movableContainerLeftPos) {
         smv.disableLeftScrollArrow();
         smv.enableRightScrollArrow();
       } else {
         smv.enableLeftScrollArrow();
-        
+
         if (stc.movableContainerLeftPos <= smv.getMinPos()) {
           smv.disableRightScrollArrow();
         } else {
@@ -671,13 +678,13 @@
 
       $allLi = stc.$tabsUl.find('li');
       isActiveTabLastTab = $activeTab[0] === $allLi[$allLi.length - 1];
-      
+
       if (isActiveTabLastTab) {
         stc.movableContainerLeftPos = smv.getMinPos();
         smv.slideMovableContainerToLeftPos();
         return true;
       }
-        
+
       activeTabWidth = $activeTab.outerWidth();
       activeTabLeftPos = $activeTab.offset().left;
 
@@ -689,7 +696,7 @@
         smv.slideMovableContainerToLeftPos();
         return true;
       }
-      
+
       return false;
     };
 
@@ -736,7 +743,7 @@
           smv.disableRightScrollArrow();
         } else {
           smv.enableRightScrollArrow();
-          
+
           if (!stc.movableContainerLeftPos) {
             smv.disableLeftScrollArrow();
           }
@@ -1267,6 +1274,22 @@
       return;
     }
 
+    scrtabsData.scroller
+      .off(CONSTANTS.EVENTS.DROPDOWN_MENU_SHOW)
+      .off(CONSTANTS.EVENTS.DROPDOWN_MENU_HIDE);
+
+    // if there were any dropdown menus opened, remove the css we added to
+    // them so they would display correctly
+    scrtabsData.scroller
+      .find('[data-' + CONSTANTS.DATA_KEY_DDMENU_MODIFIED + ']')
+      .css({
+        display: '',
+        left: '',
+        top: ''
+      })
+      .off(CONSTANTS.EVENTS.CLICK)
+      .removeAttr('data-' + CONSTANTS.DATA_KEY_DDMENU_MODIFIED);
+
     if (scrtabsData.isWrapperOnly) { // we just wrapped nav-tabs markup, so restore it
       // $targetElInstance is the ul.nav-tabs
       $tabsContainer = $targetElInstance.parents('.scrtabs-tab-container');
@@ -1291,6 +1314,92 @@
 
     $(window).off(CONSTANTS.EVENTS.WINDOW_RESIZE);
     $('body').off(CONSTANTS.EVENTS.FORCE_REFRESH);
+  }
+
+  function listenForDropdownMenuTabs($scroller) {
+    var $ddMenu;
+
+    // for dropdown menus to show, we need to move them out of the
+    // scroller and append them to the body
+    $scroller
+      .on(CONSTANTS.EVENTS.DROPDOWN_MENU_SHOW, handleDropdownShow)
+      .on(CONSTANTS.EVENTS.DROPDOWN_MENU_HIDE, handleDropdownHide);
+
+    function handleDropdownHide(e) {
+      // move the dropdown menu back into its tab
+      $(e.target).append($ddMenu.off(CONSTANTS.EVENTS.CLICK));
+    }
+
+    function handleDropdownShow(e) {
+      var $ddParentTabLi = $(e.target),
+          ddLiOffset = $ddParentTabLi.offset(),
+          $currActiveTab = $scroller.find('li[role="presentation"].active'),
+          ddMenuRightX,
+          tabsContainerMaxX,
+          ddMenuTargetLeft;
+
+      $ddMenu = $ddParentTabLi
+                  .find('.dropdown-menu')
+                  .attr('data-' + CONSTANTS.DATA_KEY_DDMENU_MODIFIED, true);
+
+      // if the dropdown's parent tab li isn't already active,
+      // we need to deactivate any active menu item in the dropdown
+      if ($currActiveTab[0] !== $ddParentTabLi[0]) {
+        $ddMenu.find('li.active').removeClass('active');
+      }
+
+      // we need to do our own click handling because the built-in
+      // bootstrap handlers won't work since we moved the dropdown
+      // menu outside the tabs container
+      $ddMenu.on(CONSTANTS.EVENTS.CLICK, 'a[role="tab"]', handleClickOnDropdownMenuItem);
+
+      $('body').append($ddMenu);
+
+      // make sure the menu doesn't go off the right side of the page
+      ddMenuRightX = $ddMenu.width() + ddLiOffset.left;
+      tabsContainerMaxX = $scroller.width() - (CONSTANTS.SCROLL_ARROW_WIDTH + 1);
+      ddMenuTargetLeft = ddLiOffset.left;
+
+      if (ddMenuRightX > tabsContainerMaxX) {
+        ddMenuTargetLeft -= (ddMenuRightX - tabsContainerMaxX);
+      }
+
+      $ddMenu.css({
+        'display': 'block',
+        'top': ddLiOffset.top + $ddParentTabLi.outerHeight() - 2,
+        'left': ddMenuTargetLeft
+      });
+
+      function handleClickOnDropdownMenuItem(e) {
+        var $selectedMenuItemAnc = $(this),
+            $selectedMenuItemLi = $selectedMenuItemAnc.parent('li'),
+            $selectedMenuItemDropdownMenu = $selectedMenuItemLi.parent('.dropdown-menu'),
+            targetPaneId = $selectedMenuItemAnc.attr('href');
+
+        if ($selectedMenuItemLi.hasClass('active')) {
+          return;
+        }
+
+        // once we select a menu item from the dropdown, deactivate
+        // the current tab (unless it's our parent tab), deactivate
+        // any active dropdown menu item, make our parent tab active
+        // (if it's not already), and activate the selected menu item
+        $scroller
+          .find('li.active')
+          .not($ddParentTabLi)
+          .add($selectedMenuItemDropdownMenu.find('li.active'))
+          .removeClass('active');
+
+        $ddParentTabLi
+          .add($selectedMenuItemLi)
+          .addClass('active');
+
+        // manually deactivate current active pane and activate our pane
+        $('.tab-content .tab-pane.active').removeClass('active');
+        $(targetPaneId).addClass('active');
+      }
+
+    }
   }
 
   function refreshDataDrivenTabs($container, options) {
@@ -1333,6 +1442,10 @@
   }
 
   function refreshTargetElementInstance($container, options) {
+    if (!$container.data('scrtabs')) { // target element doesn't have plugin on it
+      return;
+    }
+
     // force a refresh if the tabs are static html or they're data-driven
     // but the data didn't change so we didn't call initTabs()
     if ($container.data('scrtabs').isWrapperOnly || !refreshDataDrivenTabs($container, options)) {
@@ -1342,7 +1455,16 @@
 
   function wrapNavTabsInstanceInScroller($navTabsInstance, settings, readyCallback, attachTabContentToDomCallback) {
     var $scroller = tabElements.getNewElScrollerElementWrappingNavTabsInstance($navTabsInstance.clone(true)), // use clone because we replaceWith later
-        scrollingTabsControl = new ScrollingTabsControl($scroller);
+        scrollingTabsControl = new ScrollingTabsControl($scroller),
+        navTabsInstanceData = $navTabsInstance.data('scrtabs');
+
+    if (!navTabsInstanceData) {
+      $navTabsInstance.data('scrtabs', {
+        scroller: $scroller
+      });
+    } else {
+      navTabsInstanceData.scroller = $scroller;
+    }
 
     $navTabsInstance.replaceWith($scroller.css('visibility', 'hidden'));
 
@@ -1354,6 +1476,8 @@
     };
 
     $scroller.initTabs();
+
+    listenForDropdownMenuTabs($scroller);
 
     return $scroller;
   }
