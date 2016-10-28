@@ -123,6 +123,12 @@ The scrolling container should automatically refresh itself on window resize, bu
 $('.nav-tabs').scrollingTabs('refresh');
 ```
 
+##### Forcing a Scroll to the Active Tab
+
+On window resize, the scrolling container should automatically scroll to the active tab if it's offscreen, but you can also programmatically force a scroll to the active tab any time (if, for example, you're programmatically setting the active tab) by calling the plugin's `scrollToActiveTab` method:
+```javascript
+$('.nav-tabs').scrollingTabs('scrollToActiveTab');
+```
 
 
 #### <a id="uc2"></a>Use Case #2: Data-driven Tabs

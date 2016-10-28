@@ -1,6 +1,6 @@
 /**
  * jquery-bootstrap-scrolling-tabs
- * @version v0.0.8
+ * @version v0.1.0
  * @link https://github.com/mikejacobson/jquery-bootstrap-scrolling-tabs
  * @author Mike Jacobson <michaeljjacobson1@gmail.com>
  * @license MIT License, http://www.opensource.org/licenses/MIT
@@ -36,10 +36,6 @@
  *      JavaScript:
  *
  *            $('.nav-tabs').scrollingTabs();
- *
- *      On window resize, the tabs should refresh themselves, but to force a refresh:
- *
- *            $('.nav-tabs').scrollingTabs('refresh');
  *
  *
  *    Use Case #2: Data-driven tabs
@@ -113,6 +109,23 @@
  *             $.fn.scrollingTabs.defaults.forceActiveTab = true;
  *             $.fn.scrollingTabs.defaults.scrollToTabEdge = true;
  *             $.fn.scrollingTabs.defaults.disableScrollArrowsOnFullyScrolled = true;
+ *
+ *
+ *    Methods
+ *    -----------------------------
+ *    - refresh
+ *    On window resize, the tabs should refresh themselves, but to force a refresh:
+ *
+ *      $('.nav-tabs').scrollingTabs('refresh');
+ *
+ *    - scrollToActiveTab
+ *    On window resize, the active tab will automatically be scrolled to
+ *    if it ends up offscreen, but you can also programmatically force a
+ *    scroll to the active tab any time (if, for example, you're
+ *    programmatically setting the active tab) by calling the
+ *    'scrollToActiveTab' method:
+ *
+ *    $('.nav-tabs').scrollingTabs('scrollToActiveTab');
  *
  *
  *    Events
@@ -235,37 +248,33 @@
         ehd.setElementWidths();
         ehd.setScrollArrowVisibility();
 
-        if (stc.scrollArrowsVisible) {
-          ehd.setFixedContainerWidthForJustVisibleScrollArrows();
-        }
-
         // this could have been a window resize or the removal of a
         // dynamic tab, so make sure the movable container is positioned
         // correctly because, if it is far to the left and we increased the
         // window width, it's possible that the tabs will be too far left,
         // beyond the min pos.
-        if (stc.scrollArrowsVisible || scrollArrowsWereVisible) {
-          if (stc.scrollArrowsVisible) {
-            // make sure container not too far left
-            minPos = smv.getMinPos();
+        if (stc.scrollArrowsVisible) {
+          // make sure container not too far left
+          minPos = smv.getMinPos();
+
+          isPerformingSlideAnim = smv.scrollToActiveTab({
+            isOnWindowResize: true
+          });
+
+          if (!isPerformingSlideAnim) {
+            smv.refreshScrollArrowsDisabledState();
+
             if (stc.movableContainerLeftPos < minPos) {
               smv.incrementScrollRight(minPos);
-            } else {
-              isPerformingSlideAnim = smv.scrollToActiveTab({
-                isOnWindowResize: true
-              });
-
-              actionsTaken.didScrollToActiveTab = true;
             }
-          } else {
-            // scroll arrows went away after resize, so position movable container at 0
-            stc.movableContainerLeftPos = 0;
-            smv.slideMovableContainerToLeftPos();
           }
-        }
 
-        if (!isPerformingSlideAnim) {
-          smv.refreshScrollArrowsDisabledState();
+          actionsTaken.didScrollToActiveTab = true;
+
+        } else if (scrollArrowsWereVisible) {
+          // scroll arrows went away after resize, so position movable container at 0
+          stc.movableContainerLeftPos = 0;
+          smv.slideMovableContainerToLeftPos();
         }
 
         return actionsTaken;
@@ -341,14 +350,14 @@
         stc.$fixedContainer.width(stc.fixedContainerWidth = stc.$tabsContainer.outerWidth());
       };
 
-      p.setFixedContainerWidthForJustHiddenScrollArrows = function () {
+      p.setFixedContainerWidthForHiddenScrollArrows = function () {
         var ehd = this,
             stc = ehd.stc;
 
         stc.$fixedContainer.width(stc.fixedContainerWidth);
       };
 
-      p.setFixedContainerWidthForJustVisibleScrollArrows = function () {
+      p.setFixedContainerWidthForVisibleScrollArrows = function () {
         var ehd = this,
             stc = ehd.stc;
 
@@ -358,7 +367,7 @@
       p.setMovableContainerWidth = function () {
         var ehd = this,
             stc = ehd.stc,
-            $tabLi = stc.$tabsUl.find('li');
+            $tabLi = stc.$tabsUl.find('> li');
 
         stc.movableContainerWidth = 0;
 
@@ -397,11 +406,15 @@
         if (shouldBeVisible && !stc.scrollArrowsVisible) {
           stc.$scrollArrows.show();
           stc.scrollArrowsVisible = true;
-          ehd.setFixedContainerWidthForJustVisibleScrollArrows();
         } else if (!shouldBeVisible && stc.scrollArrowsVisible) {
           stc.$scrollArrows.hide();
           stc.scrollArrowsVisible = false;
-          ehd.setFixedContainerWidthForJustHiddenScrollArrows();
+        }
+
+        if (stc.scrollArrowsVisible) {
+          ehd.setFixedContainerWidthForVisibleScrollArrows();
+        } else {
+          ehd.setFixedContainerWidthForHiddenScrollArrows();
         }
       };
 
@@ -470,7 +483,7 @@
           newWinWidth = stc.$win.width();
 
       if (newWinWidth === stc.winWidth) {
-        return false; // false alarm
+        return false;
       }
 
       stc.winWidth = newWinWidth;
@@ -606,10 +619,6 @@
         stc.movableContainerLeftPos = 0;
       } else if (stc.scrollToTabEdge) {
         smv.setMovableContainerLeftPosToTabEdge('left');
-
-        if (stc.movableContainerLeftPos > 0) {
-          stc.movableContainerLeftPos = 0;
-        }
       }
 
       smv.slideMovableContainerToLeftPos();
@@ -657,15 +666,12 @@
     p.scrollToActiveTab = function (options) {
       var smv = this,
           stc = smv.stc,
+          RIGHT_OFFSET_BUFFER = 20,
           $activeTab,
-          activeTabWidth,
           activeTabLeftPos,
-          rightArrowLeftPos,
-          overlap,
-          $allLi,
-          isActiveTabLastTab;
+          activeTabRightPos,
+          rightArrowLeftPos;
 
-      // if the active tab is not fully visible, scroll till it is
       if (!stc.scrollArrowsVisible) {
         return;
       }
@@ -676,23 +682,17 @@
         return;
       }
 
-      $allLi = stc.$tabsUl.find('li');
-      isActiveTabLastTab = $activeTab[0] === $allLi[$allLi.length - 1];
+      activeTabLeftPos = $activeTab.offset().left;
+      activeTabRightPos = activeTabLeftPos + $activeTab.outerWidth();
 
-      if (isActiveTabLastTab) {
-        stc.movableContainerLeftPos = smv.getMinPos();
+      rightArrowLeftPos = stc.fixedContainerWidth - RIGHT_OFFSET_BUFFER;
+
+      if (activeTabRightPos > rightArrowLeftPos) { // active tab off right side
+        stc.movableContainerLeftPos -= (activeTabRightPos - rightArrowLeftPos + CONSTANTS.SCROLL_ARROW_WIDTH);
         smv.slideMovableContainerToLeftPos();
         return true;
-      }
-
-      activeTabWidth = $activeTab.outerWidth();
-      activeTabLeftPos = $activeTab.offset().left;
-
-      rightArrowLeftPos = stc.$rightScrollArrow.offset().left;
-      overlap = activeTabLeftPos + activeTabWidth - rightArrowLeftPos;
-
-      if (overlap > 0) {
-        stc.movableContainerLeftPos = (options.isOnWindowResize || options.isOnTabsRefresh) ? (stc.movableContainerLeftPos - overlap) : -overlap;
+      } else if (activeTabLeftPos < CONSTANTS.SCROLL_ARROW_WIDTH) { // active tab off left side
+        stc.movableContainerLeftPos += CONSTANTS.SCROLL_ARROW_WIDTH - activeTabLeftPos;
         smv.slideMovableContainerToLeftPos();
         return true;
       }
@@ -726,27 +726,31 @@
           stc = smv.stc,
           leftVal;
 
+      if (stc.movableContainerLeftPos > 0) {
+        stc.movableContainerLeftPos = 0;
+      } else if (stc.movableContainerLeftPos < smv.getMinPos()) {
+        stc.movableContainerLeftPos = smv.getMinPos();
+      }
+
       stc.movableContainerLeftPos = stc.movableContainerLeftPos / 1;
       leftVal = smv.getMovableContainerCssLeftVal();
 
+      smv.performingSlideAnim = true;
+
       stc.$movableContainer.stop().animate({ left: leftVal }, 'slow', function __slideAnimComplete() {
         var newMinPos = smv.getMinPos();
+
+        smv.performingSlideAnim = false;
 
         // if we slid past the min pos--which can happen if you resize the window
         // quickly--move back into position
         if (stc.movableContainerLeftPos < newMinPos) {
           smv.decrementMovableContainerLeftPos(newMinPos);
           stc.$movableContainer.stop().animate({ left: smv.getMovableContainerCssLeftVal() }, 'fast', function() {
-            smv.disableRightScrollArrow();
+            smv.refreshScrollArrowsDisabledState();
           });
-        } else if (stc.movableContainerLeftPos === newMinPos) {
-          smv.disableRightScrollArrow();
         } else {
-          smv.enableRightScrollArrow();
-
-          if (!stc.movableContainerLeftPos) {
-            smv.disableLeftScrollArrow();
-          }
+          smv.refreshScrollArrowsDisabledState();
         }
       });
     };
@@ -794,7 +798,7 @@
     stc.$tabsContainer = $tabsContainer;
 
     stc.movableContainerLeftPos = 0;
-    stc.scrollArrowsVisible = true;
+    stc.scrollArrowsVisible = false;
     stc.scrollToTabEdge = false;
     stc.disableScrollArrowsOnFullyScrolled = false;
 
@@ -807,8 +811,7 @@
   (function (p) {
     p.initTabs = function (options, $scroller, readyCallback, attachTabContentToDomCallback) {
       var stc = this,
-          elementsHandler = stc.elementsHandler,
-          scrollMovement = stc.scrollMovement;
+          elementsHandler = stc.elementsHandler;
 
       if (options.scrollToTabEdge) {
         stc.scrollToTabEdge = true;
@@ -832,12 +835,6 @@
         elementsHandler.initElements(options);
         actionsTaken = elementsHandler.refreshAllElementSizes();
 
-        if (!actionsTaken.didScrollToActiveTab) {
-          scrollMovement.scrollToActiveTab({
-            isOnTabsRefresh: options.isWatchingTabs
-          });
-        }
-
         $scroller.css('visibility', 'visible');
 
         if (attachTabContentToDomCallback) {
@@ -850,6 +847,12 @@
       }
     };
 
+    p.scrollToActiveTab = function(options) {
+      var stc = this,
+          smv = stc.scrollMovement;
+
+      smv.scrollToActiveTab(options);
+    };
   }(ScrollingTabsControl.prototype));
 
 
@@ -1453,6 +1456,17 @@
     }
   }
 
+  function scrollToActiveTab() {
+    var $targetElInstance = $(this),
+        scrtabsData = $targetElInstance.data('scrtabs');
+
+    if (!scrtabsData) {
+      return;
+    }
+
+    scrtabsData.scroller.scrollToActiveTab();
+  }
+
   function wrapNavTabsInstanceInScroller($navTabsInstance, settings, readyCallback, attachTabContentToDomCallback) {
     var $scroller = tabElements.getNewElScrollerElementWrappingNavTabsInstance($navTabsInstance.clone(true)), // use clone because we replaceWith later
         scrollingTabsControl = new ScrollingTabsControl($scroller),
@@ -1473,6 +1487,10 @@
                                     $scroller,
                                     readyCallback,
                                     attachTabContentToDomCallback);
+    };
+
+    $scroller.scrollToActiveTab = function() {
+      scrollingTabsControl.scrollToActiveTab(settings);
     };
 
     $scroller.initTabs();
@@ -1534,6 +1552,10 @@
       return $targetEls.each(function () {
         refreshTargetElementInstance($(this), settings);
       });
+    },
+
+    scrollToActiveTab: function() {
+      return this.each(scrollToActiveTab);
     }
   };
 
