@@ -347,9 +347,16 @@
 
       p.setFixedContainerWidth = function () {
         var ehd = this,
-            stc = ehd.stc;
+            stc = ehd.stc,
+            tabsContainerRect = stc.$tabsContainer.get(0).getBoundingClientRect();
+        /**
+         * @author poletaew
+         * It solves problem with rounding by jQuery.outerWidth
+         * If we have real width 100.5 px, jQuery.outerWidth returns us 101 px and we get layout's fail
+         */
+        stc.fixedContainerWidth = tabsContainerRect.width || (tabsContainerRect.right - tabsContainerRect.left);
 
-        stc.$fixedContainer.width(stc.fixedContainerWidth = stc.$tabsContainer.outerWidth());
+        stc.$fixedContainer.width(stc.fixedContainerWidth);
       };
 
       p.setFixedContainerWidthForHiddenScrollArrows = function () {
@@ -683,8 +690,12 @@
       if (!$activeTab.length) {
         return;
       }
-
-      activeTabLeftPos = $activeTab.offset().left;
+      
+      /**
+       * @author poletaew
+       * We need relative offset (depends on $fixedContainer), don't absolute
+       */
+      activeTabLeftPos = $activeTab.offset().left - stc.$fixedContainer.offset().left;
       activeTabRightPos = activeTabLeftPos + $activeTab.outerWidth();
 
       rightArrowLeftPos = stc.fixedContainerWidth - RIGHT_OFFSET_BUFFER;
