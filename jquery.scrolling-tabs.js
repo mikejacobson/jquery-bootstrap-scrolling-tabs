@@ -1,6 +1,6 @@
 /**
  * jquery-bootstrap-scrolling-tabs
- * @version v0.1.1
+ * @version v0.1.2
  * @link https://github.com/mikejacobson/jquery-bootstrap-scrolling-tabs
  * @author Mike Jacobson <michaeljjacobson1@gmail.com>
  * @license MIT License, http://www.opensource.org/licenses/MIT
@@ -690,7 +690,7 @@
       if (!$activeTab.length) {
         return;
       }
-      
+
       /**
        * @author poletaew
        * We need relative offset (depends on $fixedContainer), don't absolute
