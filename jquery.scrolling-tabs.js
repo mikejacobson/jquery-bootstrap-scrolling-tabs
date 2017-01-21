@@ -1,6 +1,6 @@
 /**
  * jquery-bootstrap-scrolling-tabs
- * @version v0.1.2
+ * @version v0.2.0
  * @link https://github.com/mikejacobson/jquery-bootstrap-scrolling-tabs
  * @author Mike Jacobson <michaeljjacobson1@gmail.com>
  * @license MIT License, http://www.opensource.org/licenses/MIT
@@ -59,7 +59,8 @@
  *               propContent: 'content', // optional
  *               ignoreTabPanes: false, // optional
  *               scrollToTabEdge: false, // optional
- *               disableScrollArrowsOnFullyScrolled: false // optional
+ *               disableScrollArrowsOnFullyScrolled: false, // optional
+ *               reverseScroll: false // optional
  *             });
  *
  *      Settings/Options:
@@ -86,6 +87,10 @@
  *                          disable when the tabs are scrolled fully left,
  *                          and the right scroll arrow to disable when the tabs
  *                          are scrolled fully right.
+ *        reverseScroll:
+ *                          set to true if you want the left scroll arrow to
+ *                          slide the tabs left instead of right, and the right
+ *                          scroll arrow to slide the tabs right.
  *
  *
  *
@@ -109,6 +114,7 @@
  *             $.fn.scrollingTabs.defaults.forceActiveTab = true;
  *             $.fn.scrollingTabs.defaults.scrollToTabEdge = true;
  *             $.fn.scrollingTabs.defaults.disableScrollArrowsOnFullyScrolled = true;
+ *             $.fn.scrollingTabs.defaults.reverseScroll = true;
  *
  *
  *    Methods
@@ -176,6 +182,11 @@
       SCROLL_ARROW_DISABLE: 'scrtabs-disable'
     },
 
+    SLIDE_DIRECTION: {
+      LEFT: 1,
+      RIGHT: 2
+    },
+
     EVENTS: {
       CLICK: 'click.scrtabs',
       DROPDOWN_MENU_HIDE: 'hide.bs.dropdown.scrtabs',
@@ -231,8 +242,6 @@
         var ehd = this;
 
         ehd.setElementReferences();
-        ehd.stc.$scrollArrows.hide();
-
         ehd.setEventListeners();
       };
 
@@ -267,7 +276,7 @@
             smv.refreshScrollArrowsDisabledState();
 
             if (stc.movableContainerLeftPos < minPos) {
-              smv.incrementScrollRight(minPos);
+              smv.incrementMovableContainerRight(minPos);
             }
           }
 
@@ -285,7 +294,9 @@
       p.setElementReferences = function () {
         var ehd = this,
             stc = ehd.stc,
-            $tabsContainer = stc.$tabsContainer;
+            $tabsContainer = stc.$tabsContainer,
+            $leftArrow = $tabsContainer.find('.scrtabs-js-tab-scroll-arrow-left'),
+            $rightArrow = $tabsContainer.find('.scrtabs-js-tab-scroll-arrow-right');
 
         stc.isNavPills = false;
 
@@ -303,9 +314,10 @@
         }
 
         stc.$tabsLiCollection = stc.$tabsUl.find('> li');
-        stc.$leftScrollArrow = $tabsContainer.find('.scrtabs-js-tab-scroll-arrow-left');
-        stc.$rightScrollArrow = $tabsContainer.find('.scrtabs-js-tab-scroll-arrow-right');
-        stc.$scrollArrows = stc.$leftScrollArrow.add(stc.$rightScrollArrow);
+
+        stc.$slideLeftArrow = stc.reverseScroll ? $leftArrow : $rightArrow;
+        stc.$slideRightArrow = stc.reverseScroll ? $rightArrow : $leftArrow;
+        stc.$scrollArrows = stc.$slideLeftArrow.add(stc.$slideRightArrow);
 
         stc.$win = $(window);
       };
@@ -317,7 +329,7 @@
         stc.containerWidth = stc.$tabsContainer.outerWidth();
         stc.winWidth = stc.$win.width();
 
-        stc.scrollArrowsCombinedWidth = stc.$leftScrollArrow.outerWidth() + stc.$rightScrollArrow.outerWidth();
+        stc.scrollArrowsCombinedWidth = stc.$slideLeftArrow.outerWidth() + stc.$slideRightArrow.outerWidth();
 
         ehd.setFixedContainerWidth();
         ehd.setMovableContainerWidth();
@@ -326,18 +338,18 @@
       p.setEventListeners = function () {
         var ehd = this,
             stc = ehd.stc,
-            evh = stc.eventHandlers; // eventHandlers
+            evh = stc.eventHandlers;
 
-        stc.$leftScrollArrow.off('.scrtabs').on({
-          'mousedown.scrtabs': function (e) { evh.handleMousedownOnLeftScrollArrow.call(evh, e); },
-          'mouseup.scrtabs': function (e) { evh.handleMouseupOnLeftScrollArrow.call(evh, e); },
-          'click.scrtabs': function (e) { evh.handleClickOnLeftScrollArrow.call(evh, e); }
+        stc.$slideLeftArrow.off('.scrtabs').on({
+          'mousedown.scrtabs': function (e) { evh.handleMousedownOnSlideMovContainerLeftArrow.call(evh, e); },
+          'mouseup.scrtabs': function (e) { evh.handleMouseupOnSlideMovContainerLeftArrow.call(evh, e); },
+          'click.scrtabs': function (e) { evh.handleClickOnSlideMovContainerLeftArrow.call(evh, e); }
         });
 
-        stc.$rightScrollArrow.off('.scrtabs').on({
-          'mousedown.scrtabs': function (e) { evh.handleMousedownOnRightScrollArrow.call(evh, e); },
-          'mouseup.scrtabs': function (e) { evh.handleMouseupOnRightScrollArrow.call(evh, e); },
-          'click.scrtabs': function (e) { evh.handleClickOnRightScrollArrow.call(evh, e); }
+        stc.$slideRightArrow.off('.scrtabs').on({
+          'mousedown.scrtabs': function (e) { evh.handleMousedownOnSlideMovContainerRightArrow.call(evh, e); },
+          'mouseup.scrtabs': function (e) { evh.handleMouseupOnSlideMovContainerRightArrow.call(evh, e); },
+          'click.scrtabs': function (e) { evh.handleClickOnSlideMovContainerRightArrow.call(evh, e); }
         });
 
         stc.$win.smartresize(function (e) { evh.handleWindowResize.call(evh, e); });
@@ -443,47 +455,48 @@
 
   // prototype methods
   (function (p){
-    p.handleClickOnLeftScrollArrow = function (e) {
+    p.handleClickOnSlideMovContainerLeftArrow = function (e) {
       var evh = this,
           stc = evh.stc;
 
-      stc.scrollMovement.incrementScrollLeft();
+      stc.scrollMovement.incrementMovableContainerLeft();
     };
 
-    p.handleClickOnRightScrollArrow = function (e) {
-      var evh = this,
-          stc = evh.stc,
-          scrollMovement = stc.scrollMovement;
-
-      scrollMovement.incrementScrollRight(scrollMovement.getMinPos());
-    };
-
-    p.handleMousedownOnLeftScrollArrow = function (e) {
+    p.handleClickOnSlideMovContainerRightArrow = function (e) {
       var evh = this,
           stc = evh.stc;
 
-      stc.scrollMovement.startScrollLeft();
+      stc.scrollMovement.incrementMovableContainerRight();
     };
 
-    p.handleMousedownOnRightScrollArrow = function (e) {
+    p.handleMousedownOnSlideMovContainerLeftArrow = function (e) {
       var evh = this,
           stc = evh.stc;
 
-      stc.scrollMovement.startScrollRight();
+      stc.$slideLeftArrow.data(CONSTANTS.DATA_KEY_IS_MOUSEDOWN, true);
+      stc.scrollMovement.continueSlideMovableContainerLeft();
     };
 
-    p.handleMouseupOnLeftScrollArrow = function (e) {
+    p.handleMousedownOnSlideMovContainerRightArrow = function (e) {
       var evh = this,
           stc = evh.stc;
 
-      stc.scrollMovement.stopScrollLeft();
+      stc.$slideRightArrow.data(CONSTANTS.DATA_KEY_IS_MOUSEDOWN, true);
+      stc.scrollMovement.continueSlideMovableContainerRight();
     };
 
-    p.handleMouseupOnRightScrollArrow = function (e) {
+    p.handleMouseupOnSlideMovContainerLeftArrow = function (e) {
       var evh = this,
           stc = evh.stc;
 
-      stc.scrollMovement.stopScrollRight();
+      stc.$slideLeftArrow.data(CONSTANTS.DATA_KEY_IS_MOUSEDOWN, false);
+    };
+
+    p.handleMouseupOnSlideMovContainerRightArrow = function (e) {
+      var evh = this,
+          stc = evh.stc;
+
+      stc.$slideRightArrow.data(CONSTANTS.DATA_KEY_IS_MOUSEDOWN, false);
     };
 
     p.handleWindowResize = function (e) {
@@ -516,30 +529,34 @@
   // prototype methods
   (function (p) {
 
-    p.continueScrollLeft = function () {
+    p.continueSlideMovableContainerLeft = function () {
       var smv = this,
           stc = smv.stc;
 
       setTimeout(function() {
-        if (stc.$leftScrollArrow.data(CONSTANTS.DATA_KEY_IS_MOUSEDOWN) && (stc.movableContainerLeftPos < 0)) {
-          if (!smv.incrementScrollLeft()) { // scroll limit not reached, so keep scrolling
-            smv.continueScrollLeft();
-          }
+        if (stc.movableContainerLeftPos <= smv.getMinPos()  ||
+            !stc.$slideLeftArrow.data(CONSTANTS.DATA_KEY_IS_MOUSEDOWN)) {
+          return;
+        }
+
+        if (!smv.incrementMovableContainerLeft()) { // haven't reached max left
+          smv.continueSlideMovableContainerLeft();
         }
       }, CONSTANTS.CONTINUOUS_SCROLLING_TIMEOUT_INTERVAL);
     };
 
-    p.continueScrollRight = function (minPos) {
+    p.continueSlideMovableContainerRight = function () {
       var smv = this,
           stc = smv.stc;
 
       setTimeout(function() {
-        if (stc.$rightScrollArrow.data(CONSTANTS.DATA_KEY_IS_MOUSEDOWN) && (stc.movableContainerLeftPos > minPos)) {
-          // slide tabs LEFT -> decrease movable container's left position
-          // min value is (movableContainerWidth - $tabHeader width)
-          if (!smv.incrementScrollRight(minPos)) {
-            smv.continueScrollRight(minPos);
-          }
+        if (stc.movableContainerLeftPos >= 0  ||
+            !stc.$slideRightArrow.data(CONSTANTS.DATA_KEY_IS_MOUSEDOWN)) {
+          return;
+        }
+
+        if (!smv.incrementMovableContainerRight()) { // haven't reached max right
+          smv.continueSlideMovableContainerRight();
         }
       }, CONSTANTS.CONTINUOUS_SCROLLING_TIMEOUT_INTERVAL);
     };
@@ -552,7 +569,7 @@
       if (stc.movableContainerLeftPos < minPos) {
         stc.movableContainerLeftPos = minPos;
       } else if (stc.scrollToTabEdge) {
-        smv.setMovableContainerLeftPosToTabEdge('right');
+        smv.setMovableContainerLeftPosToTabEdge(CONSTANTS.SLIDE_DIRECTION.LEFT);
 
         if (stc.movableContainerLeftPos < minPos) {
           stc.movableContainerLeftPos = minPos;
@@ -560,7 +577,7 @@
       }
     };
 
-    p.disableLeftScrollArrow = function () {
+    p.disableSlideLeftArrow = function () {
       var smv = this,
           stc = smv.stc;
 
@@ -568,10 +585,10 @@
         return;
       }
 
-      stc.$leftScrollArrow.addClass(CONSTANTS.CSS_CLASSES.SCROLL_ARROW_DISABLE);
+      stc.$slideLeftArrow.addClass(CONSTANTS.CSS_CLASSES.SCROLL_ARROW_DISABLE);
     };
 
-    p.disableRightScrollArrow = function () {
+    p.disableSlideRightArrow = function () {
       var smv = this,
           stc = smv.stc;
 
@@ -579,10 +596,10 @@
         return;
       }
 
-      stc.$rightScrollArrow.addClass(CONSTANTS.CSS_CLASSES.SCROLL_ARROW_DISABLE);
+      stc.$slideRightArrow.addClass(CONSTANTS.CSS_CLASSES.SCROLL_ARROW_DISABLE);
     };
 
-    p.enableLeftScrollArrow = function () {
+    p.enableSlideLeftArrow = function () {
       var smv = this,
           stc = smv.stc;
 
@@ -590,10 +607,10 @@
         return;
       }
 
-      stc.$leftScrollArrow.removeClass(CONSTANTS.CSS_CLASSES.SCROLL_ARROW_DISABLE);
+      stc.$slideLeftArrow.removeClass(CONSTANTS.CSS_CLASSES.SCROLL_ARROW_DISABLE);
     };
 
-    p.enableRightScrollArrow = function () {
+    p.enableSlideRightArrow = function () {
       var smv = this,
           stc = smv.stc;
 
@@ -601,7 +618,7 @@
         return;
       }
 
-      stc.$rightScrollArrow.removeClass(CONSTANTS.CSS_CLASSES.SCROLL_ARROW_DISABLE);
+      stc.$slideRightArrow.removeClass(CONSTANTS.CSS_CLASSES.SCROLL_ARROW_DISABLE);
     };
 
     p.getMinPos = function () {
@@ -618,36 +635,42 @@
       return (stc.movableContainerLeftPos === 0) ? '0' : stc.movableContainerLeftPos + 'px';
     };
 
-    p.incrementScrollLeft = function () {
+    p.incrementMovableContainerLeft = function () {
       var smv = this,
-          stc = smv.stc;
-
-      stc.movableContainerLeftPos += (stc.fixedContainerWidth / CONSTANTS.SCROLL_OFFSET_FRACTION);
-
-      if (stc.movableContainerLeftPos > 0) {
-        stc.movableContainerLeftPos = 0;
-      } else if (stc.scrollToTabEdge) {
-        smv.setMovableContainerLeftPosToTabEdge('left');
-      }
-
-      smv.slideMovableContainerToLeftPos();
-      smv.enableRightScrollArrow();
-
-      return (stc.movableContainerLeftPos === 0); // indicates scroll limit reached
-    };
-
-    p.incrementScrollRight = function (minPos) {
-      var smv = this,
-          stc = smv.stc;
+          stc = smv.stc,
+          minPos = smv.getMinPos();
 
       smv.decrementMovableContainerLeftPos(minPos);
       smv.slideMovableContainerToLeftPos();
+      smv.enableSlideRightArrow();
 
-      if (stc.movableContainerLeftPos !== 0) {
-        smv.enableLeftScrollArrow();
+      // return true if we're fully left, false otherwise
+      return (stc.movableContainerLeftPos === minPos);
+    };
+
+    p.incrementMovableContainerRight = function (minPos) {
+      var smv = this,
+          stc = smv.stc;
+
+      // if minPos passed in, the movable container was beyond the minPos
+      if (minPos) {
+        stc.movableContainerLeftPos = minPos;
+      } else {
+        stc.movableContainerLeftPos += (stc.fixedContainerWidth / CONSTANTS.SCROLL_OFFSET_FRACTION);
+
+        if (stc.movableContainerLeftPos > 0) {
+          stc.movableContainerLeftPos = 0;
+        } else if (stc.scrollToTabEdge) {
+          smv.setMovableContainerLeftPosToTabEdge(CONSTANTS.SLIDE_DIRECTION.RIGHT);
+        }
       }
 
-      return (stc.movableContainerLeftPos === minPos);
+      smv.slideMovableContainerToLeftPos();
+      smv.enableSlideLeftArrow();
+
+      // return true if we're fully right, false otherwise
+      // left pos of 0 is the movable container's max position (farthest right)
+      return (stc.movableContainerLeftPos === 0);
     };
 
     p.refreshScrollArrowsDisabledState = function() {
@@ -658,18 +681,20 @@
         return;
       }
 
-      if (!stc.movableContainerLeftPos) {
-        smv.disableLeftScrollArrow();
-        smv.enableRightScrollArrow();
-      } else {
-        smv.enableLeftScrollArrow();
-
-        if (stc.movableContainerLeftPos <= smv.getMinPos()) {
-          smv.disableRightScrollArrow();
-        } else {
-          smv.enableRightScrollArrow();
-        }
+      if (stc.movableContainerLeftPos >= 0) { // movable container fully right
+        smv.disableSlideRightArrow();
+        smv.enableSlideLeftArrow();
+        return;
       }
+
+      if (stc.movableContainerLeftPos <= smv.getMinPos()) { // fully left
+        smv.disableSlideLeftArrow();
+        smv.enableSlideRightArrow();
+        return;
+      }
+
+      smv.enableSlideLeftArrow();
+      smv.enableSlideRightArrow();
     };
 
     p.scrollToActiveTab = function (options) {
@@ -713,7 +738,7 @@
       return false;
     };
 
-    p.setMovableContainerLeftPosToTabEdge = function (scrollArrowClicked) {
+    p.setMovableContainerLeftPosToTabEdge = function (slideDirection) {
       var smv = this,
           stc = smv.stc,
           offscreenWidth = -stc.movableContainerLeftPos,
@@ -727,7 +752,7 @@
           totalTabWidth += tabWidth;
 
           if (totalTabWidth > offscreenWidth) {
-            stc.movableContainerLeftPos = (scrollArrowClicked === 'left') ? -(totalTabWidth - tabWidth) : -totalTabWidth;
+            stc.movableContainerLeftPos = (slideDirection === CONSTANTS.SLIDE_DIRECTION.RIGHT) ? -(totalTabWidth - tabWidth) : -totalTabWidth;
             return false; // exit .each() loop
           }
 
@@ -737,12 +762,13 @@
     p.slideMovableContainerToLeftPos = function () {
       var smv = this,
           stc = smv.stc,
+          minPos = smv.getMinPos(),
           leftVal;
 
       if (stc.movableContainerLeftPos > 0) {
         stc.movableContainerLeftPos = 0;
-      } else if (stc.movableContainerLeftPos < smv.getMinPos()) {
-        stc.movableContainerLeftPos = smv.getMinPos();
+      } else if (stc.movableContainerLeftPos < minPos) {
+        stc.movableContainerLeftPos = minPos;
       }
 
       stc.movableContainerLeftPos = stc.movableContainerLeftPos / 1;
@@ -768,36 +794,6 @@
       });
     };
 
-    p.startScrollLeft = function () {
-      var smv = this,
-          stc = smv.stc;
-
-      stc.$leftScrollArrow.data(CONSTANTS.DATA_KEY_IS_MOUSEDOWN, true);
-      smv.continueScrollLeft();
-    };
-
-    p.startScrollRight = function () {
-      var smv = this,
-          stc = smv.stc;
-
-      stc.$rightScrollArrow.data(CONSTANTS.DATA_KEY_IS_MOUSEDOWN, true);
-      smv.continueScrollRight(smv.getMinPos());
-    };
-
-    p.stopScrollLeft = function () {
-      var smv = this,
-          stc = smv.stc;
-
-      stc.$leftScrollArrow.data(CONSTANTS.DATA_KEY_IS_MOUSEDOWN, false);
-    };
-
-    p.stopScrollRight = function () {
-      var smv = this,
-          stc = smv.stc;
-
-      stc.$rightScrollArrow.data(CONSTANTS.DATA_KEY_IS_MOUSEDOWN, false);
-    };
-
   }(ScrollMovement.prototype));
 
 
@@ -814,6 +810,7 @@
     stc.scrollArrowsVisible = false;
     stc.scrollToTabEdge = false;
     stc.disableScrollArrowsOnFullyScrolled = false;
+    stc.reverseScroll = false;
 
     stc.scrollMovement = new ScrollMovement(stc);
     stc.eventHandlers = new EventHandlers(stc);
@@ -832,6 +829,10 @@
 
       if (options.disableScrollArrowsOnFullyScrolled) {
         stc.disableScrollArrowsOnFullyScrolled = true;
+      }
+
+      if (options.reverseScroll) {
+        stc.reverseScroll = true;
       }
 
       setTimeout(initTabsAfterTimeout, 100);
@@ -901,12 +902,16 @@
       return $('<ul class="nav nav-tabs" role="tablist"></ul>');
     }
 
-    function getNewElScrollerElementWrappingNavTabsInstance($navTabsInstance) {
+    function getNewElScrollerElementWrappingNavTabsInstance($navTabsInstance, settings) {
       var $tabsContainer = $('<div class="scrtabs-tab-container"></div>'),
           $leftArrow = $('<div class="scrtabs-tab-scroll-arrow scrtabs-js-tab-scroll-arrow-left"><span class="glyphicon glyphicon-chevron-left"></span></div>'),
           $rightArrow = $('<div class="scrtabs-tab-scroll-arrow scrtabs-js-tab-scroll-arrow-right"><span class="glyphicon glyphicon-chevron-right"></span></div>'),
           $fixedContainer = $('<div class="scrtabs-tabs-fixed-container"></div>'),
           $movableContainer = $('<div class="scrtabs-tabs-movable-container"></div>');
+
+      if (settings.disableScrollArrowsOnFullyScrolled) {
+        $leftArrow.add($rightArrow).addClass('scrtabs-disable');
+      }
 
       return $tabsContainer
                 .append($leftArrow,
@@ -1481,7 +1486,7 @@
   }
 
   function wrapNavTabsInstanceInScroller($navTabsInstance, settings, readyCallback, attachTabContentToDomCallback) {
-    var $scroller = tabElements.getNewElScrollerElementWrappingNavTabsInstance($navTabsInstance.clone(true)), // use clone because we replaceWith later
+    var $scroller = tabElements.getNewElScrollerElementWrappingNavTabsInstance($navTabsInstance.clone(true), settings), // use clone because we replaceWith later
         scrollingTabsControl = new ScrollingTabsControl($scroller),
         navTabsInstanceData = $navTabsInstance.data('scrtabs');
 
@@ -1594,7 +1599,8 @@
     ignoreTabPanes: false,
     scrollToTabEdge: false,
     disableScrollArrowsOnFullyScrolled: false,
-    forceActiveTab: false
+    forceActiveTab: false,
+    reverseScroll: false
   };
 
 

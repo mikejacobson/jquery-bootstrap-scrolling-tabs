@@ -1,6 +1,6 @@
 /**
  * jquery-bootstrap-scrolling-tabs
- * @version v0.1.2
+ * @version v0.2.0
  * @link https://github.com/mikejacobson/jquery-bootstrap-scrolling-tabs
  * @author Mike Jacobson <michaeljjacobson1@gmail.com>
  * @license MIT License, http://www.opensource.org/licenses/MIT
@@ -42,6 +42,7 @@
   border-top: none;
   color: #428bca;
   cursor: pointer;
+  display: none;
   float: left;
   font-size: 12px;
   height: 42px;
@@ -50,18 +51,18 @@
   padding-top: 13px;
   width: 20px;
 }
-/* line 50, jquery.scrolling-tabs.scss */
+/* line 51, jquery.scrolling-tabs.scss */
 .scrtabs-tab-scroll-arrow:hover {
   background-color: #eeeeee;
 }
 
-/* line 55, jquery.scrolling-tabs.scss */
+/* line 56, jquery.scrolling-tabs.scss */
 .scrtabs-tab-scroll-arrow.scrtabs-disable {
   color: #ddd;
   cursor: default;
 }
 
-/* line 60, jquery.scrolling-tabs.scss */
+/* line 61, jquery.scrolling-tabs.scss */
 .scrtabs-tabs-fixed-container ul.nav-tabs > li {
   white-space: nowrap;
 }

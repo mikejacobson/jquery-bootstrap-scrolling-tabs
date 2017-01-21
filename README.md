@@ -10,7 +10,7 @@ Here's what they look like:
 
 And here are plunks showing them working with:
 
-* <a href="http://plnkr.co/edit/8i9i0qYKeggGzmR3Fv8X?p=preview" target="_blank">HTML-defined Tabs</a>
+* <a href="http://plnkr.co/edit/iMJ435SFXjIX18YEM4Z4?p=preview" target="_blank">HTML-defined Tabs</a>
 * <a href="http://plnkr.co/edit/4SCaNOWyB8IsZSVlRXIz?p=preview" target="_blank">Data-driven Tabs</a>
 
 Use Cases
@@ -23,6 +23,7 @@ Use Cases
 Optional Features
 -----------------
 There are also optional features available:
+* [Reverse Scroll](#ft0)
 * [Force Scroll to Tab Edge](#ft1)
 * [Disable Scroll Arrows on Fully Scrolled](#ft2)
 
@@ -252,6 +253,22 @@ $('#tabs-inside-here').scrollingTabs('refresh', {
   forceActiveTab: true
 });
 ```
+
+#### <a id="ft0"></a>Reverse Scroll
+
+By default, on page load, if there are tabs hidden off the right side of the page, you would click the right scroll arrow to slide those tabs into view (and vice versa for the left scroll arrow, of course, if there are tabs hidden off the left side of the page).
+
+You can reverse the direction the tabs slide when an arrow is clicked by passing in option `reverseScroll: true`:
+
+```javascript
+$('#tabs-inside-here').scrollingTabs({
+  tabs: myTabs,
+  reverseScroll: true  
+});
+```
+
+This might be the more intuitive behavior for mobile devices.
+
 
 #### <a id="ft1"></a>Force Scroll to Tab Edge
 
