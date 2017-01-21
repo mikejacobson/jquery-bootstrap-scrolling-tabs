@@ -1,6 +1,6 @@
 /**
  * jquery-bootstrap-scrolling-tabs
- * @version v0.2.0
+ * @version v0.3.0
  * @link https://github.com/mikejacobson/jquery-bootstrap-scrolling-tabs
  * @author Mike Jacobson <michaeljjacobson1@gmail.com>
  * @license MIT License, http://www.opensource.org/licenses/MIT
@@ -91,6 +91,12 @@
  *                          set to true if you want the left scroll arrow to
  *                          slide the tabs left instead of right, and the right
  *                          scroll arrow to slide the tabs right.
+ *        widthMultiplier:
+ *                          set to a value less than 1 if you want the tabs
+ *                          container to be less than the full width of its
+ *                          parent element. For example, set it to 0.5 if you
+ *                          want the tabs container to be half the width of
+ *                          its parent.
  *
  *
  *
@@ -115,6 +121,7 @@
  *             $.fn.scrollingTabs.defaults.scrollToTabEdge = true;
  *             $.fn.scrollingTabs.defaults.disableScrollArrowsOnFullyScrolled = true;
  *             $.fn.scrollingTabs.defaults.reverseScroll = true;
+ *             $.fn.scrollingTabs.defaults.widthMultiplier = 0.5;
  *
  *
  *    Methods
@@ -326,9 +333,7 @@
         var ehd = this,
             stc = ehd.stc;
 
-        stc.containerWidth = stc.$tabsContainer.outerWidth();
         stc.winWidth = stc.$win.width();
-
         stc.scrollArrowsCombinedWidth = stc.$slideLeftArrow.outerWidth() + stc.$slideRightArrow.outerWidth();
 
         ehd.setFixedContainerWidth();
@@ -367,6 +372,7 @@
          * If we have real width 100.5 px, jQuery.outerWidth returns us 101 px and we get layout's fail
          */
         stc.fixedContainerWidth = tabsContainerRect.width || (tabsContainerRect.right - tabsContainerRect.left);
+        stc.fixedContainerWidth = stc.fixedContainerWidth * stc.widthMultiplier;
 
         stc.$fixedContainer.width(stc.fixedContainerWidth);
       };
@@ -811,6 +817,7 @@
     stc.scrollToTabEdge = false;
     stc.disableScrollArrowsOnFullyScrolled = false;
     stc.reverseScroll = false;
+    stc.widthMultiplier = 1;
 
     stc.scrollMovement = new ScrollMovement(stc);
     stc.eventHandlers = new EventHandlers(stc);
@@ -821,7 +828,8 @@
   (function (p) {
     p.initTabs = function (options, $scroller, readyCallback, attachTabContentToDomCallback) {
       var stc = this,
-          elementsHandler = stc.elementsHandler;
+          elementsHandler = stc.elementsHandler,
+          num;
 
       if (options.scrollToTabEdge) {
         stc.scrollToTabEdge = true;
@@ -833,6 +841,14 @@
 
       if (options.reverseScroll) {
         stc.reverseScroll = true;
+      }
+
+      if (options.widthMultiplier !== 1) {
+        num = Number(options.widthMultiplier); // handle string value
+
+        if (!isNaN(num)) {
+          stc.widthMultiplier = num;
+        }
       }
 
       setTimeout(initTabsAfterTimeout, 100);
@@ -1600,7 +1616,8 @@
     scrollToTabEdge: false,
     disableScrollArrowsOnFullyScrolled: false,
     forceActiveTab: false,
-    reverseScroll: false
+    reverseScroll: false,
+    widthMultiplier: 1
   };
 
 

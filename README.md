@@ -23,9 +23,10 @@ Use Cases
 Optional Features
 -----------------
 There are also optional features available:
-* [Reverse Scroll](#ft0)
-* [Force Scroll to Tab Edge](#ft1)
-* [Disable Scroll Arrows on Fully Scrolled](#ft2)
+* [Reverse Scroll](#reverseScroll)
+* [Force Scroll to Tab Edge](#scrollToTabEdge)
+* [Disable Scroll Arrows on Fully Scrolled](#disableScrollArrowsOnFullyScrolled)
+* [Width Multiplier](#widthMultiplier)
 
 
 Usage
@@ -74,6 +75,17 @@ $('.nav-tabs').scrollingTabs();
 ```
 
 
+##### reverseScroll Option
+
+You can also pass in the `reverseScroll` option:
+```javascript
+$('.nav-tabs').scrollingTabs({
+  reverseScroll: true  
+});
+```
+This will reverse the direction the tabs slide when you click a scroll arrow. More details [here](#reverseScroll).
+
+
 ##### scrollToTabEdge Option
 
 You can also pass in the `scrollToTabEdge` option:
@@ -82,7 +94,7 @@ $('.nav-tabs').scrollingTabs({
   scrollToTabEdge: true  
 });
 ```
-This will force the scrolling to always end with a tab edge aligned with the left scroll arrow. More details [here](#ft1).
+This will force the scrolling to always end with a tab edge aligned with the left scroll arrow. More details [here](#scrollToTabEdge).
 
 
 ##### disableScrollArrowsOnFullyScrolled Option
@@ -93,7 +105,20 @@ $('.nav-tabs').scrollingTabs({
   disableScrollArrowsOnFullyScrolled: true  
 });
 ```
-This will cause the left scroll arrow to disable when the tabs are scrolled fully left, and the right scroll arrow to disable when the tabs are scrolled fully right.
+If you're using the default scroll setting, this will cause the left scroll arrow to disable when the tabs are scrolled fully left (on page load, for example), and the right scroll arrow to disable when the tabs are scrolled fully right.
+
+If you have the `reverseScroll` option set to `true`, the opposite arrows will disable.
+
+
+##### widthMultiplier Option
+
+You can also pass in the `widthMultiplier` option:
+```javascript
+$('.nav-tabs').scrollingTabs({
+  widthMultiplier: 0.5  
+});
+```
+Pass in a value less than 1 if you want the tabs container to be less than the full width of its parent element. For example, if you want the tabs container to be half the width of its parent, pass in `0.5`.
 
 
 
@@ -254,7 +279,7 @@ $('#tabs-inside-here').scrollingTabs('refresh', {
 });
 ```
 
-#### <a id="ft0"></a>Reverse Scroll
+#### <a id="reverseScroll"></a>Reverse Scroll
 
 By default, on page load, if there are tabs hidden off the right side of the page, you would click the right scroll arrow to slide those tabs into view (and vice versa for the left scroll arrow, of course, if there are tabs hidden off the left side of the page).
 
@@ -270,7 +295,7 @@ $('#tabs-inside-here').scrollingTabs({
 This might be the more intuitive behavior for mobile devices.
 
 
-#### <a id="ft1"></a>Force Scroll to Tab Edge
+#### <a id="scrollToTabEdge"></a>Force Scroll to Tab Edge
 
 If you want to ensure the scrolling always ends with a tab edge aligned with the left scroll arrow so there won't be a partially hidden tab, pass in option `scrollToTabEdge: true`:
 
@@ -284,14 +309,29 @@ $('#tabs-inside-here').scrollingTabs({
 There's no way to guarantee the left *and* right edges will be full tabs because that's dependent on the the width of the tabs and the window. So this just makes sure the left side will be a full tab.
 
 
-#### <a id="ft2"></a>Disable Scroll Arrows on Fully Scrolled
+#### <a id="disableScrollArrowsOnFullyScrolled"></a>Disable Scroll Arrows on Fully Scrolled
 
-If you want the left scroll arrow to disable when the tabs are scrolled fully left, and the right scroll arrow to disable when the tabs are scrolled fully right, pass in option `disableScrollArrowsOnFullyScrolled: true`:
+If you want the left scroll arrow to disable when the tabs are scrolled fully left (the way they would be on page load, for example), and the right scroll arrow to disable when the tabs are scrolled fully right, pass in option `disableScrollArrowsOnFullyScrolled: true`:
 
 ```javascript
 $('#tabs-inside-here').scrollingTabs({
   tabs: myTabs,
   disableScrollArrowsOnFullyScrolled: true  
+});
+```
+
+Note that if you have the `reverseScroll` option set to `true`, the opposite arrows will disable.
+
+
+
+#### <a id="widthMultiplier"></a>Width Multiplier
+
+If you want the tabs container to be less than the full width of its parent element, pass in a `widthMultiplier` value that's less than 1. For example, if you want the tabs container to be half the width of its parent, pass in option `widthMultiplier: 0.5`:
+
+```javascript
+$('#tabs-inside-here').scrollingTabs({
+  tabs: myTabs,
+  widthMultiplier: 0.5  
 });
 ```
 
@@ -304,6 +344,8 @@ $.fn.scrollingTabs.defaults.tabs = myTabs;
 $.fn.scrollingTabs.defaults.forceActiveTab = true;
 $.fn.scrollingTabs.defaults.scrollToTabEdge = true;
 $.fn.scrollingTabs.defaults.disableScrollArrowsOnFullyScrolled = true;
+$.fn.scrollingTabs.defaults.reverseScroll = true;
+$.fn.scrollingTabs.defaults.widthMultiplier = 0.5;
 ```
 
 #### <a id="events"></a>Events
