@@ -1,6 +1,6 @@
 /**
  * jquery-bootstrap-scrolling-tabs
- * @version v0.3.0
+ * @version v0.4.0
  * @link https://github.com/mikejacobson/jquery-bootstrap-scrolling-tabs
  * @author Mike Jacobson <michaeljjacobson1@gmail.com>
  * @license MIT License, http://www.opensource.org/licenses/MIT
@@ -346,14 +346,14 @@
             evh = stc.eventHandlers;
 
         stc.$slideLeftArrow.off('.scrtabs').on({
-          'mousedown.scrtabs': function (e) { evh.handleMousedownOnSlideMovContainerLeftArrow.call(evh, e); },
-          'mouseup.scrtabs': function (e) { evh.handleMouseupOnSlideMovContainerLeftArrow.call(evh, e); },
+          'mousedown.scrtabs touchstart.scrtabs': function (e) { evh.handleMousedownOnSlideMovContainerLeftArrow.call(evh, e); },
+          'mouseup.scrtabs touchend.scrtabs': function (e) { evh.handleMouseupOnSlideMovContainerLeftArrow.call(evh, e); },
           'click.scrtabs': function (e) { evh.handleClickOnSlideMovContainerLeftArrow.call(evh, e); }
         });
 
         stc.$slideRightArrow.off('.scrtabs').on({
-          'mousedown.scrtabs': function (e) { evh.handleMousedownOnSlideMovContainerRightArrow.call(evh, e); },
-          'mouseup.scrtabs': function (e) { evh.handleMouseupOnSlideMovContainerRightArrow.call(evh, e); },
+          'mousedown.scrtabs touchstart.scrtabs': function (e) { evh.handleMousedownOnSlideMovContainerRightArrow.call(evh, e); },
+          'mouseup.scrtabs touchend.scrtabs': function (e) { evh.handleMouseupOnSlideMovContainerRightArrow.call(evh, e); },
           'click.scrtabs': function (e) { evh.handleClickOnSlideMovContainerRightArrow.call(evh, e); }
         });
 
