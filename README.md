@@ -350,6 +350,19 @@ $('#tabs-inside-here').scrollingTabs({
 });
 ```
 
+#### <a id="tabClickHandler"></a>Tab Click Handler
+
+You can pass in a callback function that executes any time a tab is clicked using the `tabClickHandler` option.
+The callback function is simply passed as the event handler to jQuery's .on(), so the function will receive the jQuery event as an argument, and 'this' inside the function will be the clicked tab's anchor element.
+
+```javascript
+$('#tabs-inside-here').scrollingTabs({
+  tabs: myTabs,
+  tabClickHandler: function (e) {
+    var clickedTabElement = this;
+  }  
+});
+```
 
 
 #### Setting Defaults
