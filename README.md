@@ -27,6 +27,7 @@ There are also optional features available:
 * [Force Scroll to Tab Edge](#scrollToTabEdge)
 * [Disable Scroll Arrows on Fully Scrolled](#disableScrollArrowsOnFullyScrolled)
 * [Width Multiplier](#widthMultiplier)
+* [Tab Click Handler](#tabClickHandler)
 
 
 Usage
@@ -110,15 +111,29 @@ If you're using the default scroll setting, this will cause the left scroll arro
 If you have the `reverseScroll` option set to `true`, the opposite arrows will disable.
 
 
+
 ##### widthMultiplier Option
 
 You can also pass in the `widthMultiplier` option:
 ```javascript
 $('.nav-tabs').scrollingTabs({
-  widthMultiplier: 0.5  
+  widthMultiplier: 0.5
 });
 ```
 Pass in a value less than 1 if you want the tabs container to be less than the full width of its parent element. For example, if you want the tabs container to be half the width of its parent, pass in `0.5`.
+
+
+##### tabClickHandler Option
+
+You can also use the `tabClickHandler` option to pass in a callback function to execute any time a tab is clicked:
+```javascript
+$('.nav-tabs').scrollingTabs({
+  tabClickHandler: function (e) {
+    var clickedTabElement = this;
+  }
+});
+```
+The callback function is simply passed as the event handler to jQuery's .on(), so the function will receive the jQuery event as an argument, and 'this' inside the function will be the clicked tab's anchor element.
 
 
 

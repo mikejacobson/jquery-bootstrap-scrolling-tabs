@@ -1,6 +1,6 @@
 /**
  * jquery-bootstrap-scrolling-tabs
- * @version v0.4.0
+ * @version v0.5.0
  * @link https://github.com/mikejacobson/jquery-bootstrap-scrolling-tabs
  * @author Mike Jacobson <michaeljjacobson1@gmail.com>
  * @license MIT License, http://www.opensource.org/licenses/MIT
@@ -97,7 +97,13 @@
  *                          parent element. For example, set it to 0.5 if you
  *                          want the tabs container to be half the width of
  *                          its parent.
- *
+ *        tabClickHandler:
+ *                          a callback function to execute any time a tab is clicked.
+ *                          The function is simply passed as the event handler
+ *                          to jQuery's .on(), so the function will receive
+ *                          the jQuery event as an argument, and the 'this'
+ *                          inside the function will be the clicked tab's anchor
+ *                          element.
  *
  *
  *      On tabs data change:
@@ -122,6 +128,7 @@
  *             $.fn.scrollingTabs.defaults.disableScrollArrowsOnFullyScrolled = true;
  *             $.fn.scrollingTabs.defaults.reverseScroll = true;
  *             $.fn.scrollingTabs.defaults.widthMultiplier = 0.5;
+ *             $.fn.scrollingTabs.defaults.tabClickHandler = function () { };
  *
  *
  *    Methods
@@ -199,6 +206,8 @@
       DROPDOWN_MENU_HIDE: 'hide.bs.dropdown.scrtabs',
       DROPDOWN_MENU_SHOW: 'show.bs.dropdown.scrtabs',
       FORCE_REFRESH: 'forcerefresh.scrtabs',
+      MOUSEDOWN: 'mousedown.scrtabs touchstart.scrtabs',
+      MOUSEUP: 'mouseup.scrtabs touchend.scrtabs',
       WINDOW_RESIZE: 'resize.scrtabs',
       TABS_READY: 'ready.scrtabs'
     }
@@ -343,19 +352,27 @@
       p.setEventListeners = function () {
         var ehd = this,
             stc = ehd.stc,
-            evh = stc.eventHandlers;
+            evh = stc.eventHandlers,
+            ev = CONSTANTS.EVENTS;
 
-        stc.$slideLeftArrow.off('.scrtabs').on({
-          'mousedown.scrtabs touchstart.scrtabs': function (e) { evh.handleMousedownOnSlideMovContainerLeftArrow.call(evh, e); },
-          'mouseup.scrtabs touchend.scrtabs': function (e) { evh.handleMouseupOnSlideMovContainerLeftArrow.call(evh, e); },
-          'click.scrtabs': function (e) { evh.handleClickOnSlideMovContainerLeftArrow.call(evh, e); }
-        });
+        stc.$slideLeftArrow
+          .off('.scrtabs')
+          .on(ev.MOUSEDOWN, function (e) { evh.handleMousedownOnSlideMovContainerLeftArrow.call(evh, e); })
+          .on(ev.MOUSEUP, function (e) { evh.handleMouseupOnSlideMovContainerLeftArrow.call(evh, e); })
+          .on(ev.CLICK, function (e) { evh.handleClickOnSlideMovContainerLeftArrow.call(evh, e); });
 
-        stc.$slideRightArrow.off('.scrtabs').on({
-          'mousedown.scrtabs touchstart.scrtabs': function (e) { evh.handleMousedownOnSlideMovContainerRightArrow.call(evh, e); },
-          'mouseup.scrtabs touchend.scrtabs': function (e) { evh.handleMouseupOnSlideMovContainerRightArrow.call(evh, e); },
-          'click.scrtabs': function (e) { evh.handleClickOnSlideMovContainerRightArrow.call(evh, e); }
-        });
+        stc.$slideRightArrow
+          .off('.scrtabs')
+          .on(ev.MOUSEDOWN, function (e) { evh.handleMousedownOnSlideMovContainerRightArrow.call(evh, e); })
+          .on(ev.MOUSEUP, function (e) { evh.handleMouseupOnSlideMovContainerRightArrow.call(evh, e); })
+          .on(ev.CLICK, function (e) { evh.handleClickOnSlideMovContainerRightArrow.call(evh, e); });
+
+        if (stc.tabClickHandler) {
+          stc.$tabsLiCollection
+            .find('a[data-toggle="tab"]')
+            .off(ev.CLICK)
+            .on(ev.CLICK, stc.tabClickHandler);
+        }
 
         stc.$win.smartresize(function (e) { evh.handleWindowResize.call(evh, e); });
 
@@ -1327,6 +1344,12 @@
       .off(CONSTANTS.EVENTS.CLICK)
       .removeAttr('data-' + CONSTANTS.DATA_KEY_DDMENU_MODIFIED);
 
+    if (scrtabsData.scroller.hasTabClickHandler) {
+      $targetElInstance
+        .find('a[data-toggle="tab"]')
+        .off('.scrtabs');
+    }
+
     if (scrtabsData.isWrapperOnly) { // we just wrapped nav-tabs markup, so restore it
       // $targetElInstance is the ul.nav-tabs
       $tabsContainer = $targetElInstance.parents('.scrtabs-tab-container');
@@ -1516,6 +1539,11 @@
 
     $navTabsInstance.replaceWith($scroller.css('visibility', 'hidden'));
 
+    if (settings.tabClickHandler && (typeof settings.tabClickHandler === 'function')) {
+      $scroller.hasTabClickHandler = true;
+      scrollingTabsControl.tabClickHandler = settings.tabClickHandler;
+    }
+
     $scroller.initTabs = function () {
       scrollingTabsControl.initTabs(settings,
                                     $scroller,
@@ -1617,7 +1645,8 @@
     disableScrollArrowsOnFullyScrolled: false,
     forceActiveTab: false,
     reverseScroll: false,
-    widthMultiplier: 1
+    widthMultiplier: 1,
+    tabClickHandler: null
   };
 
 
