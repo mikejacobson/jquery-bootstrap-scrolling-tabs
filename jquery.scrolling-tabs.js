@@ -1,6 +1,6 @@
 /**
  * jquery-bootstrap-scrolling-tabs
- * @version v0.5.0
+ * @version v0.6.0
  * @link https://github.com/mikejacobson/jquery-bootstrap-scrolling-tabs
  * @author Mike Jacobson <michaeljjacobson1@gmail.com>
  * @license MIT License, http://www.opensource.org/licenses/MIT
@@ -104,6 +104,18 @@
  *                          the jQuery event as an argument, and the 'this'
  *                          inside the function will be the clicked tab's anchor
  *                          element.
+ *        cssClassLeftArrow, cssClassRightArrow:
+ *                          custom values for the class attributes for the
+ *                          left and right scroll arrows. The defaults are
+ *                          'glyphicon glyphicon-chevron-left' and
+ *                          'glyphicon glyphicon-chevron-right'.
+ *                          Using different icons might require you to add
+ *                          custom styling to the arrows to position the icons
+ *                          correctly; the arrows can be targeted with these
+ *                          selectors:
+ *                          .scrtabs-tab-scroll-arrow
+ *                          .scrtabs-tab-scroll-arrow-left
+ *                          .scrtabs-tab-scroll-arrow-right
  *
  *
  *      On tabs data change:
@@ -311,8 +323,8 @@
         var ehd = this,
             stc = ehd.stc,
             $tabsContainer = stc.$tabsContainer,
-            $leftArrow = $tabsContainer.find('.scrtabs-js-tab-scroll-arrow-left'),
-            $rightArrow = $tabsContainer.find('.scrtabs-js-tab-scroll-arrow-right');
+            $leftArrow = $tabsContainer.find('.scrtabs-tab-scroll-arrow-left'),
+            $rightArrow = $tabsContainer.find('.scrtabs-tab-scroll-arrow-right');
 
         stc.isNavPills = false;
 
@@ -937,8 +949,8 @@
 
     function getNewElScrollerElementWrappingNavTabsInstance($navTabsInstance, settings) {
       var $tabsContainer = $('<div class="scrtabs-tab-container"></div>'),
-          $leftArrow = $('<div class="scrtabs-tab-scroll-arrow scrtabs-js-tab-scroll-arrow-left"><span class="glyphicon glyphicon-chevron-left"></span></div>'),
-          $rightArrow = $('<div class="scrtabs-tab-scroll-arrow scrtabs-js-tab-scroll-arrow-right"><span class="glyphicon glyphicon-chevron-right"></span></div>'),
+          $leftArrow = $('<div class="scrtabs-tab-scroll-arrow scrtabs-tab-scroll-arrow-left"><span class="' + settings.cssClassLeftArrow + '"></span></div>'),
+          $rightArrow = $('<div class="scrtabs-tab-scroll-arrow scrtabs-tab-scroll-arrow-right"><span class="' + settings.cssClassRightArrow + '"></span></div>'),
           $fixedContainer = $('<div class="scrtabs-tabs-fixed-container"></div>'),
           $movableContainer = $('<div class="scrtabs-tabs-movable-container"></div>');
 
@@ -1646,7 +1658,9 @@
     forceActiveTab: false,
     reverseScroll: false,
     widthMultiplier: 1,
-    tabClickHandler: null
+    tabClickHandler: null,
+    cssClassLeftArrow: 'glyphicon glyphicon-chevron-left',
+    cssClassRightArrow: 'glyphicon glyphicon-chevron-right'
   };
 
 

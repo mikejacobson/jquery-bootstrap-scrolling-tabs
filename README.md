@@ -28,6 +28,7 @@ There are also optional features available:
 * [Disable Scroll Arrows on Fully Scrolled](#disableScrollArrowsOnFullyScrolled)
 * [Width Multiplier](#widthMultiplier)
 * [Tab Click Handler](#tabClickHandler)
+* [Custom Scroll Arrow classes](#cssClassArrows)
 
 
 Usage
@@ -361,6 +362,29 @@ $('#tabs-inside-here').scrollingTabs({
   tabClickHandler: function (e) {
     var clickedTabElement = this;
   }  
+});
+```
+
+#### <a id="cssClassArrows"></a>Custom Scroll Arrow classes
+
+You can pass in custom values for the class attributes for the left- and right scroll arrows using options `cssClassLeftArrow` and `cssClassRightArrow`.
+
+The defaults are `glyphicon glyphicon-chevron-left` and `glyphicon glyphicon-chevron-right`.
+
+Using different icons might require you to add custom styling to the arrows to position the icons correctly; the arrows can be targeted with these selectors:
+
+`.scrtabs-tab-scroll-arrow`
+
+`.scrtabs-tab-scroll-arrow-left`
+
+`.scrtabs-tab-scroll-arrow-right`
+
+
+```javascript
+$('#tabs-inside-here').scrollingTabs({
+  tabs: myTabs,
+  cssClassLeftArrow: 'fa fa-chevron-left',
+  cssClassRightArrow: 'fa fa-chevron-right'
 });
 ```
 
