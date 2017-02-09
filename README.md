@@ -428,6 +428,15 @@ $('#tabs-inside-here').scrollingTabs('destroy');
 If you were wrapping markup, the markup will be restored; if your tabs were data-driven, the tabs will be destroyed along with the plugin.
 
 
+Custom SCSS
+-----------
+Customise the SCSS by including `jquery.scrolling-tabs.scss` and overriding the following variables:
+* `$scrtabs-tabs-height` - The height of the tabs.
+* `$scrtabs-border-color` - The tabs border color.
+* `$scrtabs-foreground-color` - The text color.
+* `$scrtabs-background-color-hover` - The background color of the tabs when hovered over.
+
+
 License
 -------
 MIT License.
