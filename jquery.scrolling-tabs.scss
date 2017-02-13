@@ -46,7 +46,7 @@ $scrtabs-background-color-hover: rgb(238, 238, 238) !default;
 .scrtabs-tab-scroll-arrow {
   border: $scrtabs-border-color;
   border-top: none;
-  color: $scrtabs-background-color-hover;
+  color: $scrtabs-foreground-color;
   cursor: pointer;
   display: none;
   float: left;
