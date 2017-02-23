@@ -1,6 +1,6 @@
 /**
  * jquery-bootstrap-scrolling-tabs
- * @version v0.7.0
+ * @version v0.7.1
  * @link https://github.com/mikejacobson/jquery-bootstrap-scrolling-tabs
  * @author Mike Jacobson <michaeljjacobson1@gmail.com>
  * @license MIT License, http://www.opensource.org/licenses/MIT
@@ -386,7 +386,7 @@
             .on(ev.CLICK, stc.tabClickHandler);
         }
 
-        stc.$win.smartresize(function (e) { evh.handleWindowResize.call(evh, e); });
+        stc.$win.off('.scrtabs').smartresize(function (e) { evh.handleWindowResize.call(evh, e); });
 
         $('body').on(CONSTANTS.EVENTS.FORCE_REFRESH, stc.elementsHandler.refreshAllElementSizes.bind(stc.elementsHandler));
       };
