@@ -1,0 +1,71 @@
+/**
+ * jquery-bootstrap-scrolling-tabs
+ * @version v0.7.1
+ * @link https://github.com/mikejacobson/jquery-bootstrap-scrolling-tabs
+ * @author Mike Jacobson <michaeljjacobson1@gmail.com>
+ * @license MIT License, http://www.opensource.org/licenses/MIT
+ */
+
+// Tabs height
+$scrtabs-tabs-height: 42px !default;
+
+// Border color (bootstrap lt gray)
+$scrtabs-border-color: 1px solid rgb(221, 221, 221) !default;
+
+// Foreground color (bootstrap blue)
+$scrtabs-foreground-color: rgb(66, 139, 202) !default;
+
+// Background color on hover (bootstrap gray)
+$scrtabs-background-color-hover: rgb(238, 238, 238) !default;
+
+.scrtabs-tab-container * {
+  box-sizing: border-box;
+}
+
+.scrtabs-tab-container {
+  height: $scrtabs-tabs-height;
+  .tab-content {
+    clear: left;
+  }
+}
+
+.scrtabs-tabs-fixed-container {
+  float: left;
+  height: $scrtabs-tabs-height;
+  overflow: hidden;
+  width: 100%;
+}
+
+.scrtabs-tabs-movable-container {
+  position: relative;
+  .tab-content {
+    display: none;
+  }
+}
+
+.scrtabs-tab-scroll-arrow {
+  border: $scrtabs-border-color;
+  border-top: none;
+  color: $scrtabs-foreground-color;
+  cursor: pointer;
+  display: none;
+  float: left;
+  font-size: 12px;
+  height: $scrtabs-tabs-height;
+  margin-bottom: -1px;
+  padding-left: 2px;
+  padding-top: 13px;
+  width: 20px;
+  &:hover {
+    background-color: $scrtabs-background-color-hover;
+  }
+}
+
+.scrtabs-tab-scroll-arrow.scrtabs-disable {
+  color: #ddd;
+  cursor: default
+}
+
+.scrtabs-tabs-fixed-container ul.nav-tabs > li {
+  white-space: nowrap;
+}
