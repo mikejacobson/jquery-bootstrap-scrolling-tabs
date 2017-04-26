@@ -1,6 +1,6 @@
 {
   "name": "jquery-bootstrap-scrolling-tabs",
-  "version": "0.7.1",
+  "version": "1.0.0",
   "description": "jQuery plugin for scrollable Bootstrap Tabs",
   "homepage": "https://github.com/mikejacobson/jquery-bootstrap-scrolling-tabs",
   "bugs": "https://github.com/mikejacobson/jquery-bootstrap-scrolling-tabs/issues",
@@ -28,5 +28,18 @@
     "tabs",
     "scrolling",
     "scrollable"
-  ]
+  ],
+  "devDependencies": {
+    "browser-sync": "^2.18.8",
+    "gulp": "^3.9.1",
+    "gulp-clean-css": "^3.0.3",
+    "gulp-include": "^2.3.1",
+    "gulp-jshint": "^2.0.4",
+    "gulp-rename": "^1.2.2",
+    "gulp-sass": "^3.1.0",
+    "gulp-uglify": "^2.1.0",
+    "gulp-util": "^3.0.8",
+    "jshint": "^2.9.4",
+    "jshint-stylish": "^2.2.1"
+  }
 }
