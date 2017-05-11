@@ -1,9 +1,9 @@
 {
   "name": "jquery-bootstrap-scrolling-tabs",
-  "version": "0.7.1",
+  "version": "1.0.0",
   "main": [
-    "jquery.scrolling-tabs.js",
-    "jquery.scrolling-tabs.css"
+    "./dist/jquery.scrolling-tabs.js",
+    "./dist/jquery.scrolling-tabs.css"
   ],
   "description": "jQuery plugin for scrollable Bootstrap Tabs",
   "homepage": "https://github.com/mikejacobson/jquery-bootstrap-scrolling-tabs",
@@ -15,14 +15,16 @@
   "license": "MIT",
   "ignore": [
     ".gitignore",
+    "package.json",
     "bower.json",
     "README.md",
     "*.scss",
-    "config.rb"
+    "config.rb",
+    "st-screenshot.png"
   ],
   "dependencies": {
     "bootstrap": "^3.1.1",
-    "jquery": ">=1.9.0 <3.0.0"
+    "jquery": ">=1.9.0 <4.0.0"
   },
   "keywords": [
     "jquery",

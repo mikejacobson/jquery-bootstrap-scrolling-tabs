@@ -53,6 +53,63 @@ var methods = {
   }
 };
 
+function destroyPlugin() {
+  var $targetElInstance = $(this),
+      scrtabsData = $targetElInstance.data('scrtabs'),
+      $tabsContainer;
+
+  if (!scrtabsData) {
+    return;
+  }
+
+  scrtabsData.scroller
+    .off(CONSTANTS.EVENTS.DROPDOWN_MENU_SHOW)
+    .off(CONSTANTS.EVENTS.DROPDOWN_MENU_HIDE);
+
+  // if there were any dropdown menus opened, remove the css we added to
+  // them so they would display correctly
+  scrtabsData.scroller
+    .find('[data-' + CONSTANTS.DATA_KEY_DDMENU_MODIFIED + ']')
+    .css({
+      display: '',
+      left: '',
+      top: ''
+    })
+    .off(CONSTANTS.EVENTS.CLICK)
+    .removeAttr('data-' + CONSTANTS.DATA_KEY_DDMENU_MODIFIED);
+
+  if (scrtabsData.scroller.hasTabClickHandler) {
+    $targetElInstance
+      .find('a[data-toggle="tab"]')
+      .off('.scrtabs');
+  }
+
+  if (scrtabsData.isWrapperOnly) { // we just wrapped nav-tabs markup, so restore it
+    // $targetElInstance is the ul.nav-tabs
+    $tabsContainer = $targetElInstance.parents('.scrtabs-tab-container');
+
+    if ($tabsContainer.length) {
+      $tabsContainer.replaceWith($targetElInstance);
+    }
+
+  } else { // we generated the tabs from data so destroy everything we created
+    if (scrtabsData.scroller && scrtabsData.scroller.initTabs) {
+      scrtabsData.scroller.initTabs = null;
+    }
+
+    // $targetElInstance is the container for the ul.nav-tabs we generated
+    $targetElInstance
+      .find('.scrtabs-tab-container')
+      .add('.tab-content')
+      .remove();
+  }
+
+  $targetElInstance.removeData('scrtabs');
+
+  $(window).off(CONSTANTS.EVENTS.WINDOW_RESIZE);
+  $('body').off(CONSTANTS.EVENTS.FORCE_REFRESH);
+}
+
 
 $.fn.scrollingTabs = function(methodOrOptions) {
 

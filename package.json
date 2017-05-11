@@ -5,7 +5,7 @@
   "homepage": "https://github.com/mikejacobson/jquery-bootstrap-scrolling-tabs",
   "bugs": "https://github.com/mikejacobson/jquery-bootstrap-scrolling-tabs/issues",
   "author": "Mike Jacobson <michaeljjacobson1@gmail.com>",
-  "main": "jquery.scrolling-tabs.js",
+  "main": "./dist/jquery.scrolling-tabs.js",
   "repository": {
     "type": "git",
     "url": "https://github.com/mikejacobson/jquery-bootstrap-scrolling-tabs.git"
@@ -20,7 +20,7 @@
   ],
   "dependencies": {
     "bootstrap": "^3.1.1",
-    "jquery": ">=1.9.0 <3.0.0"
+    "jquery": ">=1.9.0 <4.0.0"
   },
   "keywords": [
     "jquery",
