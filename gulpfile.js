@@ -24,6 +24,12 @@ gulp.task('lint', function () {
     .pipe(jshint.reporter('jshint-stylish'));
 });
 
+gulp.task('lintsrc', function () {
+  return gulp.src('src/js/*.js')
+    .pipe(jshint())
+    .pipe(jshint.reporter('jshint-stylish'));
+});
+
 gulp.task('sass', function () {
   return gulp.src('src/scss/*.scss')
     .pipe(sass().on('error', sass.logError))

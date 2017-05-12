@@ -264,12 +264,6 @@
   
   // ElementsHandler prototype methods
   (function (p) {
-      p.getOuterWidth = function ($el) {
-        var rect = $el.get(0).getBoundingClientRect();
-  
-        return rect.width || (rect.right - rect.left);
-      };
-  
       p.initElements = function (options) {
         var ehd = this;
   
@@ -359,7 +353,7 @@
             stc = ehd.stc;
   
         stc.winWidth = stc.$win.width();
-        stc.scrollArrowsCombinedWidth = ehd.getOuterWidth(stc.$slideLeftArrow) + ehd.getOuterWidth(stc.$slideRightArrow);
+        stc.scrollArrowsCombinedWidth = stc.$slideLeftArrow.outerWidth() + stc.$slideRightArrow.outerWidth();
   
         ehd.setFixedContainerWidth();
         ehd.setMovableContainerWidth();
@@ -433,7 +427,7 @@
   
         if ($tabLi.length) {
   
-          $tabLi.each(function __getLiWidth() {
+          $tabLi.each(function () {
             var $li = $(this),
                 totalMargin = 0;
   
@@ -441,7 +435,7 @@
               totalMargin = parseInt($li.css('margin-left'), 10) + parseInt($li.css('margin-right'), 10);
             }
   
-            stc.movableContainerWidth += (ehd.getOuterWidth($li) + totalMargin);
+            stc.movableContainerWidth += ($li.outerWidth() + totalMargin);
           });
   
           stc.movableContainerWidth += 1;
