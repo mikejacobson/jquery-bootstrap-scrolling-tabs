@@ -38,6 +38,13 @@ Usage
 3. Include `dist/jquery.scrolling-tabs.min.js` (or `dist/jquery.scrolling-tabs.js`) on your page (make sure that jQuery is included before it, of course)
 
 
+Breaking Change for v1.0.0
+--
+* The plugin files, `jquery.scrolling-tabs.js` and `jquery.scrolling-tabs.css`, have been moved from the project root into `<root>/dist/`.
+
+Possible Breaking Change for v1.0.0
+--
+* The jQuery dependency has been bumped from `<3.0.0` to `<4.0.0`.
 
 Overview
 --------
