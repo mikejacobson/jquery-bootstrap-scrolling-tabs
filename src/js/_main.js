@@ -1,0 +1,17 @@
+//=include header.js
+;(function ($, window) {
+  'use strict';
+
+  //=include constants.js
+  //=include smartresize.js
+  //=include elementsHandler.js
+  //=include eventHandlers.js
+  //=include scrollMovement.js
+  //=include scrollingTabsControl.js
+
+  //=include buildTabs.js
+  //=include tabListeners.js
+  //=include api.js
+
+
+}(jQuery, window));
