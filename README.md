@@ -34,8 +34,8 @@ There are also optional features available:
 Usage
 -----
 1. Download it or install it using bower: `bower install jquery-bootstrap-scrolling-tabs` or npm: `npm install jquery-bootstrap-scrolling-tabs`
-2. Include `jquery.scrolling-tabs.min.css` (or `jquery.scrolling-tabs.css`) on your page *after* Bootstrap's CSS
-3. Include `jquery.scrolling-tabs.min.js` (or `jquery.scrolling-tabs.js`) on your page (make sure that jQuery is included before it, of course)
+2. Include `dist/jquery.scrolling-tabs.min.css` (or `dist/jquery.scrolling-tabs.css`) on your page *after* Bootstrap's CSS
+3. Include `dist/jquery.scrolling-tabs.min.js` (or `dist/jquery.scrolling-tabs.js`) on your page (make sure that jQuery is included before it, of course)
 
 
 
