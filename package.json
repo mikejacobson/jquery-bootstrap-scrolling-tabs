@@ -40,6 +40,7 @@
     "gulp-uglify": "^2.1.0",
     "gulp-util": "^3.0.8",
     "jshint": "^2.9.4",
-    "jshint-stylish": "^2.2.1"
+    "jshint-stylish": "^2.2.1",
+    "run-sequence": "^1.2.2"
   }
 }

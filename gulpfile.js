@@ -5,6 +5,7 @@ var cleancss = require('gulp-clean-css');
 var include = require('gulp-include');
 var jshint = require('gulp-jshint');
 var rename = require('gulp-rename');
+var runSequence = require('run-sequence');
 var sass = require('gulp-sass');
 var uglify = require('gulp-uglify');
 var util = require('gulp-util');
@@ -18,7 +19,7 @@ gulp.task('bundlejs', function () {
     .pipe(gulp.dest('dist'));
 });
 
-gulp.task('lint', function () {
+gulp.task('lintdist', function () {
   return gulp.src('dist/jquery.scrolling-tabs.js')
     .pipe(jshint())
     .pipe(jshint.reporter('jshint-stylish'));
@@ -66,4 +67,18 @@ gulp.task('watch', function () {
   gulp.watch('src/js/*.js', ['bundlejs', 'minjs']);
 });
 
-gulp.task('default', ['bundlejs', 'lint', 'sass', 'minjs', 'mincss', 'browser-sync', 'watch']);
+gulp.task('build', function (cb) {
+  runSequence('lintsrc',
+              'bundlejs',
+              'lintdist',
+              'minjs',
+              'sass',
+              'mincss',
+              cb);
+});
+
+gulp.task('default', function () {
+  runSequence('build',
+              'browser-sync',
+              'watch');
+});
