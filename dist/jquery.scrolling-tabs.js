@@ -4,7 +4,9 @@
  * @link https://github.com/mikejacobson/jquery-bootstrap-scrolling-tabs
  * @author Mike Jacobson <michaeljjacobson1@gmail.com>
  * @license MIT License, http://www.opensource.org/licenses/MIT
- *
+ */
+
+/**
  * jQuery plugin version of Angular directive angular-bootstrap-scrolling-tabs:
  * https://github.com/mikejacobson/angular-bootstrap-scrolling-tabs
  *
