@@ -28,6 +28,14 @@ $scrtabs-background-color-hover: rgb(238, 238, 238) !default;
   width: 100%;
 }
 
+.scrtabs-allow-scrollbar .scrtabs-tabs-fixed-container {
+  overflow-x: auto;
+
+  &::-webkit-scrollbar {
+    display:none;
+  }
+}
+
 .scrtabs-tabs-movable-container {
   position: relative;
   .tab-content {

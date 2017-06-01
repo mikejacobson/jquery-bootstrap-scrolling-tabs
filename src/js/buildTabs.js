@@ -210,6 +210,8 @@ function buildNavTabsAndTabContentForTargetElementInstance($targetElInstance, se
   $scroller.find('.nav-tabs > li').each(function (index) {
     tabUtils.storeDataOnLiEl($(this), tabs, index);
   });
+
+  return $targetElInstance;
 }
 
 

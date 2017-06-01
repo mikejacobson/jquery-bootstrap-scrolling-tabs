@@ -23,7 +23,17 @@ var methods = {
               $targetEls.trigger(CONSTANTS.EVENTS.TABS_READY);
             };
 
+        if (settings.enableSwiping) {
+          $targetEl.parent().addClass('scrtabs-allow-scrollbar');
+        }
+
         wrapNavTabsInstanceInScroller($targetEl, settings, readyCallback);
+
+        if (settings.enableSwiping) {
+          $targetEl.data('scrtabs', {
+            enableSwipingElement: 'parent'
+          });
+        }
       });
 
     }
@@ -35,7 +45,12 @@ var methods = {
             $targetEls.trigger(CONSTANTS.EVENTS.TABS_READY);
           };
 
-      buildNavTabsAndTabContentForTargetElementInstance($targetEl, settings, readyCallback);
+      var $newTargetEl = buildNavTabsAndTabContentForTargetElementInstance($targetEl, settings, readyCallback);
+
+      if (settings.enableSwiping) {
+        $newTargetEl.addClass('scrtabs-allow-scrollbar');
+        $newTargetEl.data('scrtabs').enableSwipingElement = 'self';
+      }
     });
   },
 
@@ -60,6 +75,12 @@ function destroyPlugin() {
 
   if (!scrtabsData) {
     return;
+  }
+
+  if (scrtabsData.enableSwipingElement === 'self') {
+    $targetElInstance.removeClass('scrtabs-allow-scrollbar');
+  } else if (scrtabsData.enableSwipingElement === 'parent') {
+    $targetElInstance.parent().removeClass('scrtabs-allow-scrollbar');
   }
 
   scrtabsData.scroller
@@ -137,5 +158,6 @@ $.fn.scrollingTabs.defaults = {
   widthMultiplier: 1,
   tabClickHandler: null,
   cssClassLeftArrow: 'glyphicon glyphicon-chevron-left',
-  cssClassRightArrow: 'glyphicon glyphicon-chevron-right'
+  cssClassRightArrow: 'glyphicon glyphicon-chevron-right',
+  enableSwiping: false
 };
