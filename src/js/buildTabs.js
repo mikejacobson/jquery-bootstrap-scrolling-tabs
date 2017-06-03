@@ -186,6 +186,7 @@ function buildNavTabsAndTabContentForTargetElementInstance($targetElInstance, se
     }
   });
 
+console.log("inside buildNavTabsAndTabContentForTargetElementInstance calling wrapNavTabsInstanceInScroller, $targetElInstance.data(): ", $targetElInstance.data());
   $scroller = wrapNavTabsInstanceInScroller($navTabs,
                                             settings,
                                             readyCallback,
@@ -202,6 +203,8 @@ function buildNavTabsAndTabContentForTargetElementInstance($targetElInstance, se
       scroller: $scroller
     }
   });
+
+  console.log("inside buildNavTabsAndTabContentForTargetElementInstance AFTER calling wrapNavTabsInstanceInScroller, $targetElInstance.data(): ", $targetElInstance.data());
 
   // once the nav-tabs are wrapped in the scroller, attach each tab's
   // data to it for reference later; we need to wait till they're

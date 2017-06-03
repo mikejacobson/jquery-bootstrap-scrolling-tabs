@@ -27,7 +27,10 @@ var methods = {
           $targetEl.parent().addClass('scrtabs-allow-scrollbar');
         }
 
+console.log("NOT data-driven, calling wrapNavTabsInstanceInScroller, $targetEl.data(): ", $targetEl.data());
         wrapNavTabsInstanceInScroller($targetEl, settings, readyCallback);
+
+        console.log("NOT data-driven, AFTER calling wrapNavTabsInstanceInScroller, $targetEl.data(): ", $targetEl.data());
 
         if (settings.enableSwiping) {
           $targetEl.data('scrtabs', {
@@ -45,7 +48,11 @@ var methods = {
             $targetEls.trigger(CONSTANTS.EVENTS.TABS_READY);
           };
 
+console.log("Data-driven, calling buildNavTabsAndTabContentForTargetElementInstance, $targetEl.data(): ", $targetEl.data());
+
       var $newTargetEl = buildNavTabsAndTabContentForTargetElementInstance($targetEl, settings, readyCallback);
+
+      console.log("Data-driven, AFTER calling buildNavTabsAndTabContentForTargetElementInstance, $newTargetEl.data(): ", $newTargetEl.data());
 
       if (settings.enableSwiping) {
         $newTargetEl.addClass('scrtabs-allow-scrollbar');
@@ -73,6 +80,7 @@ function destroyPlugin() {
       scrtabsData = $targetElInstance.data('scrtabs'),
       $tabsContainer;
 
+console.log("DESTROY, $targetElInstance.data(): ",$targetElInstance.data());
   if (!scrtabsData) {
     return;
   }

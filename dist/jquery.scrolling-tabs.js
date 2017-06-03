@@ -1095,6 +1095,7 @@
       }
     });
   
+  console.log("inside buildNavTabsAndTabContentForTargetElementInstance calling wrapNavTabsInstanceInScroller, $targetElInstance.data(): ", $targetElInstance.data());
     $scroller = wrapNavTabsInstanceInScroller($navTabs,
                                               settings,
                                               readyCallback,
@@ -1111,6 +1112,8 @@
         scroller: $scroller
       }
     });
+  
+    console.log("inside buildNavTabsAndTabContentForTargetElementInstance AFTER calling wrapNavTabsInstanceInScroller, $targetElInstance.data(): ", $targetElInstance.data());
   
     // once the nav-tabs are wrapped in the scroller, attach each tab's
     // data to it for reference later; we need to wait till they're
@@ -1533,7 +1536,10 @@
             $targetEl.parent().addClass('scrtabs-allow-scrollbar');
           }
   
+  console.log("NOT data-driven, calling wrapNavTabsInstanceInScroller, $targetEl.data(): ", $targetEl.data());
           wrapNavTabsInstanceInScroller($targetEl, settings, readyCallback);
+  
+          console.log("NOT data-driven, AFTER calling wrapNavTabsInstanceInScroller, $targetEl.data(): ", $targetEl.data());
   
           if (settings.enableSwiping) {
             $targetEl.data('scrtabs', {
@@ -1551,7 +1557,11 @@
               $targetEls.trigger(CONSTANTS.EVENTS.TABS_READY);
             };
   
+  console.log("Data-driven, calling buildNavTabsAndTabContentForTargetElementInstance, $targetEl.data(): ", $targetEl.data());
+  
         var $newTargetEl = buildNavTabsAndTabContentForTargetElementInstance($targetEl, settings, readyCallback);
+  
+        console.log("Data-driven, AFTER calling buildNavTabsAndTabContentForTargetElementInstance, $newTargetEl.data(): ", $newTargetEl.data());
   
         if (settings.enableSwiping) {
           $newTargetEl.addClass('scrtabs-allow-scrollbar');
@@ -1579,6 +1589,7 @@
         scrtabsData = $targetElInstance.data('scrtabs'),
         $tabsContainer;
   
+  console.log("DESTROY, $targetElInstance.data(): ",$targetElInstance.data());
     if (!scrtabsData) {
       return;
     }
