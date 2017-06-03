@@ -208,6 +208,7 @@
     DATA_KEY_IS_MOUSEDOWN: 'scrtabsismousedown',
   
     CSS_CLASSES: {
+      ALLOW_SCROLLBAR: 'scrtabs-allow-scrollbar',
       SCROLL_ARROW_DISABLE: 'scrtabs-disable'
     },
   
@@ -1095,7 +1096,6 @@
       }
     });
   
-  console.log("inside buildNavTabsAndTabContentForTargetElementInstance calling wrapNavTabsInstanceInScroller, $targetElInstance.data(): ", $targetElInstance.data());
     $scroller = wrapNavTabsInstanceInScroller($navTabs,
                                               settings,
                                               readyCallback,
@@ -1112,8 +1112,6 @@
         scroller: $scroller
       }
     });
-  
-    console.log("inside buildNavTabsAndTabContentForTargetElementInstance AFTER calling wrapNavTabsInstanceInScroller, $targetElInstance.data(): ", $targetElInstance.data());
   
     // once the nav-tabs are wrapped in the scroller, attach each tab's
     // data to it for reference later; we need to wait till they're
@@ -1533,19 +1531,11 @@
               };
   
           if (settings.enableSwiping) {
-            $targetEl.parent().addClass('scrtabs-allow-scrollbar');
+            $targetEl.parent().addClass(CONSTANTS.CSS_CLASSES.ALLOW_SCROLLBAR);
+            $targetEl.data('scrtabs').enableSwipingElement = 'parent';
           }
   
-  console.log("NOT data-driven, calling wrapNavTabsInstanceInScroller, $targetEl.data(): ", $targetEl.data());
           wrapNavTabsInstanceInScroller($targetEl, settings, readyCallback);
-  
-          console.log("NOT data-driven, AFTER calling wrapNavTabsInstanceInScroller, $targetEl.data(): ", $targetEl.data());
-  
-          if (settings.enableSwiping) {
-            $targetEl.data('scrtabs', {
-              enableSwipingElement: 'parent'
-            });
-          }
         });
   
       }
@@ -1557,14 +1547,10 @@
               $targetEls.trigger(CONSTANTS.EVENTS.TABS_READY);
             };
   
-  console.log("Data-driven, calling buildNavTabsAndTabContentForTargetElementInstance, $targetEl.data(): ", $targetEl.data());
-  
         var $newTargetEl = buildNavTabsAndTabContentForTargetElementInstance($targetEl, settings, readyCallback);
   
-        console.log("Data-driven, AFTER calling buildNavTabsAndTabContentForTargetElementInstance, $newTargetEl.data(): ", $newTargetEl.data());
-  
         if (settings.enableSwiping) {
-          $newTargetEl.addClass('scrtabs-allow-scrollbar');
+          $newTargetEl.addClass(CONSTANTS.CSS_CLASSES.ALLOW_SCROLLBAR);
           $newTargetEl.data('scrtabs').enableSwipingElement = 'self';
         }
       });
@@ -1589,15 +1575,14 @@
         scrtabsData = $targetElInstance.data('scrtabs'),
         $tabsContainer;
   
-  console.log("DESTROY, $targetElInstance.data(): ",$targetElInstance.data());
     if (!scrtabsData) {
       return;
     }
   
     if (scrtabsData.enableSwipingElement === 'self') {
-      $targetElInstance.removeClass('scrtabs-allow-scrollbar');
+      $targetElInstance.removeClass(CONSTANTS.CSS_CLASSES.ALLOW_SCROLLBAR);
     } else if (scrtabsData.enableSwipingElement === 'parent') {
-      $targetElInstance.parent().removeClass('scrtabs-allow-scrollbar');
+      $targetElInstance.closest('.scrtabs-tab-container').parent().removeClass(CONSTANTS.CSS_CLASSES.ALLOW_SCROLLBAR);
     }
   
     scrtabsData.scroller

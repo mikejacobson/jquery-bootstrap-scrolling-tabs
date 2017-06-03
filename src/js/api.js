@@ -24,19 +24,11 @@ var methods = {
             };
 
         if (settings.enableSwiping) {
-          $targetEl.parent().addClass('scrtabs-allow-scrollbar');
+          $targetEl.parent().addClass(CONSTANTS.CSS_CLASSES.ALLOW_SCROLLBAR);
+          $targetEl.data('scrtabs').enableSwipingElement = 'parent';
         }
 
-console.log("NOT data-driven, calling wrapNavTabsInstanceInScroller, $targetEl.data(): ", $targetEl.data());
         wrapNavTabsInstanceInScroller($targetEl, settings, readyCallback);
-
-        console.log("NOT data-driven, AFTER calling wrapNavTabsInstanceInScroller, $targetEl.data(): ", $targetEl.data());
-
-        if (settings.enableSwiping) {
-          $targetEl.data('scrtabs', {
-            enableSwipingElement: 'parent'
-          });
-        }
       });
 
     }
@@ -48,14 +40,10 @@ console.log("NOT data-driven, calling wrapNavTabsInstanceInScroller, $targetEl.d
             $targetEls.trigger(CONSTANTS.EVENTS.TABS_READY);
           };
 
-console.log("Data-driven, calling buildNavTabsAndTabContentForTargetElementInstance, $targetEl.data(): ", $targetEl.data());
-
       var $newTargetEl = buildNavTabsAndTabContentForTargetElementInstance($targetEl, settings, readyCallback);
 
-      console.log("Data-driven, AFTER calling buildNavTabsAndTabContentForTargetElementInstance, $newTargetEl.data(): ", $newTargetEl.data());
-
       if (settings.enableSwiping) {
-        $newTargetEl.addClass('scrtabs-allow-scrollbar');
+        $newTargetEl.addClass(CONSTANTS.CSS_CLASSES.ALLOW_SCROLLBAR);
         $newTargetEl.data('scrtabs').enableSwipingElement = 'self';
       }
     });
@@ -80,15 +68,14 @@ function destroyPlugin() {
       scrtabsData = $targetElInstance.data('scrtabs'),
       $tabsContainer;
 
-console.log("DESTROY, $targetElInstance.data(): ",$targetElInstance.data());
   if (!scrtabsData) {
     return;
   }
 
   if (scrtabsData.enableSwipingElement === 'self') {
-    $targetElInstance.removeClass('scrtabs-allow-scrollbar');
+    $targetElInstance.removeClass(CONSTANTS.CSS_CLASSES.ALLOW_SCROLLBAR);
   } else if (scrtabsData.enableSwipingElement === 'parent') {
-    $targetElInstance.parent().removeClass('scrtabs-allow-scrollbar');
+    $targetElInstance.closest('.scrtabs-tab-container').parent().removeClass(CONSTANTS.CSS_CLASSES.ALLOW_SCROLLBAR);
   }
 
   scrtabsData.scroller
