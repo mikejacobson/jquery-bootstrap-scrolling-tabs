@@ -29,6 +29,7 @@ There are also optional features available:
 * [Width Multiplier](#widthMultiplier)
 * [Tab Click Handler](#tabClickHandler)
 * [Custom Scroll Arrow classes](#cssClassArrows)
+* [Enable Horizontal Swiping for Touch Screens](#allowScrollbar)
 
 
 Usage
@@ -394,6 +395,45 @@ $('#tabs-inside-here').scrollingTabs({
   cssClassRightArrow: 'fa fa-chevron-right'
 });
 ```
+
+#### <a id="allowScrollbar"></a>Enable Horizontal Swiping for Touch Screens
+
+To enable horizontal swiping for touch screens, you need to enable horizontal scrolling&mdash;and therefore the horizontal scrollbar&mdash;for the tabs. For WebKit-based browsers, the scrollbar can then be hidden via CSS, but for browsers that don't support `::-webkit-scrollbar` (see [MDN documentation](https://developer.mozilla.org/en-US/docs/Web/CSS/::-webkit-scrollbar) for details), the scrollbar will be visible (which is what this plugin was originally built to prevent).
+
+So if you only need to support WebKit-based browsers, there are two ways to enable swiping: you can add a CSS class to an ancestor element of the tabs, or you can pass in a config option on init.
+
+##### Enable via CSS Class
+Adding CSS class `scrtabs-allow-scrollbar` to an ancestor element of the tabs element will enable touch swiping. As long as the tabs fixed container (`.scrtabs-tabs-fixed-container`) is a descendent of the element with that class, it will work.
+
+For example:
+```html
+<body class="scrtabs-allow-scrollbar">
+  <!-- Nav tabs -->
+  <ul class="nav nav-tabs" role="tablist">
+    <li role="presentation" class="active"><a href="#tab1" role="tab" data-toggle="tab">Tab Number 1</a></li>
+    <li role="presentation"><a href="#tab2" role="tab" data-toggle="tab">Tab Number 2</a></li>
+    <li role="presentation"><a href="#tab3" role="tab" data-toggle="tab">Tab Number 3</a></li>
+  </ul>
+
+  <!-- Tab panes -->
+  <div class="tab-content">
+    <div role="tabpanel" class="tab-pane active" id="tab1">Tab 1 content...</div>
+    <div role="tabpanel" class="tab-pane" id="tab2">Tab 2 content...</div>
+    <div role="tabpanel" class="tab-pane" id="tab3">Tab 3 content...</div>
+  </div>
+</body>
+```
+
+##### Enable via Config Option
+Alternatively, you can pass in option `enableSwiping: true` when initializing the plugin:
+```javascript
+$('.nav-tabs').scrollingTabs({
+  enableSwiping: true  
+});
+```
+This will simply add the `scrtabs-allow-scrollbar` CSS class to the tabs' parent element for you.
+
+
 
 
 #### Setting Defaults

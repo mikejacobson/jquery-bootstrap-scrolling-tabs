@@ -26,25 +26,12 @@
         color: black;
         font-size: 12px;
       }
-
-      .st-demo-subheader {
-        background-color: #f0f0f0;
-        color: #333;
-        font-size: 16px;
-        height: 65px;
-        margin-top: 50px;
-        padding: 8px 24px;
-      }
-
-      .st-demo-subheader:first-child {
-        margin-top: 0;
-      }
     </style>
   </head>
 
   <body>
 
-    <div class="st-demo-header">jquery-bootstrap-scrolling-tabs Demo
+    <div class="st-demo-header">jquery-bootstrap-scrolling-tabs Demo - Markup Only
         <button type="button" id="btn-destroy">Destroy</button>
         <button type="button" id="btn-refresh">Refresh</button>
     </div>
@@ -104,12 +91,12 @@
       <div role="tabpanel" class="tab-pane" id="tab9b">Tab 9b content...</div>
       <div role="tabpanel" class="tab-pane" id="tab9c">Tab 9c content...</div>
       <div role="tabpanel" class="tab-pane" id="tab10">Tab 10 content...</div>
-      <div role="tabpanel" class="tab-pane" id="tab10">Tab 11 content...</div>
-      <div role="tabpanel" class="tab-pane" id="tab10">Tab 12 content...</div>
-      <div role="tabpanel" class="tab-pane" id="tab10">Tab 13 content...</div>
-      <div role="tabpanel" class="tab-pane" id="tab10">Tab 14 content...</div>
-      <div role="tabpanel" class="tab-pane" id="tab10">Tab 15 content...</div>
-      <div role="tabpanel" class="tab-pane" id="tab10">Tab 16 content...</div>
+      <div role="tabpanel" class="tab-pane" id="tab11">Tab 11 content...</div>
+      <div role="tabpanel" class="tab-pane" id="tab12">Tab 12 content...</div>
+      <div role="tabpanel" class="tab-pane" id="tab13">Tab 13 content...</div>
+      <div role="tabpanel" class="tab-pane" id="tab14">Tab 14 content...</div>
+      <div role="tabpanel" class="tab-pane" id="tab15">Tab 15 content...</div>
+      <div role="tabpanel" class="tab-pane" id="tab16">Tab 16 content...</div>
     </div>
 
     <script src="../node_modules/jquery/dist/jquery.min.js"></script>
@@ -128,6 +115,7 @@
 
       function activate() {
         $('.nav-tabs').scrollingTabs({
+          enableSwiping: true,
           scrollToTabEdge: true,
           disableScrollArrowsOnFullyScrolled: true
         })

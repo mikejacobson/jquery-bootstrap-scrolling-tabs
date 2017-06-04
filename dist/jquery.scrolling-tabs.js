@@ -1,6 +1,6 @@
 /**
  * jquery-bootstrap-scrolling-tabs
- * @version v1.0.0
+ * @version v1.1.0
  * @link https://github.com/mikejacobson/jquery-bootstrap-scrolling-tabs
  * @author Mike Jacobson <michaeljjacobson1@gmail.com>
  * @license MIT License, http://www.opensource.org/licenses/MIT
@@ -208,6 +208,7 @@
     DATA_KEY_IS_MOUSEDOWN: 'scrtabsismousedown',
   
     CSS_CLASSES: {
+      ALLOW_SCROLLBAR: 'scrtabs-allow-scrollbar',
       SCROLL_ARROW_DISABLE: 'scrtabs-disable'
     },
   
@@ -1119,6 +1120,8 @@
     $scroller.find('.nav-tabs > li').each(function (index) {
       tabUtils.storeDataOnLiEl($(this), tabs, index);
     });
+  
+    return $targetElInstance;
   }
   
   
@@ -1527,6 +1530,11 @@
                 $targetEls.trigger(CONSTANTS.EVENTS.TABS_READY);
               };
   
+          if (settings.enableSwiping) {
+            $targetEl.parent().addClass(CONSTANTS.CSS_CLASSES.ALLOW_SCROLLBAR);
+            $targetEl.data('scrtabs').enableSwipingElement = 'parent';
+          }
+  
           wrapNavTabsInstanceInScroller($targetEl, settings, readyCallback);
         });
   
@@ -1539,7 +1547,12 @@
               $targetEls.trigger(CONSTANTS.EVENTS.TABS_READY);
             };
   
-        buildNavTabsAndTabContentForTargetElementInstance($targetEl, settings, readyCallback);
+        var $newTargetEl = buildNavTabsAndTabContentForTargetElementInstance($targetEl, settings, readyCallback);
+  
+        if (settings.enableSwiping) {
+          $newTargetEl.addClass(CONSTANTS.CSS_CLASSES.ALLOW_SCROLLBAR);
+          $newTargetEl.data('scrtabs').enableSwipingElement = 'self';
+        }
       });
     },
   
@@ -1564,6 +1577,12 @@
   
     if (!scrtabsData) {
       return;
+    }
+  
+    if (scrtabsData.enableSwipingElement === 'self') {
+      $targetElInstance.removeClass(CONSTANTS.CSS_CLASSES.ALLOW_SCROLLBAR);
+    } else if (scrtabsData.enableSwipingElement === 'parent') {
+      $targetElInstance.closest('.scrtabs-tab-container').parent().removeClass(CONSTANTS.CSS_CLASSES.ALLOW_SCROLLBAR);
     }
   
     scrtabsData.scroller
@@ -1641,7 +1660,8 @@
     widthMultiplier: 1,
     tabClickHandler: null,
     cssClassLeftArrow: 'glyphicon glyphicon-chevron-left',
-    cssClassRightArrow: 'glyphicon glyphicon-chevron-right'
+    cssClassRightArrow: 'glyphicon glyphicon-chevron-right',
+    enableSwiping: false
   };
   
 

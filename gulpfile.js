@@ -19,7 +19,9 @@ gulp.task('browser-sync', function () {
     startPath: 'run',
     server: {
       baseDir: './'
-    }
+    },
+    port: 3000,
+    ghostMode: false
   });
 
   gulp.watch(['dist/*.*', 'test/*.html']).on('change', browserSync.reload);
