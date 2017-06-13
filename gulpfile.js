@@ -23,8 +23,6 @@ gulp.task('browser-sync', function () {
     port: 3000,
     ghostMode: false
   });
-
-  gulp.watch(['dist/*.*', 'test/*.html']).on('change', browserSync.reload);
 });
 
 gulp.task('bundlejs', function () {
@@ -73,17 +71,27 @@ gulp.task('sass', function () {
 
 
 gulp.task('watch', function () {
-  gulp.watch('src/scss/*.scss', ['sass']);
-  gulp.watch('src/js/*.js', ['bundlejs', 'minjs']);
+  gulp.watch('src/scss/*.scss', ['buildcss']);
+  gulp.watch('src/js/*.js', ['buildjs']);
 });
 
-gulp.task('build', function (cb) {
+gulp.task('buildcss', function (cb) {
+  runSequence('sass',
+              'mincss',
+              cb);
+});
+
+gulp.task('buildjs', function (cb) {
   runSequence('lintsrc',
               'bundlejs',
               'lintdist',
               'minjs',
-              'sass',
-              'mincss',
+              cb);
+});
+
+gulp.task('build', function (cb) {
+  runSequence('buildcss',
+              'buildjs',
               cb);
 });
 
