@@ -29,6 +29,7 @@ There are also optional features available:
 * [Width Multiplier](#widthMultiplier)
 * [Tab Click Handler](#tabClickHandler)
 * [Custom Scroll Arrow classes](#cssClassArrows)
+* [Custom Scroll Arrow content](#customArrowsContent)
 * [Enable Horizontal Swiping for Touch Screens](#allowScrollbar)
 
 
@@ -53,6 +54,7 @@ If you're using Bootstrap Tabs (`nav-tabs`) and you don't want them to wrap if t
 
 It adjusts itself on window resize (debounced to prevent resize event wackiness), so if the window is widened enough to accommodate all tabs, scrolling will deactivate and the scroll arrows will disappear. (And, of course, vice versa if the window is narrowed.)
 
+Note: Similar to [Bootstrap tabs](http://getbootstrap.com/javascript/#tabs), nested tabs are not supported.
 
 Use Cases
 ---------
@@ -395,6 +397,38 @@ $('#tabs-inside-here').scrollingTabs({
   cssClassRightArrow: 'fa fa-chevron-right'
 });
 ```
+
+#### <a id="customArrowsContent"></a>Custom Scroll Arrow content
+
+You can pass in custom values for the left- and right scroll arrow HTML using options `leftArrowContent` and `rightArrowContent`. This will override any custom `cssClassLeftArrow` and `cssClassRightArrow` settings.
+
+For example, if you wanted to use svg icons, you could set them like so:
+
+```javascript
+$('#tabs-inside-here').scrollingTabs({
+  tabs: myTabs,
+  leftArrowContent: [
+    '<div class="custom-arrow">',
+    '  <svg class="icon icon-point-left">',
+    '    <use xlink:href="#icon-point-left"></use>',
+    '  </svg>',
+    '</div>'
+  ].join(''),
+  rightArrowContent: [
+    '<div class="custom-arrow">',
+    '  <svg class="icon icon-point-right">',
+    '    <use xlink:href="#icon-point-right"></use>',
+    '  </svg>',
+    '</div>'
+  ].join('')
+});
+```
+
+You would then need to add some CSS to make them work correctly if you don't give them the default `scrtabs-tab-scroll-arrow` classes. This plunk shows it working with svg icons:
+http://plnkr.co/edit/2MdZCAnLyeU40shxaol3?p=preview
+
+
+
 
 #### <a id="allowScrollbar"></a>Enable Horizontal Swiping for Touch Screens
 

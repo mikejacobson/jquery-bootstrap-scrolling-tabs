@@ -25,8 +25,10 @@ var tabElements = (function () {
 
   function getNewElScrollerElementWrappingNavTabsInstance($navTabsInstance, settings) {
     var $tabsContainer = $('<div class="scrtabs-tab-container"></div>'),
-        $leftArrow = $('<div class="scrtabs-tab-scroll-arrow scrtabs-tab-scroll-arrow-left"><span class="' + settings.cssClassLeftArrow + '"></span></div>'),
-        $rightArrow = $('<div class="scrtabs-tab-scroll-arrow scrtabs-tab-scroll-arrow-right"><span class="' + settings.cssClassRightArrow + '"></span></div>'),
+        leftArrowContent = settings.leftArrowContent || '<div class="scrtabs-tab-scroll-arrow scrtabs-tab-scroll-arrow-left"><span class="' + settings.cssClassLeftArrow + '"></span></div>',
+        $leftArrow = $(leftArrowContent),
+        rightArrowContent = settings.rightArrowContent || '<div class="scrtabs-tab-scroll-arrow scrtabs-tab-scroll-arrow-right"><span class="' + settings.cssClassRightArrow + '"></span></div>',
+        $rightArrow = $(rightArrowContent),
         $fixedContainer = $('<div class="scrtabs-tabs-fixed-container"></div>'),
         $movableContainer = $('<div class="scrtabs-tabs-movable-container"></div>');
 
@@ -248,7 +250,7 @@ function wrapNavTabsInstanceInScroller($navTabsInstance, settings, readyCallback
 
   $scroller.initTabs();
 
-  listenForDropdownMenuTabs($scroller);
+  listenForDropdownMenuTabs($scroller, scrollingTabsControl);
 
   return $scroller;
 }

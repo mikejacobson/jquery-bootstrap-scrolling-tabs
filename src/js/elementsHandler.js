@@ -66,12 +66,15 @@ function ElementsHandler(scrollingTabsControl) {
       var ehd = this,
           stc = ehd.stc,
           $tabsContainer = stc.$tabsContainer,
-          $leftArrow = $tabsContainer.find('.scrtabs-tab-scroll-arrow-left'),
-          $rightArrow = $tabsContainer.find('.scrtabs-tab-scroll-arrow-right');
+          $leftArrow,
+          $rightArrow;
 
       stc.isNavPills = false;
 
       stc.$fixedContainer = $tabsContainer.find('.scrtabs-tabs-fixed-container');
+      $leftArrow = stc.$fixedContainer.prev();
+      $rightArrow = stc.$fixedContainer.next();
+
       stc.$movableContainer = $tabsContainer.find('.scrtabs-tabs-movable-container');
       stc.$tabsUl = $tabsContainer.find('.nav-tabs');
 

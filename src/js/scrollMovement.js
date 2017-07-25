@@ -185,7 +185,9 @@ function ScrollMovement(scrollingTabsControl) {
         $activeTab,
         activeTabLeftPos,
         activeTabRightPos,
-        rightArrowLeftPos;
+        rightArrowLeftPos,
+        leftScrollArrowWidth,
+        rightScrollArrowWidth;
 
     if (!stc.scrollArrowsVisible) {
       return;
@@ -207,13 +209,17 @@ function ScrollMovement(scrollingTabsControl) {
     rightArrowLeftPos = stc.fixedContainerWidth - RIGHT_OFFSET_BUFFER;
 
     if (activeTabRightPos > rightArrowLeftPos) { // active tab off right side
-      stc.movableContainerLeftPos -= (activeTabRightPos - rightArrowLeftPos + CONSTANTS.SCROLL_ARROW_WIDTH);
+      rightScrollArrowWidth = stc.$slideRightArrow.outerWidth();
+      stc.movableContainerLeftPos -= (activeTabRightPos - rightArrowLeftPos + rightScrollArrowWidth);
       smv.slideMovableContainerToLeftPos();
       return true;
-    } else if (activeTabLeftPos < CONSTANTS.SCROLL_ARROW_WIDTH) { // active tab off left side
-      stc.movableContainerLeftPos += CONSTANTS.SCROLL_ARROW_WIDTH - activeTabLeftPos;
-      smv.slideMovableContainerToLeftPos();
-      return true;
+    } else {
+      leftScrollArrowWidth = stc.$slideLeftArrow.outerWidth();      
+      if (activeTabLeftPos < leftScrollArrowWidth) { // active tab off left side
+        stc.movableContainerLeftPos += leftScrollArrowWidth - activeTabLeftPos;
+        smv.slideMovableContainerToLeftPos();
+        return true;
+      }
     }
 
     return false;

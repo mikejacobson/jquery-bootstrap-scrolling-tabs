@@ -1,6 +1,6 @@
 /**
  * jquery-bootstrap-scrolling-tabs
- * @version v1.1.0
+ * @version v1.2.0
  * @link https://github.com/mikejacobson/jquery-bootstrap-scrolling-tabs
  * @author Mike Jacobson <michaeljjacobson1@gmail.com>
  * @license MIT License, http://www.opensource.org/licenses/MIT
@@ -118,6 +118,33 @@
  *                          .scrtabs-tab-scroll-arrow
  *                          .scrtabs-tab-scroll-arrow-left
  *                          .scrtabs-tab-scroll-arrow-right
+ *        leftArrowContent, rightArrowContent:
+ *                          custom HTML string for the left and right scroll
+ *                          arrows. This will override any custom cssClassLeftArrow
+ *                          and cssClassRightArrow settings.
+ *                          For example, if you wanted to use svg icons, you
+ *                          could set them like so:
+ 
+ *                           leftArrowContent: [
+ *                               '<div class="custom-arrow">',
+ *                               '  <svg class="icon icon-point-left">',
+ *                               '    <use xlink:href="#icon-point-left"></use>',
+ *                               '  </svg>',
+ *                               '</div>'
+ *                             ].join(''),
+ *                             rightArrowContent: [
+ *                               '<div class="custom-arrow">',
+ *                               '  <svg class="icon icon-point-right">',
+ *                               '    <use xlink:href="#icon-point-right"></use>',
+ *                               '  </svg>',
+ *                               '</div>'
+ *                             ].join('')
+ *
+ *                          You would then need to add some CSS to make them
+ *                          work correctly if you don't give them the
+ *                          default scrtabs-tab-scroll-arrow classes.
+ *                          This plunk shows it working with svg icons:
+ *                          http://plnkr.co/edit/2MdZCAnLyeU40shxaol3?p=preview
  *
  *
  *      On tabs data change:
@@ -200,7 +227,6 @@
     CONTINUOUS_SCROLLING_TIMEOUT_INTERVAL: 50, // timeout interval for repeatedly moving the tabs container
                                                 // by one increment while the mouse is held down--decrease to
                                                 // make mousedown continous scrolling faster
-    SCROLL_ARROW_WIDTH: 20,
     SCROLL_OFFSET_FRACTION: 6, // each click moves the container this fraction of the fixed container--decrease
                                // to make the tabs scroll farther per click
   
@@ -324,12 +350,15 @@
         var ehd = this,
             stc = ehd.stc,
             $tabsContainer = stc.$tabsContainer,
-            $leftArrow = $tabsContainer.find('.scrtabs-tab-scroll-arrow-left'),
-            $rightArrow = $tabsContainer.find('.scrtabs-tab-scroll-arrow-right');
+            $leftArrow,
+            $rightArrow;
   
         stc.isNavPills = false;
   
         stc.$fixedContainer = $tabsContainer.find('.scrtabs-tabs-fixed-container');
+        $leftArrow = stc.$fixedContainer.prev();
+        $rightArrow = stc.$fixedContainer.next();
+  
         stc.$movableContainer = $tabsContainer.find('.scrtabs-tabs-movable-container');
         stc.$tabsUl = $tabsContainer.find('.nav-tabs');
   
@@ -734,7 +763,9 @@
           $activeTab,
           activeTabLeftPos,
           activeTabRightPos,
-          rightArrowLeftPos;
+          rightArrowLeftPos,
+          leftScrollArrowWidth,
+          rightScrollArrowWidth;
   
       if (!stc.scrollArrowsVisible) {
         return;
@@ -756,13 +787,17 @@
       rightArrowLeftPos = stc.fixedContainerWidth - RIGHT_OFFSET_BUFFER;
   
       if (activeTabRightPos > rightArrowLeftPos) { // active tab off right side
-        stc.movableContainerLeftPos -= (activeTabRightPos - rightArrowLeftPos + CONSTANTS.SCROLL_ARROW_WIDTH);
+        rightScrollArrowWidth = stc.$slideRightArrow.outerWidth();
+        stc.movableContainerLeftPos -= (activeTabRightPos - rightArrowLeftPos + rightScrollArrowWidth);
         smv.slideMovableContainerToLeftPos();
         return true;
-      } else if (activeTabLeftPos < CONSTANTS.SCROLL_ARROW_WIDTH) { // active tab off left side
-        stc.movableContainerLeftPos += CONSTANTS.SCROLL_ARROW_WIDTH - activeTabLeftPos;
-        smv.slideMovableContainerToLeftPos();
-        return true;
+      } else {
+        leftScrollArrowWidth = stc.$slideLeftArrow.outerWidth();      
+        if (activeTabLeftPos < leftScrollArrowWidth) { // active tab off left side
+          stc.movableContainerLeftPos += leftScrollArrowWidth - activeTabLeftPos;
+          smv.slideMovableContainerToLeftPos();
+          return true;
+        }
       }
   
       return false;
@@ -935,8 +970,10 @@
   
     function getNewElScrollerElementWrappingNavTabsInstance($navTabsInstance, settings) {
       var $tabsContainer = $('<div class="scrtabs-tab-container"></div>'),
-          $leftArrow = $('<div class="scrtabs-tab-scroll-arrow scrtabs-tab-scroll-arrow-left"><span class="' + settings.cssClassLeftArrow + '"></span></div>'),
-          $rightArrow = $('<div class="scrtabs-tab-scroll-arrow scrtabs-tab-scroll-arrow-right"><span class="' + settings.cssClassRightArrow + '"></span></div>'),
+          leftArrowContent = settings.leftArrowContent || '<div class="scrtabs-tab-scroll-arrow scrtabs-tab-scroll-arrow-left"><span class="' + settings.cssClassLeftArrow + '"></span></div>',
+          $leftArrow = $(leftArrowContent),
+          rightArrowContent = settings.rightArrowContent || '<div class="scrtabs-tab-scroll-arrow scrtabs-tab-scroll-arrow-right"><span class="' + settings.cssClassRightArrow + '"></span></div>',
+          $rightArrow = $(rightArrowContent),
           $fixedContainer = $('<div class="scrtabs-tabs-fixed-container"></div>'),
           $movableContainer = $('<div class="scrtabs-tabs-movable-container"></div>');
   
@@ -1158,7 +1195,7 @@
   
     $scroller.initTabs();
   
-    listenForDropdownMenuTabs($scroller);
+    listenForDropdownMenuTabs($scroller, scrollingTabsControl);
   
     return $scroller;
   }
@@ -1357,7 +1394,7 @@
     return isInitTabsRequired;
   }
   
-  function listenForDropdownMenuTabs($scroller) {
+  function listenForDropdownMenuTabs($scroller, stc) {
     var $ddMenu;
   
     // for dropdown menus to show, we need to move them out of the
@@ -1398,7 +1435,7 @@
   
       // make sure the menu doesn't go off the right side of the page
       ddMenuRightX = $ddMenu.width() + ddLiOffset.left;
-      tabsContainerMaxX = $scroller.width() - (CONSTANTS.SCROLL_ARROW_WIDTH + 1);
+      tabsContainerMaxX = $scroller.width() - (stc.$slideRightArrow.outerWidth() + 1);
       ddMenuTargetLeft = ddLiOffset.left;
   
       if (ddMenuRightX > tabsContainerMaxX) {
@@ -1661,6 +1698,8 @@
     tabClickHandler: null,
     cssClassLeftArrow: 'glyphicon glyphicon-chevron-left',
     cssClassRightArrow: 'glyphicon glyphicon-chevron-right',
+    leftArrowContent: '',
+    rightArrowContent: '',
     enableSwiping: false
   };
   

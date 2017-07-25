@@ -192,7 +192,7 @@ function checkForTabsRemovedOrUpdated(refreshData) {
   return isInitTabsRequired;
 }
 
-function listenForDropdownMenuTabs($scroller) {
+function listenForDropdownMenuTabs($scroller, stc) {
   var $ddMenu;
 
   // for dropdown menus to show, we need to move them out of the
@@ -233,7 +233,7 @@ function listenForDropdownMenuTabs($scroller) {
 
     // make sure the menu doesn't go off the right side of the page
     ddMenuRightX = $ddMenu.width() + ddLiOffset.left;
-    tabsContainerMaxX = $scroller.width() - (CONSTANTS.SCROLL_ARROW_WIDTH + 1);
+    tabsContainerMaxX = $scroller.width() - (stc.$slideRightArrow.outerWidth() + 1);
     ddMenuTargetLeft = ddLiOffset.left;
 
     if (ddMenuRightX > tabsContainerMaxX) {
