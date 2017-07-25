@@ -5,7 +5,6 @@
     <link rel="stylesheet" href="../node_modules/bootstrap/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="../dist/jquery.scrolling-tabs.css">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" />
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" />
 
     <style>
       .left-side {
@@ -26,17 +25,6 @@
       .st-demo-header button {
         color: black;
         font-size: 12px;
-      }
-
-      .custom-arrow {
-        border: 1px solid #ddd;
-        border-top: none;
-        cursor: pointer;
-        float: left;
-        height: 42px;
-        margin-bottom: -1px;
-        padding: 12px 4px;
-        width: 20px;
       }
     </style>
   </head>
@@ -129,9 +117,7 @@
         $('.nav-tabs').scrollingTabs({
           enableSwiping: true,
           scrollToTabEdge: true,
-          disableScrollArrowsOnFullyScrolled: true,
-          leftArrowContent: '<div class="custom-arrow left"><i class="fa fa-chevron-left"></i></div>',
-          rightArrowContent: '<div class="custom-arrow right"><i class="fa fa-chevron-right"></i></div></div>'
+          disableScrollArrowsOnFullyScrolled: true
         })
         .on('ready.scrtabs', function() {
           $('.tab-content').show();
