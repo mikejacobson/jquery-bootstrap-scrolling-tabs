@@ -110,6 +110,33 @@
  *                          .scrtabs-tab-scroll-arrow
  *                          .scrtabs-tab-scroll-arrow-left
  *                          .scrtabs-tab-scroll-arrow-right
+ *        leftArrowContent, rightArrowContent:
+ *                          custom HTML string for the left and right scroll
+ *                          arrows. This will override any custom cssClassLeftArrow
+ *                          and cssClassRightArrow settings.
+ *                          For example, if you wanted to use svg icons, you
+ *                          could set them like so:
+ 
+ *                           leftArrowContent: [
+ *                               '<div class="custom-arrow">',
+ *                               '  <svg class="icon icon-point-left">',
+ *                               '    <use xlink:href="#icon-point-left"></use>',
+ *                               '  </svg>',
+ *                               '</div>'
+ *                             ].join(''),
+ *                             rightArrowContent: [
+ *                               '<div class="custom-arrow">',
+ *                               '  <svg class="icon icon-point-right">',
+ *                               '    <use xlink:href="#icon-point-right"></use>',
+ *                               '  </svg>',
+ *                               '</div>'
+ *                             ].join('')
+ *
+ *                          You would then need to add some CSS to make them
+ *                          work correctly if you don't give them the
+ *                          default scrtabs-tab-scroll-arrow classes.
+ *                          This plunk shows it working with svg icons:
+ *                          http://plnkr.co/edit/2MdZCAnLyeU40shxaol3?p=preview
  *
  *
  *      On tabs data change:
