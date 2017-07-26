@@ -1,6 +1,6 @@
 /**
  * jquery-bootstrap-scrolling-tabs
- * @version v1.2.0
+ * @version v1.2.1
  * @link https://github.com/mikejacobson/jquery-bootstrap-scrolling-tabs
  * @author Mike Jacobson <michaeljjacobson1@gmail.com>
  * @license MIT License, http://www.opensource.org/licenses/MIT
@@ -1261,6 +1261,20 @@
       $li.find('a[role="tab"]')
           .html(origTabData[propNames.title] = newTabData[propNames.title]);
   
+      isInitTabsRequired = true;
+    }
+  
+    // update tab disabled state if necessary
+    if (origTabData[propNames.disabled] !== newTabData[propNames.disabled]) {
+      if (newTabData[propNames.disabled]) { // enabled -> disabled
+        $li.addClass('disabled');
+        $li.find('a[role="tab"]').attr('data-toggle', '');
+      } else { // disabled -> enabled
+        $li.removeClass('disabled');
+        $li.find('a[role="tab"]').attr('data-toggle', 'tab');
+      }
+  
+      origTabData[propNames.disabled] = newTabData[propNames.disabled];
       isInitTabsRequired = true;
     }
   
