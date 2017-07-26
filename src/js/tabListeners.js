@@ -62,6 +62,20 @@ function checkForTabPropertiesUpdated(refreshData) {
     isInitTabsRequired = true;
   }
 
+  // update tab disabled state if necessary
+  if (origTabData[propNames.disabled] !== newTabData[propNames.disabled]) {
+    if (newTabData[propNames.disabled]) { // enabled -> disabled
+      $li.addClass('disabled');
+      $li.find('a[role="tab"]').attr('data-toggle', '');
+    } else { // disabled -> enabled
+      $li.removeClass('disabled');
+      $li.find('a[role="tab"]').attr('data-toggle', 'tab');
+    }
+
+    origTabData[propNames.disabled] = newTabData[propNames.disabled];
+    isInitTabsRequired = true;
+  }
+
   // update tab active state if necessary
   if (refreshData.options.forceActiveTab) {
     // set the active tab based on the tabs array regardless of the current
