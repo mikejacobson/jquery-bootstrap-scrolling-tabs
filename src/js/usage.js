@@ -85,6 +85,15 @@
  *                          set to true if you want the left scroll arrow to
  *                          slide the tabs left instead of right, and the right
  *                          scroll arrow to slide the tabs right.
+ *        enableSwiping:
+ *                          set to true if you want to enable horizontal swiping
+ *                          for touch screens. This simply enables horizontal
+ *                          scrolling--and therefore the horizontal scrollbar--for
+ *                          the tabs. For WebKit-based browsers, the scrollbar
+ *                          will then be hidden via CSS (because the plugin will
+ *                          add CSS class scrtabs-allow-scrollbar to the parent
+ *                          element) but for browsers that don't support
+ *                          ::-webkit-scrollbar, the scrollbar will be visible.
  *        widthMultiplier:
  *                          set to a value less than 1 if you want the tabs
  *                          container to be less than the full width of its
@@ -116,7 +125,7 @@
  *                          and cssClassRightArrow settings.
  *                          For example, if you wanted to use svg icons, you
  *                          could set them like so:
- 
+ *
  *                           leftArrowContent: [
  *                               '<div class="custom-arrow">',
  *                               '  <svg class="icon icon-point-left">',

@@ -479,6 +479,7 @@ $.fn.scrollingTabs.defaults.scrollToTabEdge = true;
 $.fn.scrollingTabs.defaults.disableScrollArrowsOnFullyScrolled = true;
 $.fn.scrollingTabs.defaults.reverseScroll = true;
 $.fn.scrollingTabs.defaults.widthMultiplier = 0.5;
+$.fn.scrollingTabs.defaults.enableSwiping = true;
 ```
 
 #### <a id="events"></a>Events

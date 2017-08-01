@@ -72,7 +72,7 @@ gulp.task('sass', function () {
 
 gulp.task('watch', function () {
   gulp.watch('src/scss/*.scss', ['buildcss']);
-  gulp.watch('src/js/*.js', ['buildjs']);
+  gulp.watch('src/js/*.js', ['buildjs', 'buildcss']);
 });
 
 gulp.task('buildcss', function (cb) {
