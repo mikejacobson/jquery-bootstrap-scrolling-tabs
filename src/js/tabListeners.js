@@ -1,3 +1,6 @@
+/* exported listenForDropdownMenuTabs,
+            refreshTargetElementInstance,
+            scrollToActiveTab */
 function checkForTabAdded(refreshData) {
   var updatedTabsArray = refreshData.updatedTabsArray,
       propNames = refreshData.propNames,
@@ -148,7 +151,7 @@ function checkForTabsOrderChanged(refreshData) {
   }
 
   // the tab order changed...
-  updatedTabsArray.forEach(function (t, i) {
+  updatedTabsArray.forEach(function (t) {
     var paneId = t[propNames.paneId];
 
     newTabsCollection.push(
@@ -260,7 +263,7 @@ function listenForDropdownMenuTabs($scroller, stc) {
       'left': ddMenuTargetLeft
     });
 
-    function handleClickOnDropdownMenuItem(e) {
+    function handleClickOnDropdownMenuItem() {
       var $selectedMenuItemAnc = $(this),
           $selectedMenuItemLi = $selectedMenuItemAnc.parent('li'),
           $selectedMenuItemDropdownMenu = $selectedMenuItemLi.parent('.dropdown-menu'),

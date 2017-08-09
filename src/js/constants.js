@@ -1,3 +1,4 @@
+/* exported CONSTANTS */
 var CONSTANTS = {
   CONTINUOUS_SCROLLING_TIMEOUT_INTERVAL: 50, // timeout interval for repeatedly moving the tabs container
                                               // by one increment while the mouse is held down--decrease to
@@ -9,7 +10,6 @@ var CONSTANTS = {
   DATA_KEY_IS_MOUSEDOWN: 'scrtabsismousedown',
 
   CSS_CLASSES: {
-    ALLOW_SCROLLBAR: 'scrtabs-allow-scrollbar',
     SCROLL_ARROW_DISABLE: 'scrtabs-disable'
   },
 
@@ -23,9 +23,12 @@ var CONSTANTS = {
     DROPDOWN_MENU_HIDE: 'hide.bs.dropdown.scrtabs',
     DROPDOWN_MENU_SHOW: 'show.bs.dropdown.scrtabs',
     FORCE_REFRESH: 'forcerefresh.scrtabs',
-    MOUSEDOWN: 'mousedown.scrtabs touchstart.scrtabs',
-    MOUSEUP: 'mouseup.scrtabs touchend.scrtabs',
-    WINDOW_RESIZE: 'resize.scrtabs',
-    TABS_READY: 'ready.scrtabs'
+    MOUSEDOWN: 'mousedown.scrtabs',
+    MOUSEUP: 'mouseup.scrtabs',
+    TABS_READY: 'ready.scrtabs',
+    TOUCH_END: 'touchend.scrtabs',
+    TOUCH_MOVE: 'touchmove.scrtabs',
+    TOUCH_START: 'touchstart.scrtabs',
+    WINDOW_RESIZE: 'resize.scrtabs'
   }
 };

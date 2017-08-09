@@ -1,11 +1,10 @@
 /**
  * jquery-bootstrap-scrolling-tabs
- * @version v1.2.2
+ * @version v2.0.0
  * @link https://github.com/mikejacobson/jquery-bootstrap-scrolling-tabs
  * @author Mike Jacobson <michaeljjacobson1@gmail.com>
  * @license MIT License, http://www.opensource.org/licenses/MIT
  */
-
 /**
  * jQuery plugin version of Angular directive angular-bootstrap-scrolling-tabs:
  * https://github.com/mikejacobson/angular-bootstrap-scrolling-tabs
@@ -95,13 +94,7 @@
  *                          scroll arrow to slide the tabs right.
  *        enableSwiping:
  *                          set to true if you want to enable horizontal swiping
- *                          for touch screens. This simply enables horizontal
- *                          scrolling--and therefore the horizontal scrollbar--for
- *                          the tabs. For WebKit-based browsers, the scrollbar
- *                          will then be hidden via CSS (because the plugin will
- *                          add CSS class scrtabs-allow-scrollbar to the parent
- *                          element) but for browsers that don't support
- *                          ::-webkit-scrollbar, the scrollbar will be visible.
+ *                          for touch screens.
  *        widthMultiplier:
  *                          set to a value less than 1 if you want the tabs
  *                          container to be less than the full width of its
@@ -232,6 +225,7 @@
 ;(function ($, window) {
   'use strict';
 
+  /* exported CONSTANTS */
   var CONSTANTS = {
     CONTINUOUS_SCROLLING_TIMEOUT_INTERVAL: 50, // timeout interval for repeatedly moving the tabs container
                                                 // by one increment while the mouse is held down--decrease to
@@ -243,7 +237,6 @@
     DATA_KEY_IS_MOUSEDOWN: 'scrtabsismousedown',
   
     CSS_CLASSES: {
-      ALLOW_SCROLLBAR: 'scrtabs-allow-scrollbar',
       SCROLL_ARROW_DISABLE: 'scrtabs-disable'
     },
   
@@ -257,10 +250,13 @@
       DROPDOWN_MENU_HIDE: 'hide.bs.dropdown.scrtabs',
       DROPDOWN_MENU_SHOW: 'show.bs.dropdown.scrtabs',
       FORCE_REFRESH: 'forcerefresh.scrtabs',
-      MOUSEDOWN: 'mousedown.scrtabs touchstart.scrtabs',
-      MOUSEUP: 'mouseup.scrtabs touchend.scrtabs',
-      WINDOW_RESIZE: 'resize.scrtabs',
-      TABS_READY: 'ready.scrtabs'
+      MOUSEDOWN: 'mousedown.scrtabs',
+      MOUSEUP: 'mouseup.scrtabs',
+      TABS_READY: 'ready.scrtabs',
+      TOUCH_END: 'touchend.scrtabs',
+      TOUCH_MOVE: 'touchmove.scrtabs',
+      TOUCH_START: 'touchstart.scrtabs',
+      WINDOW_RESIZE: 'resize.scrtabs'
     }
   };
   
@@ -306,7 +302,51 @@
         var ehd = this;
   
         ehd.setElementReferences();
-        ehd.setEventListeners();
+        ehd.setEventListeners(options);
+      };
+  
+      p.listenForTouchEvents = function () {
+        var ehd = this,
+            stc = ehd.stc,
+            smv = stc.scrollMovement,
+            ev = CONSTANTS.EVENTS;
+  
+        var touching = false;
+        var touchStartX;
+        var startingContainerLeftPos;
+        var newLeftPos;
+  
+        stc.$movableContainer
+          .on(ev.TOUCH_START, function (e) {
+            touching = true;
+            startingContainerLeftPos = stc.movableContainerLeftPos;
+            touchStartX = e.originalEvent.changedTouches[0].pageX;
+          })
+          .on(ev.TOUCH_END, function () {
+            touching = false;
+          })
+          .on(ev.TOUCH_MOVE, function (e) {
+            if (!touching) {
+              return;
+            }
+  
+            var touchPageX = e.originalEvent.changedTouches[0].pageX;
+            var diff = touchPageX - touchStartX;
+            var minPos;
+  
+            newLeftPos = startingContainerLeftPos + diff;
+            if (newLeftPos > 0) {
+              newLeftPos = 0;
+            } else {
+              minPos = smv.getMinPos();
+              if (newLeftPos < minPos) {
+                newLeftPos = minPos;
+              }
+            }
+            stc.movableContainerLeftPos = newLeftPos;
+            stc.$movableContainer.css('left', smv.getMovableContainerCssLeftVal());
+            smv.refreshScrollArrowsDisabledState();
+          });
       };
   
       p.refreshAllElementSizes = function () {
@@ -400,11 +440,15 @@
         ehd.setMovableContainerWidth();
       };
   
-      p.setEventListeners = function () {
+      p.setEventListeners = function (settings) {
         var ehd = this,
             stc = ehd.stc,
             evh = stc.eventHandlers,
             ev = CONSTANTS.EVENTS;
+  
+        if (settings.enableSwiping) {
+          ehd.listenForTouchEvents();
+        }
   
         stc.$slideLeftArrow
           .off('.scrtabs')
@@ -526,21 +570,21 @@
   
   // prototype methods
   (function (p){
-    p.handleClickOnSlideMovContainerLeftArrow = function (e) {
+    p.handleClickOnSlideMovContainerLeftArrow = function () {
       var evh = this,
           stc = evh.stc;
   
       stc.scrollMovement.incrementMovableContainerLeft();
     };
   
-    p.handleClickOnSlideMovContainerRightArrow = function (e) {
+    p.handleClickOnSlideMovContainerRightArrow = function () {
       var evh = this,
           stc = evh.stc;
   
       stc.scrollMovement.incrementMovableContainerRight();
     };
   
-    p.handleMousedownOnSlideMovContainerLeftArrow = function (e) {
+    p.handleMousedownOnSlideMovContainerLeftArrow = function () {
       var evh = this,
           stc = evh.stc;
   
@@ -548,7 +592,7 @@
       stc.scrollMovement.continueSlideMovableContainerLeft();
     };
   
-    p.handleMousedownOnSlideMovContainerRightArrow = function (e) {
+    p.handleMousedownOnSlideMovContainerRightArrow = function () {
       var evh = this,
           stc = evh.stc;
   
@@ -556,21 +600,21 @@
       stc.scrollMovement.continueSlideMovableContainerRight();
     };
   
-    p.handleMouseupOnSlideMovContainerLeftArrow = function (e) {
+    p.handleMouseupOnSlideMovContainerLeftArrow = function () {
       var evh = this,
           stc = evh.stc;
   
       stc.$slideLeftArrow.data(CONSTANTS.DATA_KEY_IS_MOUSEDOWN, false);
     };
   
-    p.handleMouseupOnSlideMovContainerRightArrow = function (e) {
+    p.handleMouseupOnSlideMovContainerRightArrow = function () {
       var evh = this,
           stc = evh.stc;
   
       stc.$slideRightArrow.data(CONSTANTS.DATA_KEY_IS_MOUSEDOWN, false);
     };
   
-    p.handleWindowResize = function (e) {
+    p.handleWindowResize = function () {
       var evh = this,
           stc = evh.stc,
           newWinWidth = stc.$win.width();
@@ -765,7 +809,7 @@
       smv.enableSlideRightArrow();
     };
   
-    p.scrollToActiveTab = function (options) {
+    p.scrollToActiveTab = function () {
       var smv = this,
           stc = smv.stc,
           RIGHT_OFFSET_BUFFER = 20,
@@ -801,7 +845,7 @@
         smv.slideMovableContainerToLeftPos();
         return true;
       } else {
-        leftScrollArrowWidth = stc.$slideLeftArrow.outerWidth();      
+        leftScrollArrowWidth = stc.$slideLeftArrow.outerWidth();
         if (activeTabLeftPos < leftScrollArrowWidth) { // active tab off left side
           stc.movableContainerLeftPos += leftScrollArrowWidth - activeTabLeftPos;
           smv.slideMovableContainerToLeftPos();
@@ -820,7 +864,7 @@
   
         // make sure LeftPos is set so that a tab edge will be against the
         // left scroll arrow so we won't have a partial, cut-off tab
-        stc.$tabsLiCollection.each(function (index) {
+        stc.$tabsLiCollection.each(function () {
           var tabWidth = $(this).width();
   
           totalTabWidth += tabWidth;
@@ -952,6 +996,7 @@
   }(ScrollingTabsControl.prototype));
   
 
+  /* exported buildNavTabsAndTabContentForTargetElementInstance */
   var tabElements = (function () {
   
     return {
@@ -1128,7 +1173,7 @@
       return;
     }
   
-    tabs.forEach(function(tab, index) {
+    tabs.forEach(function(tab) {
       tabElements
         .getNewElTabLi(tab, propNames, true) // true -> forceActiveTab
         .appendTo($navTabs);
@@ -1209,6 +1254,9 @@
     return $scroller;
   }
   
+  /* exported listenForDropdownMenuTabs,
+              refreshTargetElementInstance,
+              scrollToActiveTab */
   function checkForTabAdded(refreshData) {
     var updatedTabsArray = refreshData.updatedTabsArray,
         propNames = refreshData.propNames,
@@ -1359,7 +1407,7 @@
     }
   
     // the tab order changed...
-    updatedTabsArray.forEach(function (t, i) {
+    updatedTabsArray.forEach(function (t) {
       var paneId = t[propNames.paneId];
   
       newTabsCollection.push(
@@ -1471,7 +1519,7 @@
         'left': ddMenuTargetLeft
       });
   
-      function handleClickOnDropdownMenuItem(e) {
+      function handleClickOnDropdownMenuItem() {
         var $selectedMenuItemAnc = $(this),
             $selectedMenuItemLi = $selectedMenuItemAnc.parent('li'),
             $selectedMenuItemDropdownMenu = $selectedMenuItemLi.parent('.dropdown-menu'),
@@ -1590,11 +1638,6 @@
                 $targetEls.trigger(CONSTANTS.EVENTS.TABS_READY);
               };
   
-          if (settings.enableSwiping) {
-            $targetEl.parent().addClass(CONSTANTS.CSS_CLASSES.ALLOW_SCROLLBAR);
-            $targetEl.data('scrtabs').enableSwipingElement = 'parent';
-          }
-  
           wrapNavTabsInstanceInScroller($targetEl, settings, readyCallback);
         });
   
@@ -1607,12 +1650,7 @@
               $targetEls.trigger(CONSTANTS.EVENTS.TABS_READY);
             };
   
-        var $newTargetEl = buildNavTabsAndTabContentForTargetElementInstance($targetEl, settings, readyCallback);
-  
-        if (settings.enableSwiping) {
-          $newTargetEl.addClass(CONSTANTS.CSS_CLASSES.ALLOW_SCROLLBAR);
-          $newTargetEl.data('scrtabs').enableSwipingElement = 'self';
-        }
+        buildNavTabsAndTabContentForTargetElementInstance($targetEl, settings, readyCallback);
       });
     },
   

@@ -13,7 +13,51 @@ function ElementsHandler(scrollingTabsControl) {
       var ehd = this;
 
       ehd.setElementReferences();
-      ehd.setEventListeners();
+      ehd.setEventListeners(options);
+    };
+
+    p.listenForTouchEvents = function () {
+      var ehd = this,
+          stc = ehd.stc,
+          smv = stc.scrollMovement,
+          ev = CONSTANTS.EVENTS;
+
+      var touching = false;
+      var touchStartX;
+      var startingContainerLeftPos;
+      var newLeftPos;
+
+      stc.$movableContainer
+        .on(ev.TOUCH_START, function (e) {
+          touching = true;
+          startingContainerLeftPos = stc.movableContainerLeftPos;
+          touchStartX = e.originalEvent.changedTouches[0].pageX;
+        })
+        .on(ev.TOUCH_END, function () {
+          touching = false;
+        })
+        .on(ev.TOUCH_MOVE, function (e) {
+          if (!touching) {
+            return;
+          }
+
+          var touchPageX = e.originalEvent.changedTouches[0].pageX;
+          var diff = touchPageX - touchStartX;
+          var minPos;
+
+          newLeftPos = startingContainerLeftPos + diff;
+          if (newLeftPos > 0) {
+            newLeftPos = 0;
+          } else {
+            minPos = smv.getMinPos();
+            if (newLeftPos < minPos) {
+              newLeftPos = minPos;
+            }
+          }
+          stc.movableContainerLeftPos = newLeftPos;
+          stc.$movableContainer.css('left', smv.getMovableContainerCssLeftVal());
+          smv.refreshScrollArrowsDisabledState();
+        });
     };
 
     p.refreshAllElementSizes = function () {
@@ -107,11 +151,15 @@ function ElementsHandler(scrollingTabsControl) {
       ehd.setMovableContainerWidth();
     };
 
-    p.setEventListeners = function () {
+    p.setEventListeners = function (settings) {
       var ehd = this,
           stc = ehd.stc,
           evh = stc.eventHandlers,
           ev = CONSTANTS.EVENTS;
+
+      if (settings.enableSwiping) {
+        ehd.listenForTouchEvents();
+      }
 
       stc.$slideLeftArrow
         .off('.scrtabs')
