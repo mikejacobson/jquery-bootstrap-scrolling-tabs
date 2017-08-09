@@ -23,11 +23,6 @@ var methods = {
               $targetEls.trigger(CONSTANTS.EVENTS.TABS_READY);
             };
 
-        if (settings.enableSwiping) {
-          $targetEl.parent().addClass(CONSTANTS.CSS_CLASSES.ALLOW_SCROLLBAR);
-          $targetEl.data('scrtabs').enableSwipingElement = 'parent';
-        }
-
         wrapNavTabsInstanceInScroller($targetEl, settings, readyCallback);
       });
 
@@ -40,12 +35,7 @@ var methods = {
             $targetEls.trigger(CONSTANTS.EVENTS.TABS_READY);
           };
 
-      var $newTargetEl = buildNavTabsAndTabContentForTargetElementInstance($targetEl, settings, readyCallback);
-
-      if (settings.enableSwiping) {
-        $newTargetEl.addClass(CONSTANTS.CSS_CLASSES.ALLOW_SCROLLBAR);
-        $newTargetEl.data('scrtabs').enableSwipingElement = 'self';
-      }
+      buildNavTabsAndTabContentForTargetElementInstance($targetEl, settings, readyCallback);
     });
   },
 

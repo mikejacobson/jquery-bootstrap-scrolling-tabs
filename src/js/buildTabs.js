@@ -1,3 +1,4 @@
+/* exported buildNavTabsAndTabContentForTargetElementInstance */
 var tabElements = (function () {
 
   return {
@@ -174,7 +175,7 @@ function buildNavTabsAndTabContentForTargetElementInstance($targetElInstance, se
     return;
   }
 
-  tabs.forEach(function(tab, index) {
+  tabs.forEach(function(tab) {
     tabElements
       .getNewElTabLi(tab, propNames, true) // true -> forceActiveTab
       .appendTo($navTabs);

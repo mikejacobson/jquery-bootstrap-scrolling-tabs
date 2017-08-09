@@ -178,7 +178,7 @@ function ScrollMovement(scrollingTabsControl) {
     smv.enableSlideRightArrow();
   };
 
-  p.scrollToActiveTab = function (options) {
+  p.scrollToActiveTab = function () {
     var smv = this,
         stc = smv.stc,
         RIGHT_OFFSET_BUFFER = 20,
@@ -214,7 +214,7 @@ function ScrollMovement(scrollingTabsControl) {
       smv.slideMovableContainerToLeftPos();
       return true;
     } else {
-      leftScrollArrowWidth = stc.$slideLeftArrow.outerWidth();      
+      leftScrollArrowWidth = stc.$slideLeftArrow.outerWidth();
       if (activeTabLeftPos < leftScrollArrowWidth) { // active tab off left side
         stc.movableContainerLeftPos += leftScrollArrowWidth - activeTabLeftPos;
         smv.slideMovableContainerToLeftPos();
@@ -233,7 +233,7 @@ function ScrollMovement(scrollingTabsControl) {
 
       // make sure LeftPos is set so that a tab edge will be against the
       // left scroll arrow so we won't have a partial, cut-off tab
-      stc.$tabsLiCollection.each(function (index) {
+      stc.$tabsLiCollection.each(function () {
         var tabWidth = $(this).width();
 
         totalTabWidth += tabWidth;

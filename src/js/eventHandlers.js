@@ -9,21 +9,21 @@ function EventHandlers(scrollingTabsControl) {
 
 // prototype methods
 (function (p){
-  p.handleClickOnSlideMovContainerLeftArrow = function (e) {
+  p.handleClickOnSlideMovContainerLeftArrow = function () {
     var evh = this,
         stc = evh.stc;
 
     stc.scrollMovement.incrementMovableContainerLeft();
   };
 
-  p.handleClickOnSlideMovContainerRightArrow = function (e) {
+  p.handleClickOnSlideMovContainerRightArrow = function () {
     var evh = this,
         stc = evh.stc;
 
     stc.scrollMovement.incrementMovableContainerRight();
   };
 
-  p.handleMousedownOnSlideMovContainerLeftArrow = function (e) {
+  p.handleMousedownOnSlideMovContainerLeftArrow = function () {
     var evh = this,
         stc = evh.stc;
 
@@ -31,7 +31,7 @@ function EventHandlers(scrollingTabsControl) {
     stc.scrollMovement.continueSlideMovableContainerLeft();
   };
 
-  p.handleMousedownOnSlideMovContainerRightArrow = function (e) {
+  p.handleMousedownOnSlideMovContainerRightArrow = function () {
     var evh = this,
         stc = evh.stc;
 
@@ -39,21 +39,21 @@ function EventHandlers(scrollingTabsControl) {
     stc.scrollMovement.continueSlideMovableContainerRight();
   };
 
-  p.handleMouseupOnSlideMovContainerLeftArrow = function (e) {
+  p.handleMouseupOnSlideMovContainerLeftArrow = function () {
     var evh = this,
         stc = evh.stc;
 
     stc.$slideLeftArrow.data(CONSTANTS.DATA_KEY_IS_MOUSEDOWN, false);
   };
 
-  p.handleMouseupOnSlideMovContainerRightArrow = function (e) {
+  p.handleMouseupOnSlideMovContainerRightArrow = function () {
     var evh = this,
         stc = evh.stc;
 
     stc.$slideRightArrow.data(CONSTANTS.DATA_KEY_IS_MOUSEDOWN, false);
   };
 
-  p.handleWindowResize = function (e) {
+  p.handleWindowResize = function () {
     var evh = this,
         stc = evh.stc,
         newWinWidth = stc.$win.width();
