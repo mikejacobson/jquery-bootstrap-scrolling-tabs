@@ -21,6 +21,9 @@
       timeout = setTimeout(delayed, threshold || 100);
     };
   };
-  $.fn[sr] = function (fn) { return fn ? this.bind(CONSTANTS.EVENTS.WINDOW_RESIZE, debounce(fn)) : this.trigger(sr); };
+  $.fn[sr] = function (fn, customEventName) {
+    var eventName = customEventName || CONSTANTS.EVENTS.WINDOW_RESIZE;
+    return fn ? this.bind(eventName, debounce(fn)) : this.trigger(sr);
+  };
 
-})('smartresize');
+})('smartresizeScrtabs');

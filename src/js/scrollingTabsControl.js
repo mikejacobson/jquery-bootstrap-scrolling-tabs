@@ -5,6 +5,7 @@ function ScrollingTabsControl($tabsContainer) {
   var stc = this;
 
   stc.$tabsContainer = $tabsContainer;
+  stc.instanceId = $.fn.scrollingTabs.nextInstanceId++;
 
   stc.movableContainerLeftPos = 0;
   stc.scrollArrowsVisible = false;

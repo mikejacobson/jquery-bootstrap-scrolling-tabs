@@ -54,6 +54,7 @@ var methods = {
 };
 
 function destroyPlugin() {
+  /* jshint validthis: true */
   var $targetElInstance = $(this),
       scrtabsData = $targetElInstance.data('scrtabs'),
       $tabsContainer;
@@ -112,7 +113,10 @@ function destroyPlugin() {
 
   $targetElInstance.removeData('scrtabs');
 
-  $(window).off(CONSTANTS.EVENTS.WINDOW_RESIZE);
+  while(--$.fn.scrollingTabs.nextInstanceId >= 0) {
+    $(window).off(CONSTANTS.EVENTS.WINDOW_RESIZE + $.fn.scrollingTabs.nextInstanceId);
+  }
+
   $('body').off(CONSTANTS.EVENTS.FORCE_REFRESH);
 }
 
@@ -127,6 +131,8 @@ $.fn.scrollingTabs = function(methodOrOptions) {
     $.error('Method ' + methodOrOptions + ' does not exist on $.scrollingTabs.');
   }
 };
+
+$.fn.scrollingTabs.nextInstanceId = 0;
 
 $.fn.scrollingTabs.defaults = {
   tabs: null,
