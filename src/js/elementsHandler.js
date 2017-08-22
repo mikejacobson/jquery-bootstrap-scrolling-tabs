@@ -155,7 +155,8 @@ function ElementsHandler(scrollingTabsControl) {
       var ehd = this,
           stc = ehd.stc,
           evh = stc.eventHandlers,
-          ev = CONSTANTS.EVENTS;
+          ev = CONSTANTS.EVENTS,
+          resizeEventName = ev.WINDOW_RESIZE + stc.instanceId;
 
       if (settings.enableSwiping) {
         ehd.listenForTouchEvents();
@@ -180,7 +181,9 @@ function ElementsHandler(scrollingTabsControl) {
           .on(ev.CLICK, stc.tabClickHandler);
       }
 
-      stc.$win.off('.scrtabs').smartresize(function (e) { evh.handleWindowResize.call(evh, e); });
+      stc.$win
+        .off(resizeEventName)
+        .smartresizeScrtabs(function (e) { evh.handleWindowResize.call(evh, e); }, resizeEventName);
 
       $('body').on(CONSTANTS.EVENTS.FORCE_REFRESH, stc.elementsHandler.refreshAllElementSizes.bind(stc.elementsHandler));
     };

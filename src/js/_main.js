@@ -1,6 +1,7 @@
 //=include usage.js
 ;(function ($, window) {
   'use strict';
+  /* jshint unused:false */
 
   //=include constants.js
   //=include smartresize.js

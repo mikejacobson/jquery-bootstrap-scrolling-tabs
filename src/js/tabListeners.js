@@ -264,6 +264,7 @@ function listenForDropdownMenuTabs($scroller, stc) {
     });
 
     function handleClickOnDropdownMenuItem() {
+      /* jshint validthis: true */
       var $selectedMenuItemAnc = $(this),
           $selectedMenuItemLi = $selectedMenuItemAnc.parent('li'),
           $selectedMenuItemDropdownMenu = $selectedMenuItemLi.parent('.dropdown-menu'),
@@ -347,6 +348,7 @@ function refreshTargetElementInstance($container, options) {
 }
 
 function scrollToActiveTab() {
+  /* jshint validthis: true */
   var $targetElInstance = $(this),
       scrtabsData = $targetElInstance.data('scrtabs');
 

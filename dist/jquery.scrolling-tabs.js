@@ -1,6 +1,6 @@
 /**
  * jquery-bootstrap-scrolling-tabs
- * @version v2.0.0
+ * @version v2.0.1
  * @link https://github.com/mikejacobson/jquery-bootstrap-scrolling-tabs
  * @author Mike Jacobson <michaeljjacobson1@gmail.com>
  * @license MIT License, http://www.opensource.org/licenses/MIT
@@ -224,6 +224,7 @@
 
 ;(function ($, window) {
   'use strict';
+  /* jshint unused:false */
 
   /* exported CONSTANTS */
   var CONSTANTS = {
@@ -283,9 +284,12 @@
         timeout = setTimeout(delayed, threshold || 100);
       };
     };
-    $.fn[sr] = function (fn) { return fn ? this.bind(CONSTANTS.EVENTS.WINDOW_RESIZE, debounce(fn)) : this.trigger(sr); };
+    $.fn[sr] = function (fn, customEventName) {
+      var eventName = customEventName || CONSTANTS.EVENTS.WINDOW_RESIZE;
+      return fn ? this.bind(eventName, debounce(fn)) : this.trigger(sr);
+    };
   
-  })('smartresize');
+  })('smartresizeScrtabs');
   
   /* ***********************************************************************************
    * ElementsHandler - Class that each instance of ScrollingTabsControl will instantiate
@@ -444,7 +448,8 @@
         var ehd = this,
             stc = ehd.stc,
             evh = stc.eventHandlers,
-            ev = CONSTANTS.EVENTS;
+            ev = CONSTANTS.EVENTS,
+            resizeEventName = ev.WINDOW_RESIZE + stc.instanceId;
   
         if (settings.enableSwiping) {
           ehd.listenForTouchEvents();
@@ -469,7 +474,9 @@
             .on(ev.CLICK, stc.tabClickHandler);
         }
   
-        stc.$win.off('.scrtabs').smartresize(function (e) { evh.handleWindowResize.call(evh, e); });
+        stc.$win
+          .off(resizeEventName)
+          .smartresizeScrtabs(function (e) { evh.handleWindowResize.call(evh, e); }, resizeEventName);
   
         $('body').on(CONSTANTS.EVENTS.FORCE_REFRESH, stc.elementsHandler.refreshAllElementSizes.bind(stc.elementsHandler));
       };
@@ -921,6 +928,7 @@
     var stc = this;
   
     stc.$tabsContainer = $tabsContainer;
+    stc.instanceId = $.fn.scrollingTabs.nextInstanceId++;
   
     stc.movableContainerLeftPos = 0;
     stc.scrollArrowsVisible = false;
@@ -1520,6 +1528,7 @@
       });
   
       function handleClickOnDropdownMenuItem() {
+        /* jshint validthis: true */
         var $selectedMenuItemAnc = $(this),
             $selectedMenuItemLi = $selectedMenuItemAnc.parent('li'),
             $selectedMenuItemDropdownMenu = $selectedMenuItemLi.parent('.dropdown-menu'),
@@ -1603,6 +1612,7 @@
   }
   
   function scrollToActiveTab() {
+    /* jshint validthis: true */
     var $targetElInstance = $(this),
         scrtabsData = $targetElInstance.data('scrtabs');
   
@@ -1669,6 +1679,7 @@
   };
   
   function destroyPlugin() {
+    /* jshint validthis: true */
     var $targetElInstance = $(this),
         scrtabsData = $targetElInstance.data('scrtabs'),
         $tabsContainer;
@@ -1727,7 +1738,10 @@
   
     $targetElInstance.removeData('scrtabs');
   
-    $(window).off(CONSTANTS.EVENTS.WINDOW_RESIZE);
+    while(--$.fn.scrollingTabs.nextInstanceId >= 0) {
+      $(window).off(CONSTANTS.EVENTS.WINDOW_RESIZE + $.fn.scrollingTabs.nextInstanceId);
+    }
+  
     $('body').off(CONSTANTS.EVENTS.FORCE_REFRESH);
   }
   
@@ -1742,6 +1756,8 @@
       $.error('Method ' + methodOrOptions + ' does not exist on $.scrollingTabs.');
     }
   };
+  
+  $.fn.scrollingTabs.nextInstanceId = 0;
   
   $.fn.scrollingTabs.defaults = {
     tabs: null,
