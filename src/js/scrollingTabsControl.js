@@ -26,6 +26,10 @@ function ScrollingTabsControl($tabsContainer) {
         elementsHandler = stc.elementsHandler,
         num;
 
+    if (options.rtl) {
+      stc.rtl = true;
+    }
+    
     if (options.scrollToTabEdge) {
       stc.scrollToTabEdge = true;
     }

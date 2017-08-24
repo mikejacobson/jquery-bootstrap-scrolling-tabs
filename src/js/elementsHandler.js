@@ -43,6 +43,9 @@ function ElementsHandler(scrollingTabsControl) {
 
           var touchPageX = e.originalEvent.changedTouches[0].pageX;
           var diff = touchPageX - touchStartX;
+          if (stc.rtl) {
+            diff = -diff;
+          }
           var minPos;
 
           newLeftPos = startingContainerLeftPos + diff;
@@ -55,7 +58,9 @@ function ElementsHandler(scrollingTabsControl) {
             }
           }
           stc.movableContainerLeftPos = newLeftPos;
-          stc.$movableContainer.css('left', smv.getMovableContainerCssLeftVal());
+
+          var leftOrRight = stc.rtl ? 'right' : 'left';
+          stc.$movableContainer.css(leftOrRight, smv.getMovableContainerCssLeftVal());
           smv.refreshScrollArrowsDisabledState();
         });
     };
@@ -90,8 +95,14 @@ function ElementsHandler(scrollingTabsControl) {
         if (!isPerformingSlideAnim) {
           smv.refreshScrollArrowsDisabledState();
 
-          if (stc.movableContainerLeftPos < minPos) {
-            smv.incrementMovableContainerRight(minPos);
+          if (stc.rtl) {
+            if (stc.movableContainerRightPos < minPos) {
+              smv.incrementMovableContainerLeft(minPos);
+            }
+          } else {
+            if (stc.movableContainerLeftPos < minPos) {
+              smv.incrementMovableContainerRight(minPos);
+            }
           }
         }
 
