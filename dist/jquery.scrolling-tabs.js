@@ -1,6 +1,6 @@
 /**
  * jquery-bootstrap-scrolling-tabs
- * @version v2.0.1
+ * @version v2.1.0
  * @link https://github.com/mikejacobson/jquery-bootstrap-scrolling-tabs
  * @author Mike Jacobson <michaeljjacobson1@gmail.com>
  * @license MIT License, http://www.opensource.org/licenses/MIT
@@ -147,6 +147,11 @@
  *                          default scrtabs-tab-scroll-arrow classes.
  *                          This plunk shows it working with svg icons:
  *                          http://plnkr.co/edit/2MdZCAnLyeU40shxaol3?p=preview
+ *        enableRtlSupport:
+ *                          set to true if you want your site to support
+ *                          right-to-left languages. If true, the plugin will
+ *                          check the page's <html> tag for attribute dir="rtl"
+ *                          and will adjust its behavior accordingly.
  *
  *
  *      On tabs data change:
@@ -238,6 +243,7 @@
     DATA_KEY_IS_MOUSEDOWN: 'scrtabsismousedown',
   
     CSS_CLASSES: {
+      RTL: 'scrtabs-rtl',
       SCROLL_ARROW_DISABLE: 'scrtabs-disable'
     },
   
@@ -418,6 +424,10 @@
             $rightArrow;
   
         stc.isNavPills = false;
+  
+        if (stc.rtl) {
+          $tabsContainer.addClass(CONSTANTS.CSS_CLASSES.RTL);
+        }
   
         stc.$fixedContainer = $tabsContainer.find('.scrtabs-tabs-fixed-container');
         $leftArrow = stc.$fixedContainer.prev();
@@ -967,10 +977,10 @@
           elementsHandler = stc.elementsHandler,
           num;
   
-      if (options.rtl) {
+      if (options.enableRtlSupport && $('html').attr('dir') === 'rtl') {
         stc.rtl = true;
       }
-      
+  
       if (options.scrollToTabEdge) {
         stc.scrollToTabEdge = true;
       }
@@ -1800,7 +1810,7 @@
     leftArrowContent: '',
     rightArrowContent: '',
     enableSwiping: false,
-    rtl: false
+    enableRtlSupport: false
   };
   
 

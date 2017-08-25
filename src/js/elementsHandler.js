@@ -126,6 +126,10 @@ function ElementsHandler(scrollingTabsControl) {
 
       stc.isNavPills = false;
 
+      if (stc.rtl) {
+        $tabsContainer.addClass(CONSTANTS.CSS_CLASSES.RTL);
+      }
+
       stc.$fixedContainer = $tabsContainer.find('.scrtabs-tabs-fixed-container');
       $leftArrow = stc.$fixedContainer.prev();
       $rightArrow = stc.$fixedContainer.next();

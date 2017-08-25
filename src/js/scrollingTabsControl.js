@@ -26,10 +26,10 @@ function ScrollingTabsControl($tabsContainer) {
         elementsHandler = stc.elementsHandler,
         num;
 
-    if (options.rtl) {
+    if (options.enableRtlSupport && $('html').attr('dir') === 'rtl') {
       stc.rtl = true;
     }
-    
+
     if (options.scrollToTabEdge) {
       stc.scrollToTabEdge = true;
     }

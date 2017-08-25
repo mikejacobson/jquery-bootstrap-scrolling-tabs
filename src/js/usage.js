@@ -140,6 +140,11 @@
  *                          default scrtabs-tab-scroll-arrow classes.
  *                          This plunk shows it working with svg icons:
  *                          http://plnkr.co/edit/2MdZCAnLyeU40shxaol3?p=preview
+ *        enableRtlSupport:
+ *                          set to true if you want your site to support
+ *                          right-to-left languages. If true, the plugin will
+ *                          check the page's <html> tag for attribute dir="rtl"
+ *                          and will adjust its behavior accordingly.
  *
  *
  *      On tabs data change:

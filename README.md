@@ -30,7 +30,8 @@ There are also optional features available:
 * [Tab Click Handler](#tabClickHandler)
 * [Custom Scroll Arrow classes](#cssClassArrows)
 * [Custom Scroll Arrow content](#customArrowsContent)
-* [Enable Horizontal Swiping for Touch Screens](#allowScrollbar)
+* [Enable Horizontal Swiping for Touch Screens](#enableSwiping)
+* [Enable Right-to-Left Language Support](#enableRtlSupport)
 
 
 Usage
@@ -435,7 +436,7 @@ http://plnkr.co/edit/2MdZCAnLyeU40shxaol3?p=preview
 
 
 
-#### <a id="allowScrollbar"></a>Enable Horizontal Swiping for Touch Screens
+#### <a id="enableSwiping"></a>Enable Horizontal Swiping for Touch Screens
 
 To enable horizontal swiping for touch screens, pass in option `enableSwiping: true` when initializing the plugin:
 ```javascript
@@ -444,6 +445,18 @@ $('.nav-tabs').scrollingTabs({
 });
 ```
 This will enable swiping for any browser that supports [touch events](https://developer.mozilla.org/en-US/docs/Web/API/Touch_events).
+
+#### <a id="enableRtlSupport"></a>Enable Right-to-Left Language Support
+
+To enable support for right-to-left languages, pass in option `enableRtlSupport: true` when initializing the plugin:
+```javascript
+$('.nav-tabs').scrollingTabs({
+  enableRtlSupport: true  
+});
+```
+
+With this option enabled, the plugin will check the page's `<html>` tag for attribute `dir="rtl"` and will adjust its behavior accordingly.
+
 
 
 #### Setting Defaults
@@ -456,7 +469,10 @@ $.fn.scrollingTabs.defaults.disableScrollArrowsOnFullyScrolled = true;
 $.fn.scrollingTabs.defaults.reverseScroll = true;
 $.fn.scrollingTabs.defaults.widthMultiplier = 0.5;
 $.fn.scrollingTabs.defaults.enableSwiping = true;
+$.fn.scrollingTabs.defaults.enableRtlSupport = true;
 ```
+
+
 
 #### <a id="events"></a>Events
 The plugin triggers event `ready.scrtabs` when the tabs have been wrapped in

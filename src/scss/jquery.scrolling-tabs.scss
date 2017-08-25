@@ -35,6 +35,13 @@ $scrtabs-background-color-hover: rgb(238, 238, 238) !default;
   }
 }
 
+// override user agent padding-start (which translates to padding-right for
+// RTL sites) of 40px applied to <ul> elements (Bootstrap already overrides
+// it for LTR sites by setting padding-left to 0)
+.scrtabs-tab-container.scrtabs-rtl .scrtabs-tabs-movable-container > ul.nav-tabs {
+  padding-right: 0;
+}
+
 .scrtabs-tab-scroll-arrow {
   border: $scrtabs-border-color;
   border-top: none;

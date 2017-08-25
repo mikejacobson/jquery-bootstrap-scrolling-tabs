@@ -27,12 +27,6 @@
         color: black;
         font-size: 12px;
       }
-
-
-      /* RTL customizing */
-      .nav-tabs {
-        padding-right: 0;
-      }
     </style>
   </head>
 
@@ -42,7 +36,6 @@
         <button type="button" id="btn-destroy">Destroy</button>
         <button type="button" id="btn-refresh">Refresh</button>
     </div>
-
 
     <!-- Nav tabs -->
     <ul class="nav nav-tabs" role="tablist" style="display: none">
@@ -122,7 +115,7 @@
 
       function activate() {
         $('.nav-tabs').scrollingTabs({
-          rtl: true,
+          enableRtlSupport: true,
           reverseScroll: true,
           enableSwiping: true,
           scrollToTabEdge: true,

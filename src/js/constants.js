@@ -10,6 +10,7 @@ var CONSTANTS = {
   DATA_KEY_IS_MOUSEDOWN: 'scrtabsismousedown',
 
   CSS_CLASSES: {
+    RTL: 'scrtabs-rtl',
     SCROLL_ARROW_DISABLE: 'scrtabs-disable'
   },
 
