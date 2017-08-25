@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="../node_modules/bootstrap/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../dist/jquery.scrolling-tabs.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" />
+
+    <style>
+      .left-side {
+        width: 50%;
+      }
+
+      .right-side {
+        width: 50%;
+      }
+
+      .st-demo-header {
+        background-color: #666666;
+        color: white;
+        font-size: 24px;
+        padding: 8px 24px;
+      }
+
+      .st-demo-header button {
+        color: black;
+        font-size: 12px;
+      }
+    </style>
+  </head>
+
+  <body>
+
+    <div class="st-demo-header">jquery-bootstrap-scrolling-tabs Demo - Markup Only
+        <button type="button" id="btn-destroy">Destroy</button>
+        <button type="button" id="btn-refresh">Refresh</button>
+    </div>
+
+    <!-- Nav tabs -->
+    <ul class="nav nav-tabs" role="tablist" style="display: none">
+      <li role="presentation" class="active"><a href="#tab1" role="tab" data-toggle="tab">Tab Number 1</a></li>
+      <li role="presentation"><a href="#tab2" role="tab" data-toggle="tab">Tab Number 2</a></li>
+      <li role="presentation" class="dropdown">
+        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Tab 3 Dropdown<span class=caret></span></a>
+        <ul class="dropdown-menu">
+          <li><a href="#tab3a" role="tab" data-toggle="tab">Tab 3a</a></li>
+          <li><a href="#tab3b" role="tab" data-toggle="tab">Tab 3b</a></li>
+          <li><a href="#tab3c" role="tab" data-toggle="tab">Tab 3c</a></li>
+          <li role="separator" class="divider"></li>
+          <li><a href="#">Separated link</a></li>
+        </ul>
+      </li>
+      <li role="presentation"><a href="#tab4" role="tab" data-toggle="tab">Tab Number 4</a></li>
+      <li role="presentation"><a href="#tab5" role="tab" data-toggle="tab">Tab Number 5</a></li>
+      <li role="presentation"><a href="#tab6" role="tab" data-toggle="tab">Tab Number 6</a></li>
+      <li role="presentation"><a href="#tab7" role="tab" data-toggle="tab">Tab Number 7</a></li>
+      <li role="presentation"><a href="#tab8" role="tab" data-toggle="tab">Tab Number 8</a></li>
+      <li role="presentation" class="dropdown">
+        <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Tab 9 Dropdown<span class=caret></span></a>
+        <ul class="dropdown-menu">
+          <li><a href="#tab9a" role="tab" data-toggle="tab">Tab 9a</a></li>
+          <li><a href="#tab9b" role="tab" data-toggle="tab">Tab 9b</a></li>
+          <li><a href="#tab9c" role="tab" data-toggle="tab">Tab 9c</a></li>
+        </ul>
+      </li>
+      <li role="presentation"><a href="#tab10" role="tab" data-toggle="tab">Tab Number 10</a></li>
+      <li role="presentation"><a href="#tab11" role="tab" data-toggle="tab">Tab Number 11</a></li>
+      <li role="presentation"><a href="#tab12" role="tab" data-toggle="tab">Tab Number 12</a></li>
+      <li role="presentation"><a href="#tab13" role="tab" data-toggle="tab">Tab Number 13</a></li>
+      <li role="presentation"><a href="#tab14" role="tab" data-toggle="tab">Tab Number 14</a></li>
+      <li role="presentation"><a href="#tab15" role="tab" data-toggle="tab">Tab Number 15</a></li>
+      <li role="presentation"><a href="#tab16" role="tab" data-toggle="tab">Tab Number 16</a></li>
+    </ul>
+
+    <!-- Tab panes -->
+    <div class="tab-content" style="display: none">
+      <div role="tabpanel" class="tab-pane active" id="tab1">Tab 1 content...</div>
+      <div role="tabpanel" class="tab-pane" id="tab2">Tab 2 content...</div>
+      <div role="tabpanel" class="tab-pane" id="tab3">Tab 3 content...</div>
+      <div role="tabpanel" class="tab-pane" id="tab3a">Tab 3a content...</div>
+      <div role="tabpanel" class="tab-pane" id="tab3b">Tab 3b content...</div>
+      <div role="tabpanel" class="tab-pane" id="tab3c">Tab 3c content...</div>
+      <div role="tabpanel" class="tab-pane" id="tab4">Tab 4 content...</div>
+      <div role="tabpanel" class="tab-pane" id="tab5">Tab 5 content...</div>
+      <div role="tabpanel" class="tab-pane" id="tab6">Tab 6 content...</div>
+      <div role="tabpanel" class="tab-pane" id="tab7">Tab 7 content...</div>
+      <div role="tabpanel" class="tab-pane" id="tab8">Tab 8 content...</div>
+      <div role="tabpanel" class="tab-pane" id="tab9">Tab 9 content...</div>
+      <div role="tabpanel" class="tab-pane" id="tab9a">Tab 9a content...</div>
+      <div role="tabpanel" class="tab-pane" id="tab9b">Tab 9b content...</div>
+      <div role="tabpanel" class="tab-pane" id="tab9c">Tab 9c content...</div>
+      <div role="tabpanel" class="tab-pane" id="tab10">Tab 10 content...</div>
+      <div role="tabpanel" class="tab-pane" id="tab11">Tab 11 content...</div>
+      <div role="tabpanel" class="tab-pane" id="tab12">Tab 12 content...</div>
+      <div role="tabpanel" class="tab-pane" id="tab13">Tab 13 content...</div>
+      <div role="tabpanel" class="tab-pane" id="tab14">Tab 14 content...</div>
+      <div role="tabpanel" class="tab-pane" id="tab15">Tab 15 content...</div>
+      <div role="tabpanel" class="tab-pane" id="tab16">Tab 16 content...</div>
+    </div>
+
+    <script src="../node_modules/jquery/dist/jquery.min.js"></script>
+    <script src="../node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
+    <script src="../dist/jquery.scrolling-tabs.js"></script>
+
+    <script>
+    ;(function($) {
+      'use strict';
+
+      $('#btn-destroy').click(destroy);
+      $('#btn-refresh').click(refresh);
+
+      $(activate);
+
+
+      function activate() {
+        $('.nav-tabs').scrollingTabs({
+          enableRtlSupport: true,
+          reverseScroll: true,
+          enableSwiping: true,
+          scrollToTabEdge: true,
+          disableScrollArrowsOnFullyScrolled: true
+        })
+        .on('ready.scrtabs', function() {
+          $('.tab-content').show();
+        });
+      }
+
+      function destroy() {
+        $('.nav-tabs').scrollingTabs('destroy');
+      }
+
+      function refresh() {
+        $('.nav-tabs').scrollingTabs('refresh');
+      }
+
+    }(jQuery));
+    </script>
+  </body>
+
+</html>

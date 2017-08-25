@@ -1,6 +1,6 @@
 /**
  * jquery-bootstrap-scrolling-tabs
- * @version v2.0.1
+ * @version v2.1.0
  * @link https://github.com/mikejacobson/jquery-bootstrap-scrolling-tabs
  * @author Mike Jacobson <michaeljjacobson1@gmail.com>
  * @license MIT License, http://www.opensource.org/licenses/MIT
@@ -147,6 +147,11 @@
  *                          default scrtabs-tab-scroll-arrow classes.
  *                          This plunk shows it working with svg icons:
  *                          http://plnkr.co/edit/2MdZCAnLyeU40shxaol3?p=preview
+ *        enableRtlSupport:
+ *                          set to true if you want your site to support
+ *                          right-to-left languages. If true, the plugin will
+ *                          check the page's <html> tag for attribute dir="rtl"
+ *                          and will adjust its behavior accordingly.
  *
  *
  *      On tabs data change:
@@ -238,6 +243,7 @@
     DATA_KEY_IS_MOUSEDOWN: 'scrtabsismousedown',
   
     CSS_CLASSES: {
+      RTL: 'scrtabs-rtl',
       SCROLL_ARROW_DISABLE: 'scrtabs-disable'
     },
   
@@ -336,6 +342,9 @@
   
             var touchPageX = e.originalEvent.changedTouches[0].pageX;
             var diff = touchPageX - touchStartX;
+            if (stc.rtl) {
+              diff = -diff;
+            }
             var minPos;
   
             newLeftPos = startingContainerLeftPos + diff;
@@ -348,7 +357,9 @@
               }
             }
             stc.movableContainerLeftPos = newLeftPos;
-            stc.$movableContainer.css('left', smv.getMovableContainerCssLeftVal());
+  
+            var leftOrRight = stc.rtl ? 'right' : 'left';
+            stc.$movableContainer.css(leftOrRight, smv.getMovableContainerCssLeftVal());
             smv.refreshScrollArrowsDisabledState();
           });
       };
@@ -383,8 +394,14 @@
           if (!isPerformingSlideAnim) {
             smv.refreshScrollArrowsDisabledState();
   
-            if (stc.movableContainerLeftPos < minPos) {
-              smv.incrementMovableContainerRight(minPos);
+            if (stc.rtl) {
+              if (stc.movableContainerRightPos < minPos) {
+                smv.incrementMovableContainerLeft(minPos);
+              }
+            } else {
+              if (stc.movableContainerLeftPos < minPos) {
+                smv.incrementMovableContainerRight(minPos);
+              }
             }
           }
   
@@ -407,6 +424,10 @@
             $rightArrow;
   
         stc.isNavPills = false;
+  
+        if (stc.rtl) {
+          $tabsContainer.addClass(CONSTANTS.CSS_CLASSES.RTL);
+        }
   
         stc.$fixedContainer = $tabsContainer.find('.scrtabs-tabs-fixed-container');
         $leftArrow = stc.$fixedContainer.prev();
@@ -888,7 +909,9 @@
       var smv = this,
           stc = smv.stc,
           minPos = smv.getMinPos(),
-          leftVal;
+          leftOrRightVal;
+  
+      var leftOrRight = stc.rtl ? 'right' : 'left';
   
       if (stc.movableContainerLeftPos > 0) {
         stc.movableContainerLeftPos = 0;
@@ -897,11 +920,13 @@
       }
   
       stc.movableContainerLeftPos = stc.movableContainerLeftPos / 1;
-      leftVal = smv.getMovableContainerCssLeftVal();
+      leftOrRightVal = smv.getMovableContainerCssLeftVal();
   
       smv.performingSlideAnim = true;
   
-      stc.$movableContainer.stop().animate({ left: leftVal }, 'slow', function __slideAnimComplete() {
+      var targetPos = stc.rtl ? { right: leftOrRightVal } : { left: leftOrRightVal };
+      
+      stc.$movableContainer.stop().animate(targetPos, 'slow', function __slideAnimComplete() {
         var newMinPos = smv.getMinPos();
   
         smv.performingSlideAnim = false;
@@ -910,7 +935,10 @@
         // quickly--move back into position
         if (stc.movableContainerLeftPos < newMinPos) {
           smv.decrementMovableContainerLeftPos(newMinPos);
-          stc.$movableContainer.stop().animate({ left: smv.getMovableContainerCssLeftVal() }, 'fast', function() {
+  
+          targetPos = stc.rtl ? { right: smv.getMovableContainerCssLeftVal() } : { left: smv.getMovableContainerCssLeftVal() };
+  
+          stc.$movableContainer.stop().animate(targetPos, 'fast', function() {
             smv.refreshScrollArrowsDisabledState();
           });
         } else {
@@ -948,6 +976,10 @@
       var stc = this,
           elementsHandler = stc.elementsHandler,
           num;
+  
+      if (options.enableRtlSupport && $('html').attr('dir') === 'rtl') {
+        stc.rtl = true;
+      }
   
       if (options.scrollToTabEdge) {
         stc.scrollToTabEdge = true;
@@ -1777,7 +1809,8 @@
     cssClassRightArrow: 'glyphicon glyphicon-chevron-right',
     leftArrowContent: '',
     rightArrowContent: '',
-    enableSwiping: false
+    enableSwiping: false,
+    enableRtlSupport: false
   };
   
 

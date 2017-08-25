@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="../node_modules/bootstrap/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../dist/jquery.scrolling-tabs.css">
+
+    <style>
+      .left-side {
+        width: 50%;
+      }
+
+      .right-side {
+        width: 50%;
+      }
+
+      .st-demo-header {
+        background-color: #666666;
+        color: white;
+        font-size: 24px;
+        padding: 8px 24px;
+      }
+
+      .st-demo-header button {
+        color: black;
+        font-size: 12px;
+      }
+
+      .st-demo-subheader {
+        background-color: #f0f0f0;
+        color: #333;
+        font-size: 16px;
+        height: 65px;
+        margin-top: 50px;
+        padding: 8px 24px;
+      }
+
+      .st-demo-subheader:first-child {
+        margin-top: 0;
+      }
+    </style>
+  </head>
+
+  <body>
+
+    <div class="st-demo-header">
+      <div>jquery-bootstrap-scrolling-tabs Demo - Data Driven</div>
+      <div>Using Tabs Array</div>
+      <div>
+        <button type="button" class="btn-add-tab">Add Tab</button>
+        <button type="button" class="btn-remove-tab">Remove Tab</button>
+        <button type="button" class="btn-update-tab">Update Tab</button>
+        <button type="button" class="btn-move-tab">Move Tabs</button>
+        <button type="button" class="btn-destroy">Destroy</button>
+      </div>
+
+    </div>
+
+    <!-- build .nav-tabs and .tab-content in here -->
+    <div class="tabs-inside-here"></div>
+
+
+    <script src="../node_modules/jquery/dist/jquery.min.js"></script>
+    <script src="../node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
+
+    <script src="../dist/jquery.scrolling-tabs.js"></script>
+
+    <script>
+    ;(function() {
+      'use strict';
+
+
+      var tabs = [
+        { paneId: 'tab00', title: 'Tab Index 0', content: 'Tab Index 0 Content', active: true, disabled: false },
+        { paneId: 'tab01', title: 'Tab Index 1', content: 'Tab Index 1 Content', active: false, disabled: false },
+        { paneId: 'tab02', title: 'Tab Index 2', content: 'Tab Index 2 Content', active: false, disabled: false },
+        { paneId: 'tab03', title: 'Tab Index 3', content: 'Tab Index 3 Content', active: false, disabled: false },
+        { paneId: 'tab04', title: 'Tab Index 4', content: 'Tab Index 4 Content', active: false, disabled: true },
+        { paneId: 'tab05', title: 'Tab Index 5', content: 'Tab Index 5 Content', active: false, disabled: false },
+        { paneId: 'tab06', title: 'Tab Index 6', content: 'Tab Index 6 Content', active: false, disabled: false },
+        { paneId: 'tab07', title: 'Tab Index 7', content: 'Tab Index 7 Content', active: false, disabled: false },
+        { paneId: 'tab08', title: 'Tab Index 8', content: 'Tab Index 8 Content', active: false, disabled: false },
+        { paneId: 'tab09', title: 'Tab Index 9', content: 'Tab Index 9 Content', active: false, disabled: false },
+        { paneId: 'tab10', title: 'Tab Index 10', content: 'Tab Index 10 Content', active: false, disabled: false },
+        { paneId: 'tab11', title: 'Tab Index 11', content: 'Tab Index 11 Content', active: false, disabled: false }
+      ],
+      lastTabId = 11;
+
+
+
+      $(activate);
+
+
+      function activate() {
+
+        $('.tabs-inside-here').scrollingTabs({
+          tabs: tabs, // required,
+          propPaneId: 'paneId', // optional - pass in default value for demo purposes
+          propTitle: 'title', // optional - pass in default value for demo purposes
+          propActive: 'active', // optional - pass in default value for demo purposes
+          propDisabled: 'disabled', // optional - pass in default value for demo purposes
+          propContent: 'content', // optional - pass in default value for demo purposes
+          scrollToTabEdge: false, // optional - pass in default value for demo purposes
+          disableScrollArrowsOnFullyScrolled: true,
+          enableSwiping: true,
+          enableRtlSupport: true,
+          reverseScroll: true,
+          //widthMultiplier: 0.7,
+          tabClickHandler: function () {
+            console.log("click!! ", Date.now());
+          }
+        });
+
+        $('.btn-add-tab').click(addTab);
+        $('.btn-remove-tab').click(removeTab);
+        $('.btn-update-tab').click(updateTab);
+        $('.btn-move-tab').click(moveTab);
+        $('.btn-destroy').click(destroy);
+      }
+
+      function destroy() {
+        $('.tabs-inside-here').scrollingTabs('destroy');
+      }
+
+      function updateTab() {
+        console.log("update " + tabs[1].title);
+
+        tabs[1].title = 'UPDATED ' + tabs[1].title;
+        tabs[1].content = 'UPDATED ' + tabs[1].content;
+
+        $('.tabs-inside-here').scrollingTabs('refresh');
+      }
+
+      function moveTab() {
+        console.log("move " + tabs[1].title + " to after " + tabs[4].title +
+                    ", move " + tabs[9].title + " to before " + tabs[6].title);
+
+        tabs.splice(4, 0, tabs.splice(1, 1)[0]); // move 1 to right after 4
+        tabs.splice(6, 0, tabs.splice(9, 1)[0]); // move 9 to right before 6
+
+        $('.tabs-inside-here').scrollingTabs('refresh');
+      }
+
+      function addTab() {
+        var newTab = {
+          paneId: 'tab' + (++lastTabId),
+          title: 'Tab Index ' + lastTabId,
+          content: 'Tab Index ' + lastTabId + ' Content',
+          active: true,
+          disabled: false
+        };
+
+        console.log("append new tab ", newTab.title);
+
+        // deactivate currently active tab
+        tabs.some(function (tab) {
+          if (tab.active) {
+            tab.active = false;
+            return true; // exit loop
+          }
+        });
+
+        tabs.push(newTab);
+
+        $('.tabs-inside-here').scrollingTabs('refresh', {
+          forceActiveTab: true // make our new tab active
+        });
+      }
+
+      function removeTab() {
+        console.log("remove tab ", tabs[2].title);
+
+        tabs.splice(2, 1);
+
+        $('.tabs-inside-here').scrollingTabs('refresh');
+      }
+
+    }());
+
+    </script>
+  </body>
+
+</html>
