@@ -60,7 +60,7 @@ If you're using Bootstrap Tabs (`nav-tabs`) and you don't want them to wrap if t
 
 It adjusts itself on window resize (debounced to prevent resize event wackiness), so if the window is widened enough to accommodate all tabs, scrolling will deactivate and the scroll arrows will disappear. (And, of course, vice versa if the window is narrowed.)
 
-Note: Similar to [Bootstrap tabs](http://getbootstrap.com/javascript/#tabs), nested tabs are not supported.
+Note: Similar to [Bootstrap tabs](https://getbootstrap.com/docs/3.3/javascript/#tabs), nested tabs are not supported.
 
 Use Cases
 ---------
