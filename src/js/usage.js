@@ -145,6 +145,11 @@
  *                          right-to-left languages. If true, the plugin will
  *                          check the page's <html> tag for attribute dir="rtl"
  *                          and will adjust its behavior accordingly.
+ *        bootstrapVersion:
+ *                          set to 4 if you're using Boostrap 4. Default is 3.
+ *                          Bootstrap 4 handles some things differently than 3
+ *                          (e.g., the 'active' class gets applied to the tab's
+ *                          'li > a' element rather than the 'li' itself).
  *
  *
  *      On tabs data change:

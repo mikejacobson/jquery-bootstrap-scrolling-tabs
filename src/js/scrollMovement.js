@@ -183,6 +183,7 @@ function ScrollMovement(scrollingTabsControl) {
         stc = smv.stc,
         RIGHT_OFFSET_BUFFER = 20,
         $activeTab,
+        $activeTabAnchor,
         activeTabLeftPos,
         activeTabRightPos,
         rightArrowLeftPos,
@@ -193,9 +194,16 @@ function ScrollMovement(scrollingTabsControl) {
       return;
     }
 
-    $activeTab = stc.$tabsUl.find('li.active');
+    if (stc.usingBootstrap4) {
+      $activeTabAnchor = stc.$tabsUl.find('li > .nav-link.active');
+      if ($activeTabAnchor.length) {
+        $activeTab = $activeTabAnchor.parent();
+      }
+    } else {
+      $activeTab = stc.$tabsUl.find('li.active');
+    }
 
-    if (!$activeTab.length) {
+    if (!$activeTab || !$activeTab.length) {
       return;
     }
 
@@ -208,17 +216,34 @@ function ScrollMovement(scrollingTabsControl) {
 
     rightArrowLeftPos = stc.fixedContainerWidth - RIGHT_OFFSET_BUFFER;
 
-    if (activeTabRightPos > rightArrowLeftPos) { // active tab off right side
-      rightScrollArrowWidth = stc.$slideRightArrow.outerWidth();
-      stc.movableContainerLeftPos -= (activeTabRightPos - rightArrowLeftPos + rightScrollArrowWidth);
-      smv.slideMovableContainerToLeftPos();
-      return true;
-    } else {
+    if (stc.rtl) {
       leftScrollArrowWidth = stc.$slideLeftArrow.outerWidth();
-      if (activeTabLeftPos < leftScrollArrowWidth) { // active tab off left side
-        stc.movableContainerLeftPos += leftScrollArrowWidth - activeTabLeftPos;
+
+      if (activeTabLeftPos < 0) { // active tab off left side
+        stc.movableContainerLeftPos += activeTabLeftPos;
         smv.slideMovableContainerToLeftPos();
         return true;
+      } else { // active tab off right side
+        rightScrollArrowWidth = stc.$slideRightArrow.outerWidth();
+        if (activeTabRightPos > rightArrowLeftPos) {
+          stc.movableContainerLeftPos += (activeTabRightPos - rightArrowLeftPos) + rightScrollArrowWidth + RIGHT_OFFSET_BUFFER;
+          smv.slideMovableContainerToLeftPos();
+          return true;
+        }
+      }
+    } else {
+      if (activeTabRightPos > rightArrowLeftPos) { // active tab off right side
+        rightScrollArrowWidth = stc.$slideRightArrow.outerWidth();
+        stc.movableContainerLeftPos -= (activeTabRightPos - rightArrowLeftPos + rightScrollArrowWidth);
+        smv.slideMovableContainerToLeftPos();
+        return true;
+      } else {
+        leftScrollArrowWidth = stc.$slideLeftArrow.outerWidth();
+        if (activeTabLeftPos < leftScrollArrowWidth) { // active tab off left side
+          stc.movableContainerLeftPos += leftScrollArrowWidth - activeTabLeftPos;
+          smv.slideMovableContainerToLeftPos();
+          return true;
+        }
       }
     }
 
@@ -266,7 +291,7 @@ function ScrollMovement(scrollingTabsControl) {
     smv.performingSlideAnim = true;
 
     var targetPos = stc.rtl ? { right: leftOrRightVal } : { left: leftOrRightVal };
-    
+
     stc.$movableContainer.stop().animate(targetPos, 'slow', function __slideAnimComplete() {
       var newMinPos = smv.getMinPos();
 

@@ -50,6 +50,10 @@ function ScrollingTabsControl($tabsContainer) {
       }
     }
 
+    if (options.bootstrapVersion.toString().charAt(0) === '4') {
+      stc.usingBootstrap4 = true;
+    }
+
     setTimeout(initTabsAfterTimeout, 100);
 
     function initTabsAfterTimeout() {

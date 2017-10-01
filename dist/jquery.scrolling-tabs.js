@@ -1,6 +1,6 @@
 /**
  * jquery-bootstrap-scrolling-tabs
- * @version v2.1.0
+ * @version v2.1.1
  * @link https://github.com/mikejacobson/jquery-bootstrap-scrolling-tabs
  * @author Mike Jacobson <michaeljjacobson1@gmail.com>
  * @license MIT License, http://www.opensource.org/licenses/MIT
@@ -152,6 +152,11 @@
  *                          right-to-left languages. If true, the plugin will
  *                          check the page's <html> tag for attribute dir="rtl"
  *                          and will adjust its behavior accordingly.
+ *        bootstrapVersion:
+ *                          set to 4 if you're using Boostrap 4. Default is 3.
+ *                          Bootstrap 4 handles some things differently than 3
+ *                          (e.g., the 'active' class gets applied to the tab's
+ *                          'li > a' element rather than the 'li' itself).
  *
  *
  *      On tabs data change:
@@ -842,6 +847,7 @@
           stc = smv.stc,
           RIGHT_OFFSET_BUFFER = 20,
           $activeTab,
+          $activeTabAnchor,
           activeTabLeftPos,
           activeTabRightPos,
           rightArrowLeftPos,
@@ -852,9 +858,16 @@
         return;
       }
   
-      $activeTab = stc.$tabsUl.find('li.active');
+      if (stc.usingBootstrap4) {
+        $activeTabAnchor = stc.$tabsUl.find('li > .nav-link.active');
+        if ($activeTabAnchor.length) {
+          $activeTab = $activeTabAnchor.parent();
+        }
+      } else {
+        $activeTab = stc.$tabsUl.find('li.active');
+      }
   
-      if (!$activeTab.length) {
+      if (!$activeTab || !$activeTab.length) {
         return;
       }
   
@@ -867,17 +880,34 @@
   
       rightArrowLeftPos = stc.fixedContainerWidth - RIGHT_OFFSET_BUFFER;
   
-      if (activeTabRightPos > rightArrowLeftPos) { // active tab off right side
-        rightScrollArrowWidth = stc.$slideRightArrow.outerWidth();
-        stc.movableContainerLeftPos -= (activeTabRightPos - rightArrowLeftPos + rightScrollArrowWidth);
-        smv.slideMovableContainerToLeftPos();
-        return true;
-      } else {
+      if (stc.rtl) {
         leftScrollArrowWidth = stc.$slideLeftArrow.outerWidth();
-        if (activeTabLeftPos < leftScrollArrowWidth) { // active tab off left side
-          stc.movableContainerLeftPos += leftScrollArrowWidth - activeTabLeftPos;
+  
+        if (activeTabLeftPos < 0) { // active tab off left side
+          stc.movableContainerLeftPos += activeTabLeftPos;
           smv.slideMovableContainerToLeftPos();
           return true;
+        } else { // active tab off right side
+          rightScrollArrowWidth = stc.$slideRightArrow.outerWidth();
+          if (activeTabRightPos > rightArrowLeftPos) {
+            stc.movableContainerLeftPos += (activeTabRightPos - rightArrowLeftPos) + rightScrollArrowWidth + RIGHT_OFFSET_BUFFER;
+            smv.slideMovableContainerToLeftPos();
+            return true;
+          }
+        }
+      } else {
+        if (activeTabRightPos > rightArrowLeftPos) { // active tab off right side
+          rightScrollArrowWidth = stc.$slideRightArrow.outerWidth();
+          stc.movableContainerLeftPos -= (activeTabRightPos - rightArrowLeftPos + rightScrollArrowWidth);
+          smv.slideMovableContainerToLeftPos();
+          return true;
+        } else {
+          leftScrollArrowWidth = stc.$slideLeftArrow.outerWidth();
+          if (activeTabLeftPos < leftScrollArrowWidth) { // active tab off left side
+            stc.movableContainerLeftPos += leftScrollArrowWidth - activeTabLeftPos;
+            smv.slideMovableContainerToLeftPos();
+            return true;
+          }
         }
       }
   
@@ -925,7 +955,7 @@
       smv.performingSlideAnim = true;
   
       var targetPos = stc.rtl ? { right: leftOrRightVal } : { left: leftOrRightVal };
-      
+  
       stc.$movableContainer.stop().animate(targetPos, 'slow', function __slideAnimComplete() {
         var newMinPos = smv.getMinPos();
   
@@ -999,6 +1029,10 @@
         if (!isNaN(num)) {
           stc.widthMultiplier = num;
         }
+      }
+  
+      if (options.bootstrapVersion.toString().charAt(0) === '4') {
+        stc.usingBootstrap4 = true;
       }
   
       setTimeout(initTabsAfterTimeout, 100);
@@ -1810,7 +1844,8 @@
     leftArrowContent: '',
     rightArrowContent: '',
     enableSwiping: false,
-    enableRtlSupport: false
+    enableRtlSupport: false,
+    bootstrapVersion: 3
   };
   
 
