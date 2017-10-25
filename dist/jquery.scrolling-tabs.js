@@ -1,6 +1,6 @@
 /**
  * jquery-bootstrap-scrolling-tabs
- * @version v2.1.1
+ * @version v2.2.1
  * @link https://github.com/mikejacobson/jquery-bootstrap-scrolling-tabs
  * @author Mike Jacobson <michaeljjacobson1@gmail.com>
  * @license MIT License, http://www.opensource.org/licenses/MIT
@@ -248,6 +248,7 @@
     DATA_KEY_IS_MOUSEDOWN: 'scrtabsismousedown',
   
     CSS_CLASSES: {
+      BOOTSTRAP4: 'scrtabs-bootstrap4',
       RTL: 'scrtabs-rtl',
       SCROLL_ARROW_DISABLE: 'scrtabs-disable'
     },
@@ -432,6 +433,10 @@
   
         if (stc.rtl) {
           $tabsContainer.addClass(CONSTANTS.CSS_CLASSES.RTL);
+        }
+  
+        if (stc.usingBootstrap4) {
+          $tabsContainer.addClass(CONSTANTS.CSS_CLASSES.BOOTSTRAP4);
         }
   
         stc.$fixedContainer = $tabsContainer.find('.scrtabs-tabs-fixed-container');
@@ -940,8 +945,6 @@
           stc = smv.stc,
           minPos = smv.getMinPos(),
           leftOrRightVal;
-  
-      var leftOrRight = stc.rtl ? 'right' : 'left';
   
       if (stc.movableContainerLeftPos > 0) {
         stc.movableContainerLeftPos = 0;

@@ -277,8 +277,6 @@ function ScrollMovement(scrollingTabsControl) {
         minPos = smv.getMinPos(),
         leftOrRightVal;
 
-    var leftOrRight = stc.rtl ? 'right' : 'left';
-
     if (stc.movableContainerLeftPos > 0) {
       stc.movableContainerLeftPos = 0;
     } else if (stc.movableContainerLeftPos < minPos) {
