@@ -130,6 +130,10 @@ function ElementsHandler(scrollingTabsControl) {
         $tabsContainer.addClass(CONSTANTS.CSS_CLASSES.RTL);
       }
 
+      if (stc.usingBootstrap4) {
+        $tabsContainer.addClass(CONSTANTS.CSS_CLASSES.BOOTSTRAP4);
+      }
+
       stc.$fixedContainer = $tabsContainer.find('.scrtabs-tabs-fixed-container');
       $leftArrow = stc.$fixedContainer.prev();
       $rightArrow = stc.$fixedContainer.next();

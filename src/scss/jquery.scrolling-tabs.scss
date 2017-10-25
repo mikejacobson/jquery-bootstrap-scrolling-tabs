@@ -21,6 +21,11 @@ $scrtabs-background-color-hover: rgb(238, 238, 238) !default;
   }
 }
 
+.scrtabs-tab-container.scrtabs-bootstrap4 .scrtabs-tabs-movable-container > .navbar-nav {
+  -ms-flex-direction: row;
+  flex-direction: row;
+}
+
 .scrtabs-tabs-fixed-container {
   float: left;
   height: $scrtabs-tabs-height;
