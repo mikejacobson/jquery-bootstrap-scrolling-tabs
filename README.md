@@ -93,6 +93,16 @@ $('.nav-tabs').scrollingTabs();
 ```
 
 
+##### Bootstrap 4 Support
+
+If you're using Bootstrap 4, you need to pass in option `bootstrapVersion: 4` (the default is `3`):
+```javascript
+$('.nav-tabs').scrollingTabs({
+  bootstrapVersion: 4  
+});
+```
+Bootstrap 4 handles some things differently than 3 (e.g., the `active` class gets applied to the tab's `li > a` element rather than the `li` itself)
+
 ##### reverseScroll Option
 
 You can also pass in the `reverseScroll` option:
