@@ -20,9 +20,9 @@ function checkForTabAdded(refreshData) {
 
     if (!$li.length) { // new tab
       isInitTabsRequired = true;
-
+console.log("options: ", options);
       // add the tab, add its pane (if necessary), and refresh the scroller
-      $li = tabElements.getNewElTabLi(tab, propNames, options.forceActiveTab);
+      $li = tabElements.getNewElTabLi(tab, propNames, options.forceActiveTab, options.tabLiContent);
       tabUtils.storeDataOnLiEl($li, updatedTabsArray, idx);
 
       if (isTabIdxPastCurrTabs) { // append to end of current tabs

@@ -1,5 +1,6 @@
 /* exported buildNavTabsAndTabContentForTargetElementInstance */
 var tabElements = (function () {
+  var options = {};
 
   return {
     getElTabPaneForLi: getElTabPaneForLi,
@@ -8,10 +9,16 @@ var tabElements = (function () {
     getNewElTabAnchor: getNewElTabAnchor,
     getNewElTabContent: getNewElTabContent,
     getNewElTabLi: getNewElTabLi,
-    getNewElTabPane: getNewElTabPane
+    getNewElTabPane: getNewElTabPane,
+    setOption: setOption
   };
 
   ///////////////////
+
+  function setOption(name, value) {
+    options[name] = value;
+    return tabElements;
+  }
 
   // ---- retrieve existing elements from the DOM ----------
   function getElTabPaneForLi($li) {
@@ -53,8 +60,11 @@ var tabElements = (function () {
     return $('<div class="tab-content"></div>');
   }
 
-  function getNewElTabLi(tab, propNames, forceActiveTab) {
-    var $li = $('<li role="presentation" class=""></li>'),
+  function getNewElTabLi(tab, propNames, forceActiveTab, tabLiContent) {
+    console.log("MJJ--- $$$$$$ options.tabLiContent: ", options.tabLiContent);
+
+    var liContent = tabLiContent || options.tabLiContent || '<li role="presentation" class=""></li>',
+        $li = $(liContent),
         $a = getNewElTabAnchor(tab, propNames).appendTo($li);
 
     if (tab[propNames.disabled]) {
@@ -176,8 +186,12 @@ function buildNavTabsAndTabContentForTargetElementInstance($targetElInstance, se
   }
 
   tabs.forEach(function(tab) {
+    var forceActiveTab = true;
+// mjj tabLiContent set!!
+
     tabElements
-      .getNewElTabLi(tab, propNames, true) // true -> forceActiveTab
+      .setOption('tabLiContent', settings.tabLiContent)
+      .getNewElTabLi(tab, propNames, forceActiveTab, settings.tabLiContent)
       .appendTo($navTabs);
 
     // build the tab panes if we weren't told to ignore them and there's
