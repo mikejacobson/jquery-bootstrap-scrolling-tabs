@@ -71,6 +71,21 @@
  *                          corresponds to that required tab property if
  *                          your property name is different than the
  *                          standard name (paneId, title, etc.)
+ *        tabsLiContent:
+ *                          optional string array used to define custom HTML
+ *                          for each tab's <li> element. Each entry is an HTML
+ *                          string defining the tab <li> element for the
+ *                          corresponding tab in the tabs array.
+ *                          The default for a tab is:
+ *                          '<li role="presentation" class=""></li>'
+ *                          So, for example, if you had 3 tabs and you needed
+ *                          a custom 'tooltip' attribute on each one, your
+ *                          tabsLiContent array might look like this:
+ *                            [
+ *                              '<li role="presentation" tooltip="Custom TT 1" class="custom-li"></li>',
+ *                              '<li role="presentation" tooltip="Custom TT 2" class="custom-li"></li>',
+ *                              '<li role="presentation" tooltip="Custom TT 3" class="custom-li"></li>'
+ *                            ]
  *        ignoreTabPanes:   relevant for data-driven tabs only--set to true if
  *                          you want the plugin to only touch the tabs
  *                          and to not generate the tab pane elements
@@ -147,10 +162,6 @@
  *                          default scrtabs-tab-scroll-arrow classes.
  *                          This plunk shows it working with svg icons:
  *                          http://plnkr.co/edit/2MdZCAnLyeU40shxaol3?p=preview
- *        tabLiContent:
- *                          custom HTML string for the tab <li> elements.
- *                          The default is:
- *                          '<li role="presentation" class=""></li>'
  *        enableRtlSupport:
  *                          set to true if you want your site to support
  *                          right-to-left languages. If true, the plugin will
@@ -1255,10 +1266,10 @@
       return;
     }
   
-    tabs.forEach(function(tab) {
+    tabs.forEach(function(tab, index) {
       var options = {
         forceActiveTab: true,
-        tabLiContent: settings.tabLiContent
+        tabLiContent: settings.tabsLiContent && settings.tabsLiContent[index]
       };
   
       tabElements
@@ -1287,7 +1298,7 @@
         propNames: propNames,
         ignoreTabPanes: ignoreTabPanes,
         hasTabContent: hasTabContent,
-        tabLiContent: settings.tabLiContent,
+        tabsLiContent: settings.tabsLiContent,
         scroller: $scroller
       }
     });
@@ -1347,6 +1358,7 @@
               scrollToActiveTab */
   function checkForTabAdded(refreshData) {
     var updatedTabsArray = refreshData.updatedTabsArray,
+        updatedTabsLiContent = refreshData.updatedTabsLiContent || [],
         propNames = refreshData.propNames,
         ignoreTabPanes = refreshData.ignoreTabPanes,
         options = refreshData.options,
@@ -1366,6 +1378,7 @@
         isInitTabsRequired = true;
   
         // add the tab, add its pane (if necessary), and refresh the scroller
+        options.tabLiContent = updatedTabsLiContent[idx];
         $li = tabElements.getNewElTabLi(tab, propNames, options);
         tabUtils.storeDataOnLiEl($li, updatedTabsArray, idx);
   
@@ -1649,9 +1662,9 @@
         refreshData = {
           options: options,
           updatedTabsArray: instanceData.tabs,
+          updatedTabsLiContent: instanceData.tabsLiContent,
           propNames: instanceData.propNames,
           ignoreTabPanes: instanceData.ignoreTabPanes,
-          tabLiContent: options.tabLiContent || instanceData.tabLiContent,
           $navTabs: $navTabs,
           $currTabLis: $navTabs.find('> li'),
           $currTabContentPanesContainer: $currTabContentPanesContainer,
@@ -1858,7 +1871,7 @@
     cssClassRightArrow: 'glyphicon glyphicon-chevron-right',
     leftArrowContent: '',
     rightArrowContent: '',
-    tabLiContent: '',
+    tabsLiContent: null,
     enableSwiping: false,
     enableRtlSupport: false,
     bootstrapVersion: 3

@@ -80,20 +80,24 @@
 
 
       var tabs = [
-        { paneId: 'tab00', title: 'Tab Index 0', content: 'Tab Index 0 Content', active: true, disabled: false },
-        { paneId: 'tab01', title: 'Tab Index 1', content: 'Tab Index 1 Content', active: false, disabled: false },
-        { paneId: 'tab02', title: 'Tab Index 2', content: 'Tab Index 2 Content', active: false, disabled: false },
-        { paneId: 'tab03', title: 'Tab Index 3', content: 'Tab Index 3 Content', active: false, disabled: false },
-        { paneId: 'tab04', title: 'Tab Index 4', content: 'Tab Index 4 Content', active: false, disabled: true },
-        { paneId: 'tab05', title: 'Tab Index 5', content: 'Tab Index 5 Content', active: false, disabled: false },
-        { paneId: 'tab06', title: 'Tab Index 6', content: 'Tab Index 6 Content', active: false, disabled: false },
-        { paneId: 'tab07', title: 'Tab Index 7', content: 'Tab Index 7 Content', active: false, disabled: false },
-        { paneId: 'tab08', title: 'Tab Index 8', content: 'Tab Index 8 Content', active: false, disabled: false },
-        { paneId: 'tab09', title: 'Tab Index 9', content: 'Tab Index 9 Content', active: false, disabled: false },
-        { paneId: 'tab10', title: 'Tab Index 10', content: 'Tab Index 10 Content', active: false, disabled: false },
-        { paneId: 'tab11', title: 'Tab Index 11', content: 'Tab Index 11 Content', active: false, disabled: false }
+        { paneId: 'tab00', tooltip: 'Custom Tooltip Tab 0',  title: 'Tab Index 0', content: 'Tab Index 0 Content', active: true, disabled: false },
+        { paneId: 'tab01', tooltip: 'Custom Tooltip Tab 1',  title: 'Tab Index 1', content: 'Tab Index 1 Content', active: false, disabled: false },
+        { paneId: 'tab02', tooltip: 'Custom Tooltip Tab 2',  title: 'Tab Index 2', content: 'Tab Index 2 Content', active: false, disabled: false },
+        { paneId: 'tab03', tooltip: 'Custom Tooltip Tab 3',  title: 'Tab Index 3', content: 'Tab Index 3 Content', active: false, disabled: false },
+        { paneId: 'tab04', tooltip: 'Custom Tooltip Tab 4',  title: 'Tab Index 4', content: 'Tab Index 4 Content', active: false, disabled: true },
+        { paneId: 'tab05', tooltip: 'Custom Tooltip Tab 5',  title: 'Tab Index 5', content: 'Tab Index 5 Content', active: false, disabled: false },
+        { paneId: 'tab06', tooltip: 'Custom Tooltip Tab 6',  title: 'Tab Index 6', content: 'Tab Index 6 Content', active: false, disabled: false },
+        { paneId: 'tab07', tooltip: 'Custom Tooltip Tab 7',  title: 'Tab Index 7', content: 'Tab Index 7 Content', active: false, disabled: false },
+        { paneId: 'tab08', tooltip: 'Custom Tooltip Tab 8',  title: 'Tab Index 8', content: 'Tab Index 8 Content', active: false, disabled: false },
+        { paneId: 'tab09', tooltip: 'Custom Tooltip Tab 9',  title: 'Tab Index 9', content: 'Tab Index 9 Content', active: false, disabled: false },
+        { paneId: 'tab10', tooltip: 'Custom Tooltip Tab 10', title: 'Tab Index 10', content: 'Tab Index 10 Content', active: false, disabled: false },
+        { paneId: 'tab11', tooltip: 'Custom Tooltip Tab 11', title: 'Tab Index 11', content: 'Tab Index 11 Content', active: false, disabled: false }
       ],
       lastTabId = 11;
+
+      var tabsLiContent = tabs.map(function(tab) {
+        return '<li role="presentation" title="' + tab.tooltip + '" data-trigger="hover" class="custom-li"></li>';
+      });
 
 
 
@@ -112,7 +116,7 @@
           scrollToTabEdge: false, // optional - pass in default value for demo purposes
           disableScrollArrowsOnFullyScrolled: true,
           enableSwiping: true,
-          tabLiContent: '<li role="presentation" class="custom-li"></li>',
+          tabsLiContent: tabsLiContent,
           //widthMultiplier: 0.7,
           tabClickHandler: function () {
             console.log("click!! ", Date.now());
@@ -152,6 +156,7 @@
       function addTab() {
         var newTab = {
           paneId: 'tab' + (++lastTabId),
+          tooltip: 'Custom Tooltab Tab ' + lastTabId,
           title: 'Tab Index ' + lastTabId,
           content: 'Tab Index ' + lastTabId + ' Content',
           active: true,
@@ -169,9 +174,9 @@
         });
 
         tabs.push(newTab);
+        tabsLiContent.push('<li role="presentation" title="' + newTab.tooltip + '" data-trigger="hover" class="custom-li-added"></li>');
 
         $('.tabs-inside-here').scrollingTabs('refresh', {
-          //tabLiContent: '<li role="presentation" class="custom-li-added"></li>',
           forceActiveTab: true // make our new tab active
         });
       }

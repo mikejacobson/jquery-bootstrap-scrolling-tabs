@@ -176,10 +176,10 @@ function buildNavTabsAndTabContentForTargetElementInstance($targetElInstance, se
     return;
   }
 
-  tabs.forEach(function(tab) {
+  tabs.forEach(function(tab, index) {
     var options = {
       forceActiveTab: true,
-      tabLiContent: settings.tabLiContent
+      tabLiContent: settings.tabsLiContent && settings.tabsLiContent[index]
     };
 
     tabElements
@@ -208,7 +208,7 @@ function buildNavTabsAndTabContentForTargetElementInstance($targetElInstance, se
       propNames: propNames,
       ignoreTabPanes: ignoreTabPanes,
       hasTabContent: hasTabContent,
-      tabLiContent: settings.tabLiContent,
+      tabsLiContent: settings.tabsLiContent,
       scroller: $scroller
     }
   });

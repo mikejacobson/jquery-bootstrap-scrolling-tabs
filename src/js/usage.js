@@ -64,6 +64,21 @@
  *                          corresponds to that required tab property if
  *                          your property name is different than the
  *                          standard name (paneId, title, etc.)
+ *        tabsLiContent:
+ *                          optional string array used to define custom HTML
+ *                          for each tab's <li> element. Each entry is an HTML
+ *                          string defining the tab <li> element for the
+ *                          corresponding tab in the tabs array.
+ *                          The default for a tab is:
+ *                          '<li role="presentation" class=""></li>'
+ *                          So, for example, if you had 3 tabs and you needed
+ *                          a custom 'tooltip' attribute on each one, your
+ *                          tabsLiContent array might look like this:
+ *                            [
+ *                              '<li role="presentation" tooltip="Custom TT 1" class="custom-li"></li>',
+ *                              '<li role="presentation" tooltip="Custom TT 2" class="custom-li"></li>',
+ *                              '<li role="presentation" tooltip="Custom TT 3" class="custom-li"></li>'
+ *                            ]
  *        ignoreTabPanes:   relevant for data-driven tabs only--set to true if
  *                          you want the plugin to only touch the tabs
  *                          and to not generate the tab pane elements
@@ -140,10 +155,6 @@
  *                          default scrtabs-tab-scroll-arrow classes.
  *                          This plunk shows it working with svg icons:
  *                          http://plnkr.co/edit/2MdZCAnLyeU40shxaol3?p=preview
- *        tabLiContent:
- *                          custom HTML string for the tab <li> elements.
- *                          The default is:
- *                          '<li role="presentation" class=""></li>'
  *        enableRtlSupport:
  *                          set to true if you want your site to support
  *                          right-to-left languages. If true, the plugin will

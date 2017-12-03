@@ -447,10 +447,24 @@ http://plnkr.co/edit/2MdZCAnLyeU40shxaol3?p=preview
 
 #### <a id="customTabLiContent"></a>Custom Tab LI content
 
-You can pass in a custom value for the tab LI element HTML using option
-`tabLiContent`. This will override the default `<li role="presentation" class=""></li>`.
+To specify custom HTML for the tabs' LI elements, you can pass in option `tabsLiContent`.
 
+It must be a string array, each entry being an HTML string that defines the tab LI element for the corresponding tab (i.e., same index) in the `tabs` array.
 
+These entries will override the default `<li role="presentation" class=""></li>`.
+
+So, for example, if you had 3 tabs and you needed a custom `tooltip` attribute on each one, your `tabsLiContent` array might look like this (although you would probably build the array dynamically using the `myTabs` data):
+
+```javascript
+$('#tabs-inside-here').scrollingTabs({
+  tabs: myTabs,
+  tabsLiContent: [
+    '<li role="presentation" tooltip="Custom TT 1" class="custom-li"></li>',
+    '<li role="presentation" tooltip="Custom TT 2" class="custom-li"></li>',
+    '<li role="presentation" tooltip="Custom TT 3" class="custom-li"></li>'
+  ]
+});
+```
 
 #### <a id="enableSwiping"></a>Enable Horizontal Swiping for Touch Screens
 

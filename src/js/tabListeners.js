@@ -3,6 +3,7 @@
             scrollToActiveTab */
 function checkForTabAdded(refreshData) {
   var updatedTabsArray = refreshData.updatedTabsArray,
+      updatedTabsLiContent = refreshData.updatedTabsLiContent || [],
       propNames = refreshData.propNames,
       ignoreTabPanes = refreshData.ignoreTabPanes,
       options = refreshData.options,
@@ -22,6 +23,7 @@ function checkForTabAdded(refreshData) {
       isInitTabsRequired = true;
 
       // add the tab, add its pane (if necessary), and refresh the scroller
+      options.tabLiContent = updatedTabsLiContent[idx];
       $li = tabElements.getNewElTabLi(tab, propNames, options);
       tabUtils.storeDataOnLiEl($li, updatedTabsArray, idx);
 
@@ -305,9 +307,9 @@ function refreshDataDrivenTabs($container, options) {
       refreshData = {
         options: options,
         updatedTabsArray: instanceData.tabs,
+        updatedTabsLiContent: instanceData.tabsLiContent,
         propNames: instanceData.propNames,
         ignoreTabPanes: instanceData.ignoreTabPanes,
-        tabLiContent: options.tabLiContent || instanceData.tabLiContent,
         $navTabs: $navTabs,
         $currTabLis: $navTabs.find('> li'),
         $currTabContentPanesContainer: $currTabContentPanesContainer,
