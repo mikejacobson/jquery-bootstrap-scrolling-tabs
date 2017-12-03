@@ -20,9 +20,9 @@ function checkForTabAdded(refreshData) {
 
     if (!$li.length) { // new tab
       isInitTabsRequired = true;
-console.log("options: ", options);
+
       // add the tab, add its pane (if necessary), and refresh the scroller
-      $li = tabElements.getNewElTabLi(tab, propNames, options.forceActiveTab, options.tabLiContent);
+      $li = tabElements.getNewElTabLi(tab, propNames, options);
       tabUtils.storeDataOnLiEl($li, updatedTabsArray, idx);
 
       if (isTabIdxPastCurrTabs) { // append to end of current tabs
@@ -32,7 +32,7 @@ console.log("options: ", options);
       }
 
       if (!ignoreTabPanes && tab[propNames.content] !== undefined) {
-        $pane = tabElements.getNewElTabPane(tab, propNames, options.forceActiveTab);
+        $pane = tabElements.getNewElTabPane(tab, propNames, options);
         if (isTabIdxPastCurrTabs) { // append to end of current tabs
           $pane.appendTo($currTabContentPanesContainer);
         } else {                        // insert in middle of current tabs
@@ -307,6 +307,7 @@ function refreshDataDrivenTabs($container, options) {
         updatedTabsArray: instanceData.tabs,
         propNames: instanceData.propNames,
         ignoreTabPanes: instanceData.ignoreTabPanes,
+        tabLiContent: options.tabLiContent || instanceData.tabLiContent,
         $navTabs: $navTabs,
         $currTabLis: $navTabs.find('> li'),
         $currTabContentPanesContainer: $currTabContentPanesContainer,

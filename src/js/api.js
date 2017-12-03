@@ -42,7 +42,7 @@ var methods = {
   refresh: function(options) {
     var $targetEls = this,
         settings = $.extend({}, $.fn.scrollingTabs.defaults, options || {});
-console.log(">>> refresh, options: ", options);
+
     return $targetEls.each(function () {
       refreshTargetElementInstance($(this), settings);
     });

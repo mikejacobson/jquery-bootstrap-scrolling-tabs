@@ -1,6 +1,6 @@
 /**
  * jquery-bootstrap-scrolling-tabs
- * @version v2.2.1
+ * @version v2.3.1
  * @link https://github.com/mikejacobson/jquery-bootstrap-scrolling-tabs
  * @author Mike Jacobson <michaeljjacobson1@gmail.com>
  * @license MIT License, http://www.opensource.org/licenses/MIT
@@ -147,6 +147,10 @@
  *                          default scrtabs-tab-scroll-arrow classes.
  *                          This plunk shows it working with svg icons:
  *                          http://plnkr.co/edit/2MdZCAnLyeU40shxaol3?p=preview
+ *        tabLiContent:
+ *                          custom HTML string for the tab <li> elements.
+ *                          The default is:
+ *                          '<li role="presentation" class=""></li>'
  *        enableRtlSupport:
  *                          set to true if you want your site to support
  *                          right-to-left languages. If true, the plugin will
@@ -1075,7 +1079,6 @@
 
   /* exported buildNavTabsAndTabContentForTargetElementInstance */
   var tabElements = (function () {
-    var options = {};
   
     return {
       getElTabPaneForLi: getElTabPaneForLi,
@@ -1084,16 +1087,10 @@
       getNewElTabAnchor: getNewElTabAnchor,
       getNewElTabContent: getNewElTabContent,
       getNewElTabLi: getNewElTabLi,
-      getNewElTabPane: getNewElTabPane,
-      setOption: setOption
+      getNewElTabPane: getNewElTabPane
     };
   
     ///////////////////
-  
-    function setOption(name, value) {
-      options[name] = value;
-      return tabElements;
-    }
   
     // ---- retrieve existing elements from the DOM ----------
     function getElTabPaneForLi($li) {
@@ -1135,29 +1132,27 @@
       return $('<div class="tab-content"></div>');
     }
   
-    function getNewElTabLi(tab, propNames, forceActiveTab, tabLiContent) {
-      console.log("MJJ--- $$$$$$ options.tabLiContent: ", options.tabLiContent);
-  
-      var liContent = tabLiContent || options.tabLiContent || '<li role="presentation" class=""></li>',
+    function getNewElTabLi(tab, propNames, options) {
+      var liContent = options.tabLiContent || '<li role="presentation" class=""></li>',
           $li = $(liContent),
           $a = getNewElTabAnchor(tab, propNames).appendTo($li);
   
       if (tab[propNames.disabled]) {
         $li.addClass('disabled');
         $a.attr('data-toggle', '');
-      } else if (forceActiveTab && tab[propNames.active]) {
+      } else if (options.forceActiveTab && tab[propNames.active]) {
         $li.addClass('active');
       }
   
       return $li;
     }
   
-    function getNewElTabPane(tab, propNames, forceActiveTab) {
+    function getNewElTabPane(tab, propNames, options) {
       var $pane = $('<div role="tabpanel" class="tab-pane"></div>')
                   .attr('id', tab[propNames.paneId])
                   .html(tab[propNames.content]);
   
-      if (forceActiveTab && tab[propNames.active]) {
+      if (options.forceActiveTab && tab[propNames.active]) {
         $pane.addClass('active');
       }
   
@@ -1261,19 +1256,20 @@
     }
   
     tabs.forEach(function(tab) {
-      var forceActiveTab = true;
-  // mjj tabLiContent set!!
+      var options = {
+        forceActiveTab: true,
+        tabLiContent: settings.tabLiContent
+      };
   
       tabElements
-        .setOption('tabLiContent', settings.tabLiContent)
-        .getNewElTabLi(tab, propNames, forceActiveTab, settings.tabLiContent)
+        .getNewElTabLi(tab, propNames, options)
         .appendTo($navTabs);
   
       // build the tab panes if we weren't told to ignore them and there's
       // tab content data available
       if (!ignoreTabPanes && hasTabContent) {
         tabElements
-          .getNewElTabPane(tab, propNames, true) // true -> forceActiveTab
+          .getNewElTabPane(tab, propNames, options)
           .appendTo($tabContent);
       }
     });
@@ -1291,6 +1287,7 @@
         propNames: propNames,
         ignoreTabPanes: ignoreTabPanes,
         hasTabContent: hasTabContent,
+        tabLiContent: settings.tabLiContent,
         scroller: $scroller
       }
     });
@@ -1367,9 +1364,9 @@
   
       if (!$li.length) { // new tab
         isInitTabsRequired = true;
-  console.log("options: ", options);
+  
         // add the tab, add its pane (if necessary), and refresh the scroller
-        $li = tabElements.getNewElTabLi(tab, propNames, options.forceActiveTab, options.tabLiContent);
+        $li = tabElements.getNewElTabLi(tab, propNames, options);
         tabUtils.storeDataOnLiEl($li, updatedTabsArray, idx);
   
         if (isTabIdxPastCurrTabs) { // append to end of current tabs
@@ -1379,7 +1376,7 @@
         }
   
         if (!ignoreTabPanes && tab[propNames.content] !== undefined) {
-          $pane = tabElements.getNewElTabPane(tab, propNames, options.forceActiveTab);
+          $pane = tabElements.getNewElTabPane(tab, propNames, options);
           if (isTabIdxPastCurrTabs) { // append to end of current tabs
             $pane.appendTo($currTabContentPanesContainer);
           } else {                        // insert in middle of current tabs
@@ -1654,6 +1651,7 @@
           updatedTabsArray: instanceData.tabs,
           propNames: instanceData.propNames,
           ignoreTabPanes: instanceData.ignoreTabPanes,
+          tabLiContent: options.tabLiContent || instanceData.tabLiContent,
           $navTabs: $navTabs,
           $currTabLis: $navTabs.find('> li'),
           $currTabContentPanesContainer: $currTabContentPanesContainer,
@@ -1750,7 +1748,7 @@
     refresh: function(options) {
       var $targetEls = this,
           settings = $.extend({}, $.fn.scrollingTabs.defaults, options || {});
-  console.log(">>> refresh, options: ", options);
+  
       return $targetEls.each(function () {
         refreshTargetElementInstance($(this), settings);
       });

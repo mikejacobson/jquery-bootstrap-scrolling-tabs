@@ -140,6 +140,10 @@
  *                          default scrtabs-tab-scroll-arrow classes.
  *                          This plunk shows it working with svg icons:
  *                          http://plnkr.co/edit/2MdZCAnLyeU40shxaol3?p=preview
+ *        tabLiContent:
+ *                          custom HTML string for the tab <li> elements.
+ *                          The default is:
+ *                          '<li role="presentation" class=""></li>'
  *        enableRtlSupport:
  *                          set to true if you want your site to support
  *                          right-to-left languages. If true, the plugin will

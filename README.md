@@ -30,6 +30,7 @@ There are also optional features available:
 * [Tab Click Handler](#tabClickHandler)
 * [Custom Scroll Arrow classes](#cssClassArrows)
 * [Custom Scroll Arrow content](#customArrowsContent)
+* [Custom Tab LI content](#customTabLiContent)
 * [Enable Horizontal Swiping for Touch Screens](#enableSwiping)
 * [Enable Right-to-Left Language Support](#enableRtlSupport)
 
@@ -443,6 +444,11 @@ $('#tabs-inside-here').scrollingTabs({
 You would then need to add some CSS to make them work correctly if you don't give them the default `scrtabs-tab-scroll-arrow` classes. This plunk shows it working with svg icons:
 http://plnkr.co/edit/2MdZCAnLyeU40shxaol3?p=preview
 
+
+#### <a id="customTabLiContent"></a>Custom Tab LI content
+
+You can pass in a custom value for the tab LI element HTML using option
+`tabLiContent`. This will override the default `<li role="presentation" class=""></li>`.
 
 
 

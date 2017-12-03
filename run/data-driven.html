@@ -39,6 +39,14 @@
       .st-demo-subheader:first-child {
         margin-top: 0;
       }
+
+      .custom-li a {
+        color: darkblue !important;
+      }
+
+      .custom-li-added a {
+        color: darkred !important;
+      }
     </style>
   </head>
 
@@ -104,7 +112,7 @@
           scrollToTabEdge: false, // optional - pass in default value for demo purposes
           disableScrollArrowsOnFullyScrolled: true,
           enableSwiping: true,
-          tabLiContent: '<li role="presentation" class="miketest"></li>',
+          tabLiContent: '<li role="presentation" class="custom-li"></li>',
           //widthMultiplier: 0.7,
           tabClickHandler: function () {
             console.log("click!! ", Date.now());
@@ -163,6 +171,7 @@
         tabs.push(newTab);
 
         $('.tabs-inside-here').scrollingTabs('refresh', {
+          //tabLiContent: '<li role="presentation" class="custom-li-added"></li>',
           forceActiveTab: true // make our new tab active
         });
       }
