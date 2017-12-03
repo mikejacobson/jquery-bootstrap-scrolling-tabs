@@ -79,6 +79,20 @@
  *                              '<li role="presentation" tooltip="Custom TT 2" class="custom-li"></li>',
  *                              '<li role="presentation" tooltip="Custom TT 3" class="custom-li"></li>'
  *                            ]
+ *                          This plunk demonstrates its usage (in conjunction
+ *                          with tabsPostProcessors):
+ *                          http://plnkr.co/edit/ugJLMk7lmDCuZQziQ0k0
+ *        tabsPostProcessors:
+ *                          optional array of functions, each one associated
+ *                          with an entry in the tabs array. When a tab element
+ *                          has been created, its associated post-processor
+ *                          function will be called with two arguments: the
+ *                          newly created $li and $a jQuery elements for that tab.
+ *                          This allows you to, for example, attach a custom
+ *                          event listener to each anchor tag.
+ *                          This plunk demonstrates its usage (in conjunction
+ *                          with tabsLiContent):
+ *                          http://plnkr.co/edit/ugJLMk7lmDCuZQziQ0k0
  *        ignoreTabPanes:   relevant for data-driven tabs only--set to true if
  *                          you want the plugin to only touch the tabs
  *                          and to not generate the tab pane elements

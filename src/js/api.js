@@ -153,6 +153,7 @@ $.fn.scrollingTabs.defaults = {
   leftArrowContent: '',
   rightArrowContent: '',
   tabsLiContent: null,
+  tabsPostProcessors: null,
   enableSwiping: false,
   enableRtlSupport: false,
   bootstrapVersion: 3

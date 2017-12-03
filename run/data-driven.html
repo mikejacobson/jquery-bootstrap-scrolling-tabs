@@ -99,6 +99,14 @@
         return '<li role="presentation" title="' + tab.tooltip + '" data-trigger="hover" class="custom-li"></li>';
       });
 
+      var tabsPostProcessors = tabs.map(function(tab) {
+        return function($li, $a) {
+          $a.click(function() {
+            console.log("anchor click! tab.tooltip: ", tab.tooltip);
+          });
+        };
+      });
+
 
 
       $(activate);
@@ -117,6 +125,7 @@
           disableScrollArrowsOnFullyScrolled: true,
           enableSwiping: true,
           tabsLiContent: tabsLiContent,
+          tabsPostProcessors: tabsPostProcessors,
           //widthMultiplier: 0.7,
           tabClickHandler: function () {
             console.log("click!! ", Date.now());
@@ -175,6 +184,11 @@
 
         tabs.push(newTab);
         tabsLiContent.push('<li role="presentation" title="' + newTab.tooltip + '" data-trigger="hover" class="custom-li-added"></li>');
+        tabsPostProcessors.push(function($li, $a) {
+            $a.click(function() {
+              console.log("anchor click! tab.tooltip: ", newTab.tooltip);
+            });
+          });
 
         $('.tabs-inside-here').scrollingTabs('refresh', {
           forceActiveTab: true // make our new tab active

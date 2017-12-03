@@ -65,6 +65,10 @@ var tabElements = (function () {
       $li.addClass('active');
     }
 
+    if (options.tabPostProcessor) {
+      options.tabPostProcessor($li, $a);
+    }
+
     return $li;
   }
 
@@ -179,7 +183,8 @@ function buildNavTabsAndTabContentForTargetElementInstance($targetElInstance, se
   tabs.forEach(function(tab, index) {
     var options = {
       forceActiveTab: true,
-      tabLiContent: settings.tabsLiContent && settings.tabsLiContent[index]
+      tabLiContent: settings.tabsLiContent && settings.tabsLiContent[index],
+      tabPostProcessor: settings.tabsPostProcessors && settings.tabsPostProcessors[index]
     };
 
     tabElements
@@ -209,6 +214,7 @@ function buildNavTabsAndTabContentForTargetElementInstance($targetElInstance, se
       ignoreTabPanes: ignoreTabPanes,
       hasTabContent: hasTabContent,
       tabsLiContent: settings.tabsLiContent,
+      tabsPostProcessors: settings.tabsPostProcessors,
       scroller: $scroller
     }
   });

@@ -4,6 +4,7 @@
 function checkForTabAdded(refreshData) {
   var updatedTabsArray = refreshData.updatedTabsArray,
       updatedTabsLiContent = refreshData.updatedTabsLiContent || [],
+      updatedTabsPostProcessors = refreshData.updatedTabsPostProcessors || [],
       propNames = refreshData.propNames,
       ignoreTabPanes = refreshData.ignoreTabPanes,
       options = refreshData.options,
@@ -24,6 +25,7 @@ function checkForTabAdded(refreshData) {
 
       // add the tab, add its pane (if necessary), and refresh the scroller
       options.tabLiContent = updatedTabsLiContent[idx];
+      options.tabPostProcessor = updatedTabsPostProcessors[idx];
       $li = tabElements.getNewElTabLi(tab, propNames, options);
       tabUtils.storeDataOnLiEl($li, updatedTabsArray, idx);
 
@@ -308,6 +310,7 @@ function refreshDataDrivenTabs($container, options) {
         options: options,
         updatedTabsArray: instanceData.tabs,
         updatedTabsLiContent: instanceData.tabsLiContent,
+        updatedTabsPostProcessors: instanceData.tabsPostProcessors,
         propNames: instanceData.propNames,
         ignoreTabPanes: instanceData.ignoreTabPanes,
         $navTabs: $navTabs,

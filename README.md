@@ -31,6 +31,7 @@ There are also optional features available:
 * [Custom Scroll Arrow classes](#cssClassArrows)
 * [Custom Scroll Arrow content](#customArrowsContent)
 * [Custom Tab LI content](#customTabLiContent)
+* [Tab LI and Anchor Post-Processors](#postProcessors)
 * [Enable Horizontal Swiping for Touch Screens](#enableSwiping)
 * [Enable Right-to-Left Language Support](#enableRtlSupport)
 
@@ -465,6 +466,33 @@ $('#tabs-inside-here').scrollingTabs({
   ]
 });
 ```
+
+This plunk demonstrates its usage (in conjunction with `tabsPostProcessors`):
+http://plnkr.co/edit/ugJLMk7lmDCuZQziQ0k0
+
+
+#### <a id="postProcessors"></a>Tab LI and Anchor Post-Processors
+
+To perform additional processing on the tab LI and/or Anchor elements after they've been created, you can pass in option `tabsPostProcessors`.
+
+This is an array of functions, each one associated with an entry in the tabs array. When a tab element has been created, its associated post-processor function will be called with two arguments: the newly created $li and $a jQuery elements for that tab.
+
+This allows you to, for example, attach a custom click handler to each anchor tag.
+
+```javascript
+$('#tabs-inside-here').scrollingTabs({
+  tabs: myTabs,
+  tabsPostProcessors: [
+    function ($li, $a) { console.log("Tab 1 clicked. $a.href: ", $a.attr('href')); },
+    function ($li, $a) { console.log("Tab 2 clicked. $a.href: ", $a.attr('href')); },
+    function ($li, $a) { console.log("Tab 3 clicked. $a.href: ", $a.attr('href')); }
+  ]
+});
+```
+This plunk demonstrates its usage (in conjunction with `tabsLiContent`):
+http://plnkr.co/edit/ugJLMk7lmDCuZQziQ0k0
+
+
 
 #### <a id="enableSwiping"></a>Enable Horizontal Swiping for Touch Screens
 
