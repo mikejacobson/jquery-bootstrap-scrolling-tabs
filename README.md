@@ -30,6 +30,8 @@ There are also optional features available:
 * [Tab Click Handler](#tabClickHandler)
 * [Custom Scroll Arrow classes](#cssClassArrows)
 * [Custom Scroll Arrow content](#customArrowsContent)
+* [Custom Tab LI content](#customTabLiContent)
+* [Tab LI and Anchor Post-Processors](#postProcessors)
 * [Enable Horizontal Swiping for Touch Screens](#enableSwiping)
 * [Enable Right-to-Left Language Support](#enableRtlSupport)
 
@@ -443,6 +445,52 @@ $('#tabs-inside-here').scrollingTabs({
 You would then need to add some CSS to make them work correctly if you don't give them the default `scrtabs-tab-scroll-arrow` classes. This plunk shows it working with svg icons:
 http://plnkr.co/edit/2MdZCAnLyeU40shxaol3?p=preview
 
+
+#### <a id="customTabLiContent"></a>Custom Tab LI content
+
+To specify custom HTML for the tabs' LI elements, you can pass in option `tabsLiContent`.
+
+It must be a string array, each entry being an HTML string that defines the tab LI element for the corresponding tab (i.e., same index) in the `tabs` array.
+
+These entries will override the default `<li role="presentation" class=""></li>`.
+
+So, for example, if you had 3 tabs and you needed a custom `tooltip` attribute on each one, your `tabsLiContent` array might look like this (although you would probably build the array dynamically using the `myTabs` data):
+
+```javascript
+$('#tabs-inside-here').scrollingTabs({
+  tabs: myTabs,
+  tabsLiContent: [
+    '<li role="presentation" tooltip="Custom TT 1" class="custom-li"></li>',
+    '<li role="presentation" tooltip="Custom TT 2" class="custom-li"></li>',
+    '<li role="presentation" tooltip="Custom TT 3" class="custom-li"></li>'
+  ]
+});
+```
+
+This plunk demonstrates its usage (in conjunction with `tabsPostProcessors`):
+http://plnkr.co/edit/ugJLMk7lmDCuZQziQ0k0
+
+
+#### <a id="postProcessors"></a>Tab LI and Anchor Post-Processors
+
+To perform additional processing on the tab LI and/or Anchor elements after they've been created, you can pass in option `tabsPostProcessors`.
+
+This is an array of functions, each one associated with an entry in the tabs array. When a tab element has been created, its associated post-processor function will be called with two arguments: the newly created $li and $a jQuery elements for that tab.
+
+This allows you to, for example, attach a custom click handler to each anchor tag.
+
+```javascript
+$('#tabs-inside-here').scrollingTabs({
+  tabs: myTabs,
+  tabsPostProcessors: [
+    function ($li, $a) { console.log("Tab 1 clicked. $a.href: ", $a.attr('href')); },
+    function ($li, $a) { console.log("Tab 2 clicked. $a.href: ", $a.attr('href')); },
+    function ($li, $a) { console.log("Tab 3 clicked. $a.href: ", $a.attr('href')); }
+  ]
+});
+```
+This plunk demonstrates its usage (in conjunction with `tabsLiContent`):
+http://plnkr.co/edit/ugJLMk7lmDCuZQziQ0k0
 
 
 

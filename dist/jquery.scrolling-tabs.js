@@ -1,6 +1,6 @@
 /**
  * jquery-bootstrap-scrolling-tabs
- * @version v2.2.1
+ * @version v2.3.1
  * @link https://github.com/mikejacobson/jquery-bootstrap-scrolling-tabs
  * @author Mike Jacobson <michaeljjacobson1@gmail.com>
  * @license MIT License, http://www.opensource.org/licenses/MIT
@@ -71,6 +71,35 @@
  *                          corresponds to that required tab property if
  *                          your property name is different than the
  *                          standard name (paneId, title, etc.)
+ *        tabsLiContent:
+ *                          optional string array used to define custom HTML
+ *                          for each tab's <li> element. Each entry is an HTML
+ *                          string defining the tab <li> element for the
+ *                          corresponding tab in the tabs array.
+ *                          The default for a tab is:
+ *                          '<li role="presentation" class=""></li>'
+ *                          So, for example, if you had 3 tabs and you needed
+ *                          a custom 'tooltip' attribute on each one, your
+ *                          tabsLiContent array might look like this:
+ *                            [
+ *                              '<li role="presentation" tooltip="Custom TT 1" class="custom-li"></li>',
+ *                              '<li role="presentation" tooltip="Custom TT 2" class="custom-li"></li>',
+ *                              '<li role="presentation" tooltip="Custom TT 3" class="custom-li"></li>'
+ *                            ]
+ *                          This plunk demonstrates its usage (in conjunction
+ *                          with tabsPostProcessors):
+ *                          http://plnkr.co/edit/ugJLMk7lmDCuZQziQ0k0
+ *        tabsPostProcessors:
+ *                          optional array of functions, each one associated
+ *                          with an entry in the tabs array. When a tab element
+ *                          has been created, its associated post-processor
+ *                          function will be called with two arguments: the
+ *                          newly created $li and $a jQuery elements for that tab.
+ *                          This allows you to, for example, attach a custom
+ *                          event listener to each anchor tag.
+ *                          This plunk demonstrates its usage (in conjunction
+ *                          with tabsLiContent):
+ *                          http://plnkr.co/edit/ugJLMk7lmDCuZQziQ0k0
  *        ignoreTabPanes:   relevant for data-driven tabs only--set to true if
  *                          you want the plugin to only touch the tabs
  *                          and to not generate the tab pane elements
@@ -1128,26 +1157,31 @@
       return $('<div class="tab-content"></div>');
     }
   
-    function getNewElTabLi(tab, propNames, forceActiveTab) {
-      var $li = $('<li role="presentation" class=""></li>'),
+    function getNewElTabLi(tab, propNames, options) {
+      var liContent = options.tabLiContent || '<li role="presentation" class=""></li>',
+          $li = $(liContent),
           $a = getNewElTabAnchor(tab, propNames).appendTo($li);
   
       if (tab[propNames.disabled]) {
         $li.addClass('disabled');
         $a.attr('data-toggle', '');
-      } else if (forceActiveTab && tab[propNames.active]) {
+      } else if (options.forceActiveTab && tab[propNames.active]) {
         $li.addClass('active');
+      }
+  
+      if (options.tabPostProcessor) {
+        options.tabPostProcessor($li, $a);
       }
   
       return $li;
     }
   
-    function getNewElTabPane(tab, propNames, forceActiveTab) {
+    function getNewElTabPane(tab, propNames, options) {
       var $pane = $('<div role="tabpanel" class="tab-pane"></div>')
                   .attr('id', tab[propNames.paneId])
                   .html(tab[propNames.content]);
   
-      if (forceActiveTab && tab[propNames.active]) {
+      if (options.forceActiveTab && tab[propNames.active]) {
         $pane.addClass('active');
       }
   
@@ -1250,16 +1284,22 @@
       return;
     }
   
-    tabs.forEach(function(tab) {
+    tabs.forEach(function(tab, index) {
+      var options = {
+        forceActiveTab: true,
+        tabLiContent: settings.tabsLiContent && settings.tabsLiContent[index],
+        tabPostProcessor: settings.tabsPostProcessors && settings.tabsPostProcessors[index]
+      };
+  
       tabElements
-        .getNewElTabLi(tab, propNames, true) // true -> forceActiveTab
+        .getNewElTabLi(tab, propNames, options)
         .appendTo($navTabs);
   
       // build the tab panes if we weren't told to ignore them and there's
       // tab content data available
       if (!ignoreTabPanes && hasTabContent) {
         tabElements
-          .getNewElTabPane(tab, propNames, true) // true -> forceActiveTab
+          .getNewElTabPane(tab, propNames, options)
           .appendTo($tabContent);
       }
     });
@@ -1277,6 +1317,8 @@
         propNames: propNames,
         ignoreTabPanes: ignoreTabPanes,
         hasTabContent: hasTabContent,
+        tabsLiContent: settings.tabsLiContent,
+        tabsPostProcessors: settings.tabsPostProcessors,
         scroller: $scroller
       }
     });
@@ -1336,6 +1378,8 @@
               scrollToActiveTab */
   function checkForTabAdded(refreshData) {
     var updatedTabsArray = refreshData.updatedTabsArray,
+        updatedTabsLiContent = refreshData.updatedTabsLiContent || [],
+        updatedTabsPostProcessors = refreshData.updatedTabsPostProcessors || [],
         propNames = refreshData.propNames,
         ignoreTabPanes = refreshData.ignoreTabPanes,
         options = refreshData.options,
@@ -1355,7 +1399,9 @@
         isInitTabsRequired = true;
   
         // add the tab, add its pane (if necessary), and refresh the scroller
-        $li = tabElements.getNewElTabLi(tab, propNames, options.forceActiveTab);
+        options.tabLiContent = updatedTabsLiContent[idx];
+        options.tabPostProcessor = updatedTabsPostProcessors[idx];
+        $li = tabElements.getNewElTabLi(tab, propNames, options);
         tabUtils.storeDataOnLiEl($li, updatedTabsArray, idx);
   
         if (isTabIdxPastCurrTabs) { // append to end of current tabs
@@ -1365,7 +1411,7 @@
         }
   
         if (!ignoreTabPanes && tab[propNames.content] !== undefined) {
-          $pane = tabElements.getNewElTabPane(tab, propNames, options.forceActiveTab);
+          $pane = tabElements.getNewElTabPane(tab, propNames, options);
           if (isTabIdxPastCurrTabs) { // append to end of current tabs
             $pane.appendTo($currTabContentPanesContainer);
           } else {                        // insert in middle of current tabs
@@ -1638,6 +1684,8 @@
         refreshData = {
           options: options,
           updatedTabsArray: instanceData.tabs,
+          updatedTabsLiContent: instanceData.tabsLiContent,
+          updatedTabsPostProcessors: instanceData.tabsPostProcessors,
           propNames: instanceData.propNames,
           ignoreTabPanes: instanceData.ignoreTabPanes,
           $navTabs: $navTabs,
@@ -1846,6 +1894,8 @@
     cssClassRightArrow: 'glyphicon glyphicon-chevron-right',
     leftArrowContent: '',
     rightArrowContent: '',
+    tabsLiContent: null,
+    tabsPostProcessors: null,
     enableSwiping: false,
     enableRtlSupport: false,
     bootstrapVersion: 3

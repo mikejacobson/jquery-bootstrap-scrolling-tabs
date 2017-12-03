@@ -53,26 +53,31 @@ var tabElements = (function () {
     return $('<div class="tab-content"></div>');
   }
 
-  function getNewElTabLi(tab, propNames, forceActiveTab) {
-    var $li = $('<li role="presentation" class=""></li>'),
+  function getNewElTabLi(tab, propNames, options) {
+    var liContent = options.tabLiContent || '<li role="presentation" class=""></li>',
+        $li = $(liContent),
         $a = getNewElTabAnchor(tab, propNames).appendTo($li);
 
     if (tab[propNames.disabled]) {
       $li.addClass('disabled');
       $a.attr('data-toggle', '');
-    } else if (forceActiveTab && tab[propNames.active]) {
+    } else if (options.forceActiveTab && tab[propNames.active]) {
       $li.addClass('active');
+    }
+
+    if (options.tabPostProcessor) {
+      options.tabPostProcessor($li, $a);
     }
 
     return $li;
   }
 
-  function getNewElTabPane(tab, propNames, forceActiveTab) {
+  function getNewElTabPane(tab, propNames, options) {
     var $pane = $('<div role="tabpanel" class="tab-pane"></div>')
                 .attr('id', tab[propNames.paneId])
                 .html(tab[propNames.content]);
 
-    if (forceActiveTab && tab[propNames.active]) {
+    if (options.forceActiveTab && tab[propNames.active]) {
       $pane.addClass('active');
     }
 
@@ -175,16 +180,22 @@ function buildNavTabsAndTabContentForTargetElementInstance($targetElInstance, se
     return;
   }
 
-  tabs.forEach(function(tab) {
+  tabs.forEach(function(tab, index) {
+    var options = {
+      forceActiveTab: true,
+      tabLiContent: settings.tabsLiContent && settings.tabsLiContent[index],
+      tabPostProcessor: settings.tabsPostProcessors && settings.tabsPostProcessors[index]
+    };
+
     tabElements
-      .getNewElTabLi(tab, propNames, true) // true -> forceActiveTab
+      .getNewElTabLi(tab, propNames, options)
       .appendTo($navTabs);
 
     // build the tab panes if we weren't told to ignore them and there's
     // tab content data available
     if (!ignoreTabPanes && hasTabContent) {
       tabElements
-        .getNewElTabPane(tab, propNames, true) // true -> forceActiveTab
+        .getNewElTabPane(tab, propNames, options)
         .appendTo($tabContent);
     }
   });
@@ -202,6 +213,8 @@ function buildNavTabsAndTabContentForTargetElementInstance($targetElInstance, se
       propNames: propNames,
       ignoreTabPanes: ignoreTabPanes,
       hasTabContent: hasTabContent,
+      tabsLiContent: settings.tabsLiContent,
+      tabsPostProcessors: settings.tabsPostProcessors,
       scroller: $scroller
     }
   });
