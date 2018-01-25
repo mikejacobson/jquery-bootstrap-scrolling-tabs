@@ -12,7 +12,7 @@ function ElementsHandler(scrollingTabsControl) {
     p.initElements = function (options) {
       var ehd = this;
 
-      ehd.setElementReferences();
+      ehd.setElementReferences(options);
       ehd.setEventListeners(options);
     };
 
@@ -117,12 +117,14 @@ function ElementsHandler(scrollingTabsControl) {
       return actionsTaken;
     };
 
-    p.setElementReferences = function () {
+    p.setElementReferences = function (settings) {
       var ehd = this,
           stc = ehd.stc,
           $tabsContainer = stc.$tabsContainer,
           $leftArrow,
-          $rightArrow;
+          $rightArrow,
+          $leftArrowClickTarget,
+          $rightArrowClickTarget;
 
       stc.isNavPills = false;
 
@@ -137,6 +139,14 @@ function ElementsHandler(scrollingTabsControl) {
       stc.$fixedContainer = $tabsContainer.find('.scrtabs-tabs-fixed-container');
       $leftArrow = stc.$fixedContainer.prev();
       $rightArrow = stc.$fixedContainer.next();
+
+      $leftArrowClickTarget = settings.leftArrowClickTarget ?
+          $tabsContainer.find(settings.leftArrowClickTarget) :
+          $leftArrow;
+
+      $rightArrowClickTarget = settings.rightArrowClickTarget ?
+          $tabsContainer.find(settings.rightArrowClickTarget) :
+          $rightArrow;
 
       stc.$movableContainer = $tabsContainer.find('.scrtabs-tabs-movable-container');
       stc.$tabsUl = $tabsContainer.find('.nav-tabs');
@@ -153,7 +163,9 @@ function ElementsHandler(scrollingTabsControl) {
       stc.$tabsLiCollection = stc.$tabsUl.find('> li');
 
       stc.$slideLeftArrow = stc.reverseScroll ? $leftArrow : $rightArrow;
+      stc.$slideLeftArrowClickTarget = stc.reverseScroll ? $leftArrowClickTarget : $rightArrowClickTarget;
       stc.$slideRightArrow = stc.reverseScroll ? $rightArrow : $leftArrow;
+      stc.$slideRightArrowClickTarget = stc.reverseScroll ? $rightArrowClickTarget : $leftArrowClickTarget;
       stc.$scrollArrows = stc.$slideLeftArrow.add(stc.$slideRightArrow);
 
       stc.$win = $(window);
@@ -181,13 +193,13 @@ function ElementsHandler(scrollingTabsControl) {
         ehd.listenForTouchEvents();
       }
 
-      stc.$slideLeftArrow
+      stc.$slideLeftArrowClickTarget
         .off('.scrtabs')
         .on(ev.MOUSEDOWN, function (e) { evh.handleMousedownOnSlideMovContainerLeftArrow.call(evh, e); })
         .on(ev.MOUSEUP, function (e) { evh.handleMouseupOnSlideMovContainerLeftArrow.call(evh, e); })
         .on(ev.CLICK, function (e) { evh.handleClickOnSlideMovContainerLeftArrow.call(evh, e); });
 
-      stc.$slideRightArrow
+      stc.$slideRightArrowClickTarget
         .off('.scrtabs')
         .on(ev.MOUSEDOWN, function (e) { evh.handleMousedownOnSlideMovContainerRightArrow.call(evh, e); })
         .on(ev.MOUSEUP, function (e) { evh.handleMouseupOnSlideMovContainerRightArrow.call(evh, e); })

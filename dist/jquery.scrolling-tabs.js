@@ -1,6 +1,6 @@
 /**
  * jquery-bootstrap-scrolling-tabs
- * @version v2.3.1
+ * @version v2.4.0
  * @link https://github.com/mikejacobson/jquery-bootstrap-scrolling-tabs
  * @author Mike Jacobson <michaeljjacobson1@gmail.com>
  * @license MIT License, http://www.opensource.org/licenses/MIT
@@ -346,7 +346,7 @@
       p.initElements = function (options) {
         var ehd = this;
   
-        ehd.setElementReferences();
+        ehd.setElementReferences(options);
         ehd.setEventListeners(options);
       };
   
@@ -451,12 +451,14 @@
         return actionsTaken;
       };
   
-      p.setElementReferences = function () {
+      p.setElementReferences = function (settings) {
         var ehd = this,
             stc = ehd.stc,
             $tabsContainer = stc.$tabsContainer,
             $leftArrow,
-            $rightArrow;
+            $rightArrow,
+            $leftArrowClickTarget,
+            $rightArrowClickTarget;
   
         stc.isNavPills = false;
   
@@ -471,6 +473,14 @@
         stc.$fixedContainer = $tabsContainer.find('.scrtabs-tabs-fixed-container');
         $leftArrow = stc.$fixedContainer.prev();
         $rightArrow = stc.$fixedContainer.next();
+  
+        $leftArrowClickTarget = settings.leftArrowClickTarget ?
+            $tabsContainer.find(settings.leftArrowClickTarget) :
+            $leftArrow;
+  
+        $rightArrowClickTarget = settings.rightArrowClickTarget ?
+            $tabsContainer.find(settings.rightArrowClickTarget) :
+            $rightArrow;
   
         stc.$movableContainer = $tabsContainer.find('.scrtabs-tabs-movable-container');
         stc.$tabsUl = $tabsContainer.find('.nav-tabs');
@@ -487,7 +497,9 @@
         stc.$tabsLiCollection = stc.$tabsUl.find('> li');
   
         stc.$slideLeftArrow = stc.reverseScroll ? $leftArrow : $rightArrow;
+        stc.$slideLeftArrowClickTarget = stc.reverseScroll ? $leftArrowClickTarget : $rightArrowClickTarget;
         stc.$slideRightArrow = stc.reverseScroll ? $rightArrow : $leftArrow;
+        stc.$slideRightArrowClickTarget = stc.reverseScroll ? $rightArrowClickTarget : $leftArrowClickTarget;
         stc.$scrollArrows = stc.$slideLeftArrow.add(stc.$slideRightArrow);
   
         stc.$win = $(window);
@@ -515,13 +527,13 @@
           ehd.listenForTouchEvents();
         }
   
-        stc.$slideLeftArrow
+        stc.$slideLeftArrowClickTarget
           .off('.scrtabs')
           .on(ev.MOUSEDOWN, function (e) { evh.handleMousedownOnSlideMovContainerLeftArrow.call(evh, e); })
           .on(ev.MOUSEUP, function (e) { evh.handleMouseupOnSlideMovContainerLeftArrow.call(evh, e); })
           .on(ev.CLICK, function (e) { evh.handleClickOnSlideMovContainerLeftArrow.call(evh, e); });
   
-        stc.$slideRightArrow
+        stc.$slideRightArrowClickTarget
           .off('.scrtabs')
           .on(ev.MOUSEDOWN, function (e) { evh.handleMousedownOnSlideMovContainerRightArrow.call(evh, e); })
           .on(ev.MOUSEUP, function (e) { evh.handleMouseupOnSlideMovContainerRightArrow.call(evh, e); })
@@ -655,7 +667,7 @@
       var evh = this,
           stc = evh.stc;
   
-      stc.$slideLeftArrow.data(CONSTANTS.DATA_KEY_IS_MOUSEDOWN, true);
+      stc.$slideLeftArrowClickTarget.data(CONSTANTS.DATA_KEY_IS_MOUSEDOWN, true);
       stc.scrollMovement.continueSlideMovableContainerLeft();
     };
   
@@ -663,7 +675,7 @@
       var evh = this,
           stc = evh.stc;
   
-      stc.$slideRightArrow.data(CONSTANTS.DATA_KEY_IS_MOUSEDOWN, true);
+      stc.$slideRightArrowClickTarget.data(CONSTANTS.DATA_KEY_IS_MOUSEDOWN, true);
       stc.scrollMovement.continueSlideMovableContainerRight();
     };
   
@@ -671,14 +683,14 @@
       var evh = this,
           stc = evh.stc;
   
-      stc.$slideLeftArrow.data(CONSTANTS.DATA_KEY_IS_MOUSEDOWN, false);
+      stc.$slideLeftArrowClickTarget.data(CONSTANTS.DATA_KEY_IS_MOUSEDOWN, false);
     };
   
     p.handleMouseupOnSlideMovContainerRightArrow = function () {
       var evh = this,
           stc = evh.stc;
   
-      stc.$slideRightArrow.data(CONSTANTS.DATA_KEY_IS_MOUSEDOWN, false);
+      stc.$slideRightArrowClickTarget.data(CONSTANTS.DATA_KEY_IS_MOUSEDOWN, false);
     };
   
     p.handleWindowResize = function () {
@@ -714,7 +726,7 @@
   
       setTimeout(function() {
         if (stc.movableContainerLeftPos <= smv.getMinPos()  ||
-            !stc.$slideLeftArrow.data(CONSTANTS.DATA_KEY_IS_MOUSEDOWN)) {
+            !stc.$slideLeftArrowClickTarget.data(CONSTANTS.DATA_KEY_IS_MOUSEDOWN)) {
           return;
         }
   
@@ -730,7 +742,7 @@
   
       setTimeout(function() {
         if (stc.movableContainerLeftPos >= 0  ||
-            !stc.$slideRightArrow.data(CONSTANTS.DATA_KEY_IS_MOUSEDOWN)) {
+            !stc.$slideRightArrowClickTarget.data(CONSTANTS.DATA_KEY_IS_MOUSEDOWN)) {
           return;
         }
   
@@ -879,7 +891,6 @@
     p.scrollToActiveTab = function () {
       var smv = this,
           stc = smv.stc,
-          RIGHT_OFFSET_BUFFER = 20,
           $activeTab,
           $activeTabAnchor,
           activeTabLeftPos,
@@ -905,6 +916,8 @@
         return;
       }
   
+      rightScrollArrowWidth = stc.$slideRightArrow.outerWidth();
+  
       /**
        * @author poletaew
        * We need relative offset (depends on $fixedContainer), don't absolute
@@ -912,7 +925,7 @@
       activeTabLeftPos = $activeTab.offset().left - stc.$fixedContainer.offset().left;
       activeTabRightPos = activeTabLeftPos + $activeTab.outerWidth();
   
-      rightArrowLeftPos = stc.fixedContainerWidth - RIGHT_OFFSET_BUFFER;
+      rightArrowLeftPos = stc.fixedContainerWidth - rightScrollArrowWidth;
   
       if (stc.rtl) {
         leftScrollArrowWidth = stc.$slideLeftArrow.outerWidth();
@@ -922,16 +935,14 @@
           smv.slideMovableContainerToLeftPos();
           return true;
         } else { // active tab off right side
-          rightScrollArrowWidth = stc.$slideRightArrow.outerWidth();
           if (activeTabRightPos > rightArrowLeftPos) {
-            stc.movableContainerLeftPos += (activeTabRightPos - rightArrowLeftPos) + rightScrollArrowWidth + RIGHT_OFFSET_BUFFER;
+            stc.movableContainerLeftPos += (activeTabRightPos - rightArrowLeftPos) + (2 * rightScrollArrowWidth);
             smv.slideMovableContainerToLeftPos();
             return true;
           }
         }
       } else {
         if (activeTabRightPos > rightArrowLeftPos) { // active tab off right side
-          rightScrollArrowWidth = stc.$slideRightArrow.outerWidth();
           stc.movableContainerLeftPos -= (activeTabRightPos - rightArrowLeftPos + rightScrollArrowWidth);
           smv.slideMovableContainerToLeftPos();
           return true;
@@ -1894,6 +1905,8 @@
     cssClassRightArrow: 'glyphicon glyphicon-chevron-right',
     leftArrowContent: '',
     rightArrowContent: '',
+    leftArrowClickTarget: '',
+    rightArrowClickTarget: '',
     tabsLiContent: null,
     tabsPostProcessors: null,
     enableSwiping: false,

@@ -27,7 +27,7 @@ function EventHandlers(scrollingTabsControl) {
     var evh = this,
         stc = evh.stc;
 
-    stc.$slideLeftArrow.data(CONSTANTS.DATA_KEY_IS_MOUSEDOWN, true);
+    stc.$slideLeftArrowClickTarget.data(CONSTANTS.DATA_KEY_IS_MOUSEDOWN, true);
     stc.scrollMovement.continueSlideMovableContainerLeft();
   };
 
@@ -35,7 +35,7 @@ function EventHandlers(scrollingTabsControl) {
     var evh = this,
         stc = evh.stc;
 
-    stc.$slideRightArrow.data(CONSTANTS.DATA_KEY_IS_MOUSEDOWN, true);
+    stc.$slideRightArrowClickTarget.data(CONSTANTS.DATA_KEY_IS_MOUSEDOWN, true);
     stc.scrollMovement.continueSlideMovableContainerRight();
   };
 
@@ -43,14 +43,14 @@ function EventHandlers(scrollingTabsControl) {
     var evh = this,
         stc = evh.stc;
 
-    stc.$slideLeftArrow.data(CONSTANTS.DATA_KEY_IS_MOUSEDOWN, false);
+    stc.$slideLeftArrowClickTarget.data(CONSTANTS.DATA_KEY_IS_MOUSEDOWN, false);
   };
 
   p.handleMouseupOnSlideMovContainerRightArrow = function () {
     var evh = this,
         stc = evh.stc;
 
-    stc.$slideRightArrow.data(CONSTANTS.DATA_KEY_IS_MOUSEDOWN, false);
+    stc.$slideRightArrowClickTarget.data(CONSTANTS.DATA_KEY_IS_MOUSEDOWN, false);
   };
 
   p.handleWindowResize = function () {
