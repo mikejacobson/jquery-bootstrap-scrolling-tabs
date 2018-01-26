@@ -35,6 +35,7 @@
     <div class="st-demo-header">jquery-bootstrap-scrolling-tabs Demo - Markup Only
         <button type="button" id="btn-destroy">Destroy</button>
         <button type="button" id="btn-refresh">Refresh</button>
+        <button id="btn-scroll">Scroll</button>
     </div>
 
 
@@ -104,12 +105,20 @@
     <script src="../node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
     <script src="../dist/jquery.scrolling-tabs.js"></script>
 
+<style>
+.scrtabs-tab-scroll-arrow:hover {
+  
+}
+</style>
     <script>
     ;(function($) {
       'use strict';
 
       $('#btn-destroy').click(destroy);
       $('#btn-refresh').click(refresh);
+      $('#btn-scroll').click(() => {
+        $('.nav-tabs').scrollingTabs('scrollToActiveTab');
+      })
 
       $(activate);
 
@@ -118,7 +127,19 @@
         $('.nav-tabs').scrollingTabs({
           enableSwiping: true,
           scrollToTabEdge: true,
-          disableScrollArrowsOnFullyScrolled: true
+          disableScrollArrowsOnFullyScrolled: true,
+          leftArrowContent: `
+          <div class="scrtabs-tab-scroll-arrow scrtabs-tab-scroll-arrow-left">
+            <button data-scrtabs-click-target type="button">
+              <i class="mdi mdi-chevron-left mdi-24px"></i>
+            </button>
+          </div>`,
+          rightArrowContent: `
+          <div class="scrtabs-tab-scroll-arrow scrtabs-tab-scroll-arrow-right">
+            <button data-scrtabs-click-target type="button">
+              <i class="mdi mdi-chevron-left mdi-24px"></i>
+            </button>
+          </div>`
         })
         .on('ready.scrtabs', function() {
           $('.tab-content').show();

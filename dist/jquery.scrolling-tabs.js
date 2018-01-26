@@ -474,13 +474,22 @@
         $leftArrow = stc.$fixedContainer.prev();
         $rightArrow = stc.$fixedContainer.next();
   
-        $leftArrowClickTarget = settings.leftArrowClickTarget ?
-            $tabsContainer.find(settings.leftArrowClickTarget) :
+        // if we have custom arrow content, we might have a click target defined
+        $leftArrowClickTarget = settings.leftArrowContent ?
+            $leftArrow.find('[scrtabs-click-target],[data-scrtabs-click-target]') :
             $leftArrow;
   
-        $rightArrowClickTarget = settings.rightArrowClickTarget ?
-            $tabsContainer.find(settings.rightArrowClickTarget) :
+        $rightArrowClickTarget = settings.rightArrowContent ?
+            $rightArrow.find('[scrtabs-click-target],[data-scrtabs-click-target]') :
             $rightArrow;
+  
+        if (!$leftArrowClickTarget.length) {
+          $leftArrowClickTarget = $leftArrow;
+        }
+  
+        if (!$rightArrowClickTarget.length) {
+          $rightArrowClickTarget = $rightArrow;
+        }
   
         stc.$movableContainer = $tabsContainer.find('.scrtabs-tabs-movable-container');
         stc.$tabsUl = $tabsContainer.find('.nav-tabs');
@@ -1905,8 +1914,6 @@
     cssClassRightArrow: 'glyphicon glyphicon-chevron-right',
     leftArrowContent: '',
     rightArrowContent: '',
-    leftArrowClickTarget: '',
-    rightArrowClickTarget: '',
     tabsLiContent: null,
     tabsPostProcessors: null,
     enableSwiping: false,
