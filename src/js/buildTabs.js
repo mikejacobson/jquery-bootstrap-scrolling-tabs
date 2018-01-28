@@ -34,7 +34,7 @@ var tabElements = (function () {
         $movableContainer = $('<div class="scrtabs-tabs-movable-container"></div>');
 
     if (settings.disableScrollArrowsOnFullyScrolled) {
-      $leftArrow.add($rightArrow).addClass('scrtabs-disable');
+      $leftArrow.add($rightArrow).addClass(CONSTANTS.CSS_CLASSES.SCROLL_ARROW_DISABLE);
     }
 
     return $tabsContainer

@@ -47,9 +47,17 @@
   .scrtabs-tab-scroll-arrow:hover {
     background-color: #eeeeee; }
 
-.scrtabs-tab-scroll-arrow.scrtabs-disable {
+.scrtabs-tab-scroll-arrow.scrtabs-with-click-target {
+  cursor: default; }
+
+.scrtabs-tab-scroll-arrow.scrtabs-disable,
+.scrtabs-tab-scroll-arrow.scrtabs-disable [scrtabs-click-target],
+.scrtabs-tab-scroll-arrow.scrtabs-disable [data-scrtabs-click-target] {
   color: #ddd;
   cursor: default; }
+
+.scrtabs-tab-scroll-arrow.scrtabs-disable:hover {
+  background-color: initial; }
 
 .scrtabs-tabs-fixed-container ul.nav-tabs > li {
   white-space: nowrap; }

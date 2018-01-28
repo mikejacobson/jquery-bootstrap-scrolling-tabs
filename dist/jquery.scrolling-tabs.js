@@ -279,7 +279,8 @@
     CSS_CLASSES: {
       BOOTSTRAP4: 'scrtabs-bootstrap4',
       RTL: 'scrtabs-rtl',
-      SCROLL_ARROW_DISABLE: 'scrtabs-disable'
+      SCROLL_ARROW_DISABLE: 'scrtabs-disable',
+      SCROLL_ARROW_WITH_CLICK_TARGET: 'scrtabs-with-click-target'
     },
   
     SLIDE_DIRECTION: {
@@ -475,19 +476,23 @@
         $rightArrow = stc.$fixedContainer.next();
   
         // if we have custom arrow content, we might have a click target defined
-        $leftArrowClickTarget = settings.leftArrowContent ?
-            $leftArrow.find('[scrtabs-click-target],[data-scrtabs-click-target]') :
-            $leftArrow;
+        if (settings.leftArrowContent) {
+          $leftArrowClickTarget = $leftArrow.find('[scrtabs-click-target],[data-scrtabs-click-target]');
+        }
   
-        $rightArrowClickTarget = settings.rightArrowContent ?
-            $rightArrow.find('[scrtabs-click-target],[data-scrtabs-click-target]') :
-            $rightArrow;
+        if (settings.rightArrowContent) {
+          $rightArrowClickTarget = $rightArrow.find('[scrtabs-click-target],[data-scrtabs-click-target]');
+        }
   
-        if (!$leftArrowClickTarget.length) {
+        if ($leftArrowClickTarget && $leftArrowClickTarget.length) {
+          $leftArrow.addClass(CONSTANTS.CSS_CLASSES.SCROLL_ARROW_WITH_CLICK_TARGET);
+        } else {
           $leftArrowClickTarget = $leftArrow;
         }
   
-        if (!$rightArrowClickTarget.length) {
+        if ($rightArrowClickTarget && $rightArrowClickTarget.length) {
+          $rightArrow.addClass(CONSTANTS.CSS_CLASSES.SCROLL_ARROW_WITH_CLICK_TARGET);
+        } else {
           $rightArrowClickTarget = $rightArrow;
         }
   
@@ -1158,7 +1163,7 @@
           $movableContainer = $('<div class="scrtabs-tabs-movable-container"></div>');
   
       if (settings.disableScrollArrowsOnFullyScrolled) {
-        $leftArrow.add($rightArrow).addClass('scrtabs-disable');
+        $leftArrow.add($rightArrow).addClass(CONSTANTS.CSS_CLASSES.SCROLL_ARROW_DISABLE);
       }
   
       return $tabsContainer

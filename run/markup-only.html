@@ -106,8 +106,11 @@
     <script src="../dist/jquery.scrolling-tabs.js"></script>
 
 <style>
+.scrtabs-tab-scroll-arrow {
+  width: 60px;
+}
 .scrtabs-tab-scroll-arrow:hover {
-  
+  background-color: #fff;
 }
 </style>
     <script>
@@ -131,13 +134,13 @@
           leftArrowContent: `
           <div class="scrtabs-tab-scroll-arrow scrtabs-tab-scroll-arrow-left">
             <button data-scrtabs-click-target type="button">
-              <i class="mdi mdi-chevron-left mdi-24px"></i>
+              <i class="mdi mdi-chevron-left mdi-24px">LFT</i>
             </button>
           </div>`,
           rightArrowContent: `
           <div class="scrtabs-tab-scroll-arrow scrtabs-tab-scroll-arrow-right">
             <button data-scrtabs-click-target type="button">
-              <i class="mdi mdi-chevron-left mdi-24px"></i>
+              <i class="mdi mdi-chevron-left mdi-24px">RGT</i>
             </button>
           </div>`
         })

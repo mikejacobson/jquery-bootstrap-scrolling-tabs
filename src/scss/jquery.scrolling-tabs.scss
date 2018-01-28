@@ -65,9 +65,19 @@ $scrtabs-background-color-hover: rgb(238, 238, 238) !default;
   }
 }
 
-.scrtabs-tab-scroll-arrow.scrtabs-disable {
+.scrtabs-tab-scroll-arrow.scrtabs-with-click-target {
+  cursor: default;
+}
+
+.scrtabs-tab-scroll-arrow.scrtabs-disable,
+.scrtabs-tab-scroll-arrow.scrtabs-disable [scrtabs-click-target],
+.scrtabs-tab-scroll-arrow.scrtabs-disable [data-scrtabs-click-target] {
   color: #ddd;
-  cursor: default
+  cursor: default;
+}
+
+.scrtabs-tab-scroll-arrow.scrtabs-disable:hover {
+  background-color: initial;
 }
 
 .scrtabs-tabs-fixed-container ul.nav-tabs > li {
