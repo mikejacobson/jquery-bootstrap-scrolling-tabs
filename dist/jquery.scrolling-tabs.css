@@ -35,7 +35,6 @@
   border: 1px solid #dddddd;
   border-top: none;
   color: #428bca;
-  cursor: pointer;
   display: none;
   float: left;
   font-size: 12px;
@@ -46,6 +45,11 @@
   width: 20px; }
   .scrtabs-tab-scroll-arrow:hover {
     background-color: #eeeeee; }
+
+.scrtabs-tab-scroll-arrow,
+.scrtabs-tab-scroll-arrow [scrtabs-click-target],
+.scrtabs-tab-scroll-arrow [data-scrtabs-click-target] {
+  cursor: pointer; }
 
 .scrtabs-tab-scroll-arrow.scrtabs-with-click-target {
   cursor: default; }

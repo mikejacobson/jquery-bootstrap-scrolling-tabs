@@ -51,7 +51,6 @@ $scrtabs-background-color-hover: rgb(238, 238, 238) !default;
   border: $scrtabs-border-color;
   border-top: none;
   color: $scrtabs-foreground-color;
-  cursor: pointer;
   display: none;
   float: left;
   font-size: 12px;
@@ -63,6 +62,12 @@ $scrtabs-background-color-hover: rgb(238, 238, 238) !default;
   &:hover {
     background-color: $scrtabs-background-color-hover;
   }
+}
+
+.scrtabs-tab-scroll-arrow,
+.scrtabs-tab-scroll-arrow [scrtabs-click-target],
+.scrtabs-tab-scroll-arrow [data-scrtabs-click-target] {
+  cursor: pointer;
 }
 
 .scrtabs-tab-scroll-arrow.scrtabs-with-click-target {
