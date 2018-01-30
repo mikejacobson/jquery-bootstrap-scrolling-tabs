@@ -302,6 +302,7 @@
     CSS_CLASSES: {
       BOOTSTRAP4: 'scrtabs-bootstrap4',
       RTL: 'scrtabs-rtl',
+      SCROLL_ARROW_CLICK_TARGET: 'scrtabs-click-target',
       SCROLL_ARROW_DISABLE: 'scrtabs-disable',
       SCROLL_ARROW_WITH_CLICK_TARGET: 'scrtabs-with-click-target'
     },
@@ -500,11 +501,11 @@
   
         // if we have custom arrow content, we might have a click target defined
         if (settings.leftArrowContent) {
-          $leftArrowClickTarget = $leftArrow.find('.scrtabs-click-target');
+          $leftArrowClickTarget = $leftArrow.find('.' + CONSTANTS.CSS_CLASSES.SCROLL_ARROW_CLICK_TARGET);
         }
   
         if (settings.rightArrowContent) {
-          $rightArrowClickTarget = $rightArrow.find('.scrtabs-click-target');
+          $rightArrowClickTarget = $rightArrow.find('.' + CONSTANTS.CSS_CLASSES.SCROLL_ARROW_CLICK_TARGET);
         }
   
         if ($leftArrowClickTarget && $leftArrowClickTarget.length) {

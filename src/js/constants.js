@@ -12,6 +12,7 @@ var CONSTANTS = {
   CSS_CLASSES: {
     BOOTSTRAP4: 'scrtabs-bootstrap4',
     RTL: 'scrtabs-rtl',
+    SCROLL_ARROW_CLICK_TARGET: 'scrtabs-click-target',
     SCROLL_ARROW_DISABLE: 'scrtabs-disable',
     SCROLL_ARROW_WITH_CLICK_TARGET: 'scrtabs-with-click-target'
   },
