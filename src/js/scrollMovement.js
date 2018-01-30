@@ -16,7 +16,7 @@ function ScrollMovement(scrollingTabsControl) {
 
     setTimeout(function() {
       if (stc.movableContainerLeftPos <= smv.getMinPos()  ||
-          !stc.$slideLeftArrow.data(CONSTANTS.DATA_KEY_IS_MOUSEDOWN)) {
+          !stc.$slideLeftArrowClickTarget.data(CONSTANTS.DATA_KEY_IS_MOUSEDOWN)) {
         return;
       }
 
@@ -32,7 +32,7 @@ function ScrollMovement(scrollingTabsControl) {
 
     setTimeout(function() {
       if (stc.movableContainerLeftPos >= 0  ||
-          !stc.$slideRightArrow.data(CONSTANTS.DATA_KEY_IS_MOUSEDOWN)) {
+          !stc.$slideRightArrowClickTarget.data(CONSTANTS.DATA_KEY_IS_MOUSEDOWN)) {
         return;
       }
 
@@ -181,7 +181,6 @@ function ScrollMovement(scrollingTabsControl) {
   p.scrollToActiveTab = function () {
     var smv = this,
         stc = smv.stc,
-        RIGHT_OFFSET_BUFFER = 20,
         $activeTab,
         $activeTabAnchor,
         activeTabLeftPos,
@@ -207,6 +206,8 @@ function ScrollMovement(scrollingTabsControl) {
       return;
     }
 
+    rightScrollArrowWidth = stc.$slideRightArrow.outerWidth();
+
     /**
      * @author poletaew
      * We need relative offset (depends on $fixedContainer), don't absolute
@@ -214,7 +215,7 @@ function ScrollMovement(scrollingTabsControl) {
     activeTabLeftPos = $activeTab.offset().left - stc.$fixedContainer.offset().left;
     activeTabRightPos = activeTabLeftPos + $activeTab.outerWidth();
 
-    rightArrowLeftPos = stc.fixedContainerWidth - RIGHT_OFFSET_BUFFER;
+    rightArrowLeftPos = stc.fixedContainerWidth - rightScrollArrowWidth;
 
     if (stc.rtl) {
       leftScrollArrowWidth = stc.$slideLeftArrow.outerWidth();
@@ -224,16 +225,14 @@ function ScrollMovement(scrollingTabsControl) {
         smv.slideMovableContainerToLeftPos();
         return true;
       } else { // active tab off right side
-        rightScrollArrowWidth = stc.$slideRightArrow.outerWidth();
         if (activeTabRightPos > rightArrowLeftPos) {
-          stc.movableContainerLeftPos += (activeTabRightPos - rightArrowLeftPos) + rightScrollArrowWidth + RIGHT_OFFSET_BUFFER;
+          stc.movableContainerLeftPos += (activeTabRightPos - rightArrowLeftPos) + (2 * rightScrollArrowWidth);
           smv.slideMovableContainerToLeftPos();
           return true;
         }
       }
     } else {
       if (activeTabRightPos > rightArrowLeftPos) { // active tab off right side
-        rightScrollArrowWidth = stc.$slideRightArrow.outerWidth();
         stc.movableContainerLeftPos -= (activeTabRightPos - rightArrowLeftPos + rightScrollArrowWidth);
         smv.slideMovableContainerToLeftPos();
         return true;

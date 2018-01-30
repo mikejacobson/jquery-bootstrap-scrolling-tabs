@@ -1,6 +1,6 @@
 /**
  * jquery-bootstrap-scrolling-tabs
- * @version v2.3.1
+ * @version v2.4.0
  * @link https://github.com/mikejacobson/jquery-bootstrap-scrolling-tabs
  * @author Mike Jacobson <michaeljjacobson1@gmail.com>
  * @license MIT License, http://www.opensource.org/licenses/MIT
@@ -176,6 +176,29 @@
  *                          default scrtabs-tab-scroll-arrow classes.
  *                          This plunk shows it working with svg icons:
  *                          http://plnkr.co/edit/2MdZCAnLyeU40shxaol3?p=preview
+ *
+ *                          When using this option, you can also mark a child
+ *                          element within the arrow content as the click target
+ *                          if you don't want the entire content to be
+ *                          clickable. You do that my adding the CSS class
+ *                          'scrtabs-click-target' to the element that should
+ *                          be clickable, like so:
+ *
+ *                           leftArrowContent: [
+ *                               '<div class="scrtabs-tab-scroll-arrow scrtabs-tab-scroll-arrow-left">',
+ *                               '  <button class="scrtabs-click-target" type="button">',
+ *                               '    <i class="custom-chevron-left"></i>',
+ *                               '  </button>',
+ *                               '</div>'
+ *                             ].join(''),
+ *                             rightArrowContent: [
+ *                               '<div class="scrtabs-tab-scroll-arrow scrtabs-tab-scroll-arrow-right">',
+ *                               '  <button class="scrtabs-click-target" type="button">',
+ *                               '    <i class="custom-chevron-right"></i>',
+ *                               '  </button>',
+ *                               '</div>'
+ *                             ].join('')
+ *
  *        enableRtlSupport:
  *                          set to true if you want your site to support
  *                          right-to-left languages. If true, the plugin will
@@ -279,7 +302,9 @@
     CSS_CLASSES: {
       BOOTSTRAP4: 'scrtabs-bootstrap4',
       RTL: 'scrtabs-rtl',
-      SCROLL_ARROW_DISABLE: 'scrtabs-disable'
+      SCROLL_ARROW_CLICK_TARGET: 'scrtabs-click-target',
+      SCROLL_ARROW_DISABLE: 'scrtabs-disable',
+      SCROLL_ARROW_WITH_CLICK_TARGET: 'scrtabs-with-click-target'
     },
   
     SLIDE_DIRECTION: {
@@ -346,7 +371,7 @@
       p.initElements = function (options) {
         var ehd = this;
   
-        ehd.setElementReferences();
+        ehd.setElementReferences(options);
         ehd.setEventListeners(options);
       };
   
@@ -451,12 +476,14 @@
         return actionsTaken;
       };
   
-      p.setElementReferences = function () {
+      p.setElementReferences = function (settings) {
         var ehd = this,
             stc = ehd.stc,
             $tabsContainer = stc.$tabsContainer,
             $leftArrow,
-            $rightArrow;
+            $rightArrow,
+            $leftArrowClickTarget,
+            $rightArrowClickTarget;
   
         stc.isNavPills = false;
   
@@ -471,6 +498,27 @@
         stc.$fixedContainer = $tabsContainer.find('.scrtabs-tabs-fixed-container');
         $leftArrow = stc.$fixedContainer.prev();
         $rightArrow = stc.$fixedContainer.next();
+  
+        // if we have custom arrow content, we might have a click target defined
+        if (settings.leftArrowContent) {
+          $leftArrowClickTarget = $leftArrow.find('.' + CONSTANTS.CSS_CLASSES.SCROLL_ARROW_CLICK_TARGET);
+        }
+  
+        if (settings.rightArrowContent) {
+          $rightArrowClickTarget = $rightArrow.find('.' + CONSTANTS.CSS_CLASSES.SCROLL_ARROW_CLICK_TARGET);
+        }
+  
+        if ($leftArrowClickTarget && $leftArrowClickTarget.length) {
+          $leftArrow.addClass(CONSTANTS.CSS_CLASSES.SCROLL_ARROW_WITH_CLICK_TARGET);
+        } else {
+          $leftArrowClickTarget = $leftArrow;
+        }
+  
+        if ($rightArrowClickTarget && $rightArrowClickTarget.length) {
+          $rightArrow.addClass(CONSTANTS.CSS_CLASSES.SCROLL_ARROW_WITH_CLICK_TARGET);
+        } else {
+          $rightArrowClickTarget = $rightArrow;
+        }
   
         stc.$movableContainer = $tabsContainer.find('.scrtabs-tabs-movable-container');
         stc.$tabsUl = $tabsContainer.find('.nav-tabs');
@@ -487,7 +535,9 @@
         stc.$tabsLiCollection = stc.$tabsUl.find('> li');
   
         stc.$slideLeftArrow = stc.reverseScroll ? $leftArrow : $rightArrow;
+        stc.$slideLeftArrowClickTarget = stc.reverseScroll ? $leftArrowClickTarget : $rightArrowClickTarget;
         stc.$slideRightArrow = stc.reverseScroll ? $rightArrow : $leftArrow;
+        stc.$slideRightArrowClickTarget = stc.reverseScroll ? $rightArrowClickTarget : $leftArrowClickTarget;
         stc.$scrollArrows = stc.$slideLeftArrow.add(stc.$slideRightArrow);
   
         stc.$win = $(window);
@@ -515,13 +565,13 @@
           ehd.listenForTouchEvents();
         }
   
-        stc.$slideLeftArrow
+        stc.$slideLeftArrowClickTarget
           .off('.scrtabs')
           .on(ev.MOUSEDOWN, function (e) { evh.handleMousedownOnSlideMovContainerLeftArrow.call(evh, e); })
           .on(ev.MOUSEUP, function (e) { evh.handleMouseupOnSlideMovContainerLeftArrow.call(evh, e); })
           .on(ev.CLICK, function (e) { evh.handleClickOnSlideMovContainerLeftArrow.call(evh, e); });
   
-        stc.$slideRightArrow
+        stc.$slideRightArrowClickTarget
           .off('.scrtabs')
           .on(ev.MOUSEDOWN, function (e) { evh.handleMousedownOnSlideMovContainerRightArrow.call(evh, e); })
           .on(ev.MOUSEUP, function (e) { evh.handleMouseupOnSlideMovContainerRightArrow.call(evh, e); })
@@ -655,7 +705,7 @@
       var evh = this,
           stc = evh.stc;
   
-      stc.$slideLeftArrow.data(CONSTANTS.DATA_KEY_IS_MOUSEDOWN, true);
+      stc.$slideLeftArrowClickTarget.data(CONSTANTS.DATA_KEY_IS_MOUSEDOWN, true);
       stc.scrollMovement.continueSlideMovableContainerLeft();
     };
   
@@ -663,7 +713,7 @@
       var evh = this,
           stc = evh.stc;
   
-      stc.$slideRightArrow.data(CONSTANTS.DATA_KEY_IS_MOUSEDOWN, true);
+      stc.$slideRightArrowClickTarget.data(CONSTANTS.DATA_KEY_IS_MOUSEDOWN, true);
       stc.scrollMovement.continueSlideMovableContainerRight();
     };
   
@@ -671,14 +721,14 @@
       var evh = this,
           stc = evh.stc;
   
-      stc.$slideLeftArrow.data(CONSTANTS.DATA_KEY_IS_MOUSEDOWN, false);
+      stc.$slideLeftArrowClickTarget.data(CONSTANTS.DATA_KEY_IS_MOUSEDOWN, false);
     };
   
     p.handleMouseupOnSlideMovContainerRightArrow = function () {
       var evh = this,
           stc = evh.stc;
   
-      stc.$slideRightArrow.data(CONSTANTS.DATA_KEY_IS_MOUSEDOWN, false);
+      stc.$slideRightArrowClickTarget.data(CONSTANTS.DATA_KEY_IS_MOUSEDOWN, false);
     };
   
     p.handleWindowResize = function () {
@@ -714,7 +764,7 @@
   
       setTimeout(function() {
         if (stc.movableContainerLeftPos <= smv.getMinPos()  ||
-            !stc.$slideLeftArrow.data(CONSTANTS.DATA_KEY_IS_MOUSEDOWN)) {
+            !stc.$slideLeftArrowClickTarget.data(CONSTANTS.DATA_KEY_IS_MOUSEDOWN)) {
           return;
         }
   
@@ -730,7 +780,7 @@
   
       setTimeout(function() {
         if (stc.movableContainerLeftPos >= 0  ||
-            !stc.$slideRightArrow.data(CONSTANTS.DATA_KEY_IS_MOUSEDOWN)) {
+            !stc.$slideRightArrowClickTarget.data(CONSTANTS.DATA_KEY_IS_MOUSEDOWN)) {
           return;
         }
   
@@ -879,7 +929,6 @@
     p.scrollToActiveTab = function () {
       var smv = this,
           stc = smv.stc,
-          RIGHT_OFFSET_BUFFER = 20,
           $activeTab,
           $activeTabAnchor,
           activeTabLeftPos,
@@ -905,6 +954,8 @@
         return;
       }
   
+      rightScrollArrowWidth = stc.$slideRightArrow.outerWidth();
+  
       /**
        * @author poletaew
        * We need relative offset (depends on $fixedContainer), don't absolute
@@ -912,7 +963,7 @@
       activeTabLeftPos = $activeTab.offset().left - stc.$fixedContainer.offset().left;
       activeTabRightPos = activeTabLeftPos + $activeTab.outerWidth();
   
-      rightArrowLeftPos = stc.fixedContainerWidth - RIGHT_OFFSET_BUFFER;
+      rightArrowLeftPos = stc.fixedContainerWidth - rightScrollArrowWidth;
   
       if (stc.rtl) {
         leftScrollArrowWidth = stc.$slideLeftArrow.outerWidth();
@@ -922,16 +973,14 @@
           smv.slideMovableContainerToLeftPos();
           return true;
         } else { // active tab off right side
-          rightScrollArrowWidth = stc.$slideRightArrow.outerWidth();
           if (activeTabRightPos > rightArrowLeftPos) {
-            stc.movableContainerLeftPos += (activeTabRightPos - rightArrowLeftPos) + rightScrollArrowWidth + RIGHT_OFFSET_BUFFER;
+            stc.movableContainerLeftPos += (activeTabRightPos - rightArrowLeftPos) + (2 * rightScrollArrowWidth);
             smv.slideMovableContainerToLeftPos();
             return true;
           }
         }
       } else {
         if (activeTabRightPos > rightArrowLeftPos) { // active tab off right side
-          rightScrollArrowWidth = stc.$slideRightArrow.outerWidth();
           stc.movableContainerLeftPos -= (activeTabRightPos - rightArrowLeftPos + rightScrollArrowWidth);
           smv.slideMovableContainerToLeftPos();
           return true;
@@ -1138,7 +1187,7 @@
           $movableContainer = $('<div class="scrtabs-tabs-movable-container"></div>');
   
       if (settings.disableScrollArrowsOnFullyScrolled) {
-        $leftArrow.add($rightArrow).addClass('scrtabs-disable');
+        $leftArrow.add($rightArrow).addClass(CONSTANTS.CSS_CLASSES.SCROLL_ARROW_DISABLE);
       }
   
       return $tabsContainer
