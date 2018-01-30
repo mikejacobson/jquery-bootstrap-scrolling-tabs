@@ -47,16 +47,14 @@
     background-color: #eeeeee; }
 
 .scrtabs-tab-scroll-arrow,
-.scrtabs-tab-scroll-arrow [scrtabs-click-target],
-.scrtabs-tab-scroll-arrow [data-scrtabs-click-target] {
+.scrtabs-tab-scroll-arrow .scrtabs-click-target {
   cursor: pointer; }
 
 .scrtabs-tab-scroll-arrow.scrtabs-with-click-target {
   cursor: default; }
 
 .scrtabs-tab-scroll-arrow.scrtabs-disable,
-.scrtabs-tab-scroll-arrow.scrtabs-disable [scrtabs-click-target],
-.scrtabs-tab-scroll-arrow.scrtabs-disable [data-scrtabs-click-target] {
+.scrtabs-tab-scroll-arrow.scrtabs-disable .scrtabs-click-target {
   color: #ddd;
   cursor: default; }
 

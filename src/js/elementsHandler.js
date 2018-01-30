@@ -142,11 +142,11 @@ function ElementsHandler(scrollingTabsControl) {
 
       // if we have custom arrow content, we might have a click target defined
       if (settings.leftArrowContent) {
-        $leftArrowClickTarget = $leftArrow.find('[scrtabs-click-target],[data-scrtabs-click-target]');
+        $leftArrowClickTarget = $leftArrow.find('.scrtabs-click-target');
       }
 
       if (settings.rightArrowContent) {
-        $rightArrowClickTarget = $rightArrow.find('[scrtabs-click-target],[data-scrtabs-click-target]');
+        $rightArrowClickTarget = $rightArrow.find('.scrtabs-click-target');
       }
 
       if ($leftArrowClickTarget && $leftArrowClickTarget.length) {

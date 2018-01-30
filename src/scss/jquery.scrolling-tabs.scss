@@ -65,8 +65,7 @@ $scrtabs-background-color-hover: rgb(238, 238, 238) !default;
 }
 
 .scrtabs-tab-scroll-arrow,
-.scrtabs-tab-scroll-arrow [scrtabs-click-target],
-.scrtabs-tab-scroll-arrow [data-scrtabs-click-target] {
+.scrtabs-tab-scroll-arrow .scrtabs-click-target {
   cursor: pointer;
 }
 
@@ -75,8 +74,7 @@ $scrtabs-background-color-hover: rgb(238, 238, 238) !default;
 }
 
 .scrtabs-tab-scroll-arrow.scrtabs-disable,
-.scrtabs-tab-scroll-arrow.scrtabs-disable [scrtabs-click-target],
-.scrtabs-tab-scroll-arrow.scrtabs-disable [data-scrtabs-click-target] {
+.scrtabs-tab-scroll-arrow.scrtabs-disable .scrtabs-click-target {
   color: #ddd;
   cursor: default;
 }

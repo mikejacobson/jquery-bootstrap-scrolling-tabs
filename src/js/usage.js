@@ -169,6 +169,29 @@
  *                          default scrtabs-tab-scroll-arrow classes.
  *                          This plunk shows it working with svg icons:
  *                          http://plnkr.co/edit/2MdZCAnLyeU40shxaol3?p=preview
+ *
+ *                          When using this option, you can also mark a child
+ *                          element within the arrow content as the click target
+ *                          if you don't want the entire content to be
+ *                          clickable. You do that my adding the CSS class
+ *                          'scrtabs-click-target' to the element that should
+ *                          be clickable, like so:
+ *
+ *                           leftArrowContent: [
+ *                               '<div class="scrtabs-tab-scroll-arrow scrtabs-tab-scroll-arrow-left">',
+ *                               '  <button class="scrtabs-click-target" type="button">',
+ *                               '    <i class="custom-chevron-left"></i>',
+ *                               '  </button>',
+ *                               '</div>'
+ *                             ].join(''),
+ *                             rightArrowContent: [
+ *                               '<div class="scrtabs-tab-scroll-arrow scrtabs-tab-scroll-arrow-right">',
+ *                               '  <button class="scrtabs-click-target" type="button">',
+ *                               '    <i class="custom-chevron-right"></i>',
+ *                               '  </button>',
+ *                               '</div>'
+ *                             ].join('')
+ *
  *        enableRtlSupport:
  *                          set to true if you want your site to support
  *                          right-to-left languages. If true, the plugin will
