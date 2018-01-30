@@ -11,15 +11,18 @@
       .left-side {
         width: 50%;
       }
+
       .right-side {
         width: 50%;
       }
+
       .st-demo-header {
         background-color: #666666;
         color: white;
         font-size: 24px;
         padding: 8px 24px;
       }
+
       .st-demo-header button {
         color: black;
         font-size: 12px;
@@ -32,6 +35,7 @@
     <div class="st-demo-header">jquery-bootstrap-scrolling-tabs Demo - Markup Only
         <button type="button" id="btn-destroy">Destroy</button>
         <button type="button" id="btn-refresh">Refresh</button>
+        <button id="btn-scroll">Scroll</button>
     </div>
 
 
@@ -101,28 +105,58 @@
     <script src="../node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
     <script src="../dist/jquery.scrolling-tabs.js"></script>
 
+<style>
+.scrtabs-tab-scroll-arrow {
+  width: 60px;
+}
+.scrtabs-tab-scroll-arrow:hover {
+  background-color: #fff;
+}
+</style>
     <script>
     ;(function($) {
       'use strict';
+
       $('#btn-destroy').click(destroy);
       $('#btn-refresh').click(refresh);
+      $('#btn-scroll').click(() => {
+        $('.nav-tabs').scrollingTabs('scrollToActiveTab');
+      })
+
       $(activate);
+
+
       function activate() {
         $('.nav-tabs').scrollingTabs({
           enableSwiping: true,
           scrollToTabEdge: true,
-          disableScrollArrowsOnFullyScrolled: true
+          disableScrollArrowsOnFullyScrolled: true,
+          leftArrowContent: `
+          <div class="scrtabs-tab-scroll-arrow scrtabs-tab-scroll-arrow-left">
+            <button class="scrtabs-click-target" type="button">
+              <i class="mdi mdi-chevron-left mdi-24px">LFT</i>
+            </button>
+          </div>`,
+          rightArrowContent: `
+          <div class="scrtabs-tab-scroll-arrow scrtabs-tab-scroll-arrow-right">
+            <button class="scrtabs-click-target" type="button">
+              <i class="mdi mdi-chevron-left mdi-24px">RGT</i>
+            </button>
+          </div>`
         })
         .on('ready.scrtabs', function() {
           $('.tab-content').show();
         });
       }
+
       function destroy() {
         $('.nav-tabs').scrollingTabs('destroy');
       }
+
       function refresh() {
         $('.nav-tabs').scrollingTabs('refresh');
       }
+
     }(jQuery));
     </script>
   </body>
