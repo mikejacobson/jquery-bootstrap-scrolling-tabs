@@ -186,6 +186,9 @@ function ScrollMovement(scrollingTabsControl) {
         activeTabLeftPos,
         activeTabRightPos,
         rightArrowLeftPos,
+        activeTabWidth,
+        leftPosOffset,
+        offsetToMiddle,
         leftScrollArrowWidth,
         rightScrollArrowWidth;
 
@@ -207,13 +210,14 @@ function ScrollMovement(scrollingTabsControl) {
     }
 
     rightScrollArrowWidth = stc.$slideRightArrow.outerWidth();
+    activeTabWidth = $activeTab.outerWidth();
 
     /**
      * @author poletaew
      * We need relative offset (depends on $fixedContainer), don't absolute
      */
     activeTabLeftPos = $activeTab.offset().left - stc.$fixedContainer.offset().left;
-    activeTabRightPos = activeTabLeftPos + $activeTab.outerWidth();
+    activeTabRightPos = activeTabLeftPos + activeTabWidth;
 
     rightArrowLeftPos = stc.fixedContainerWidth - rightScrollArrowWidth;
 
@@ -233,13 +237,17 @@ function ScrollMovement(scrollingTabsControl) {
       }
     } else {
       if (activeTabRightPos > rightArrowLeftPos) { // active tab off right side
-        stc.movableContainerLeftPos -= (activeTabRightPos - rightArrowLeftPos + rightScrollArrowWidth);
+        leftPosOffset = activeTabRightPos - rightArrowLeftPos + rightScrollArrowWidth;
+        offsetToMiddle = stc.fixedContainerWidth / 2;
+        leftPosOffset += offsetToMiddle - (activeTabWidth / 2);
+        stc.movableContainerLeftPos -= leftPosOffset;
         smv.slideMovableContainerToLeftPos();
         return true;
       } else {
         leftScrollArrowWidth = stc.$slideLeftArrow.outerWidth();
-        if (activeTabLeftPos < leftScrollArrowWidth) { // active tab off left side
-          stc.movableContainerLeftPos += leftScrollArrowWidth - activeTabLeftPos;
+        if (activeTabLeftPos < 0) { // active tab off left side
+          offsetToMiddle = stc.fixedContainerWidth / 2;
+          stc.movableContainerLeftPos += (-activeTabLeftPos) + offsetToMiddle - (activeTabWidth / 2);
           smv.slideMovableContainerToLeftPos();
           return true;
         }
