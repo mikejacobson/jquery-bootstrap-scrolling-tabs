@@ -1,6 +1,6 @@
 /**
  * jquery-bootstrap-scrolling-tabs
- * @version v2.4.0
+ * @version v2.6.0
  * @link https://github.com/mikejacobson/jquery-bootstrap-scrolling-tabs
  * @author Mike Jacobson <michaeljjacobson1@gmail.com>
  * @license MIT License, http://www.opensource.org/licenses/MIT
@@ -204,6 +204,17 @@
  *                          right-to-left languages. If true, the plugin will
  *                          check the page's <html> tag for attribute dir="rtl"
  *                          and will adjust its behavior accordingly.
+ *        handleDelayedScrollbar:
+ *                          set to true if you experience a situation where the
+ *                          right scroll arrow wraps to the next line due to a
+ *                          vertical scrollbar coming into existence on the page
+ *                          after the plugin already calculated its width without
+ *                          a scrollbar present. This would occur if, for example,
+ *                          the bulk of the page's content loaded after a delay, 
+ *                          and only then did a vertical scrollbar become necessary.
+ *                          It would also occur if a vertical scrollbar only appeared 
+ *                          on selection of a particular tab that had more content 
+ *                          than the default tab.
  *        bootstrapVersion:
  *                          set to 4 if you're using Boostrap 4. Default is 3.
  *                          Bootstrap 4 handles some things differently than 3
@@ -584,11 +595,41 @@
             .on(ev.CLICK, stc.tabClickHandler);
         }
   
+        if (settings.handleDelayedScrollbar) {
+          ehd.listenForDelayedScrollbar();
+        }
+  
         stc.$win
           .off(resizeEventName)
           .smartresizeScrtabs(function (e) { evh.handleWindowResize.call(evh, e); }, resizeEventName);
   
         $('body').on(CONSTANTS.EVENTS.FORCE_REFRESH, stc.elementsHandler.refreshAllElementSizes.bind(stc.elementsHandler));
+      };
+  
+      p.listenForDelayedScrollbar = function () {
+        var iframe = document.createElement('iframe');
+        iframe.id = "scrtabs-scrollbar-resize-listener";
+        iframe.style.cssText = 'height: 0; background-color: transparent; margin: 0; padding: 0; overflow: hidden; border-width: 0; position: absolute; width: 100%;';
+        iframe.onload = function() {
+          var timeout;
+  
+          function handleResize() {
+            try {
+              $(window).trigger('resize');
+              timeout = null;
+            } catch(e) {}
+          }
+  
+          iframe.contentWindow.addEventListener('resize', function() {
+            if (timeout) {
+              clearTimeout(timeout);
+            }
+  
+            timeout = setTimeout(handleResize, 100);
+          });
+        };
+        
+        document.body.appendChild(iframe);
       };
   
       p.setFixedContainerWidth = function () {
@@ -1955,6 +1996,7 @@
     tabsPostProcessors: null,
     enableSwiping: false,
     enableRtlSupport: false,
+    handleDelayedScrollbar: false,
     bootstrapVersion: 3
   };
   

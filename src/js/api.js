@@ -156,5 +156,6 @@ $.fn.scrollingTabs.defaults = {
   tabsPostProcessors: null,
   enableSwiping: false,
   enableRtlSupport: false,
+  handleDelayedScrollbar: false,
   bootstrapVersion: 3
 };
