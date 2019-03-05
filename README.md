@@ -26,6 +26,7 @@ There are also optional features available:
 * [Reverse Scroll](#reverseScroll)
 * [Force Scroll to Tab Edge](#scrollToTabEdge)
 * [Disable Scroll Arrows on Fully Scrolled](#disableScrollArrowsOnFullyScrolled)
+* [Handle Delayed Scrollbar](#handleDelayedScrollbar)
 * [Width Multiplier](#widthMultiplier)
 * [Tab Click Handler](#tabClickHandler)
 * [Custom Scroll Arrow classes](#cssClassArrows)
@@ -138,7 +139,6 @@ $('.nav-tabs').scrollingTabs({
 If you're using the default scroll setting, this will cause the left scroll arrow to disable when the tabs are scrolled fully left (on page load, for example), and the right scroll arrow to disable when the tabs are scrolled fully right.
 
 If you have the `reverseScroll` option set to `true`, the opposite arrows will disable.
-
 
 
 ##### widthMultiplier Option
@@ -367,6 +367,22 @@ $('#tabs-inside-here').scrollingTabs({
 Note that if you have the `reverseScroll` option set to `true`, the opposite arrows will disable.
 
 
+#### <a id="handleDelayedScrollbar"></a>Handle Delayed Scrollbar
+
+If you experience a situation where the right scroll arrow wraps to the next line due to a vertical scrollbar coming into existence on the page *after* the plugin already calculated its width without a scrollbar present, pass in option `handleDelayedScrollbar: true`:
+
+```javascript
+$('.nav-tabs').scrollingTabs({
+  handleDelayedScrollbar: true  
+});
+```
+
+This would occur if, for example, the bulk of the page's content loaded after a delay, and only then did a vertical scrollbar become necessary.
+
+It would also occur if a vertical scrollbar only appeared on selection of a particular tab that had more content than the default tab.
+
+This is not enabled by default because, since a window resize event is not triggered by a vertical scrollbar appearing, it requires adding an iframe to the page that listens for resize events because a scrollbar appearing in the parent window *does* trigger a resize event in the iframe, which then dispatches a resize event to the parent, triggering the plugin to recalculate its width.
+
 
 #### <a id="widthMultiplier"></a>Width Multiplier
 
@@ -546,6 +562,7 @@ $.fn.scrollingTabs.defaults.tabs = myTabs;
 $.fn.scrollingTabs.defaults.forceActiveTab = true;
 $.fn.scrollingTabs.defaults.scrollToTabEdge = true;
 $.fn.scrollingTabs.defaults.disableScrollArrowsOnFullyScrolled = true;
+$.fn.scrollingTabs.defaults.handleDelayedScrollbar = true;
 $.fn.scrollingTabs.defaults.reverseScroll = true;
 $.fn.scrollingTabs.defaults.widthMultiplier = 0.5;
 $.fn.scrollingTabs.defaults.enableSwiping = true;

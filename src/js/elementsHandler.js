@@ -225,11 +225,41 @@ function ElementsHandler(scrollingTabsControl) {
           .on(ev.CLICK, stc.tabClickHandler);
       }
 
+      if (settings.handleDelayedScrollbar) {
+        ehd.listenForDelayedScrollbar();
+      }
+
       stc.$win
         .off(resizeEventName)
         .smartresizeScrtabs(function (e) { evh.handleWindowResize.call(evh, e); }, resizeEventName);
 
       $('body').on(CONSTANTS.EVENTS.FORCE_REFRESH, stc.elementsHandler.refreshAllElementSizes.bind(stc.elementsHandler));
+    };
+
+    p.listenForDelayedScrollbar = function () {
+      var iframe = document.createElement('iframe');
+      iframe.id = "scrtabs-scrollbar-resize-listener";
+      iframe.style.cssText = 'height: 0; background-color: transparent; margin: 0; padding: 0; overflow: hidden; border-width: 0; position: absolute; width: 100%;';
+      iframe.onload = function() {
+        var timeout;
+
+        function handleResize() {
+          try {
+            $(window).trigger('resize');
+            timeout = null;
+          } catch(e) {}
+        }
+
+        iframe.contentWindow.addEventListener('resize', function() {
+          if (timeout) {
+            clearTimeout(timeout);
+          }
+
+          timeout = setTimeout(handleResize, 100);
+        });
+      };
+      
+      document.body.appendChild(iframe);
     };
 
     p.setFixedContainerWidth = function () {

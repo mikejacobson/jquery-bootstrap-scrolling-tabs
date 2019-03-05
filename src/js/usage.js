@@ -197,6 +197,17 @@
  *                          right-to-left languages. If true, the plugin will
  *                          check the page's <html> tag for attribute dir="rtl"
  *                          and will adjust its behavior accordingly.
+ *        handleDelayedScrollbar:
+ *                          set to true if you experience a situation where the
+ *                          right scroll arrow wraps to the next line due to a
+ *                          vertical scrollbar coming into existence on the page
+ *                          after the plugin already calculated its width without
+ *                          a scrollbar present. This would occur if, for example,
+ *                          the bulk of the page's content loaded after a delay, 
+ *                          and only then did a vertical scrollbar become necessary.
+ *                          It would also occur if a vertical scrollbar only appeared 
+ *                          on selection of a particular tab that had more content 
+ *                          than the default tab.
  *        bootstrapVersion:
  *                          set to 4 if you're using Boostrap 4. Default is 3.
  *                          Bootstrap 4 handles some things differently than 3
