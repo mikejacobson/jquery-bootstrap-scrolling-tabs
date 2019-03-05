@@ -1,6 +1,6 @@
 {
   "name": "jquery-bootstrap-scrolling-tabs",
-  "version": "2.5.0",
+  "version": "2.6.0",
   "main": [
     "./dist/jquery.scrolling-tabs.js",
     "./dist/jquery.scrolling-tabs.css"
