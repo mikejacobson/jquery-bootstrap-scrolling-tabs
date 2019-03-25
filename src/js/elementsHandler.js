@@ -208,12 +208,16 @@ function ElementsHandler(scrollingTabsControl) {
 
       stc.$slideLeftArrowClickTarget
         .off('.scrtabs')
+        .on(ev.TOUCH_START, function (e) { evh.handleMousedownOnSlideMovContainerLeftArrow.call(evh, e); })
+        .on(ev.TOUCH_END, function (e) { evh.handleMouseupOnSlideMovContainerLeftArrow.call(evh, e); })
         .on(ev.MOUSEDOWN, function (e) { evh.handleMousedownOnSlideMovContainerLeftArrow.call(evh, e); })
         .on(ev.MOUSEUP, function (e) { evh.handleMouseupOnSlideMovContainerLeftArrow.call(evh, e); })
         .on(ev.CLICK, function (e) { evh.handleClickOnSlideMovContainerLeftArrow.call(evh, e); });
 
       stc.$slideRightArrowClickTarget
         .off('.scrtabs')
+        .on(ev.TOUCH_START, function (e) { evh.handleMousedownOnSlideMovContainerRightArrow.call(evh, e); })
+        .on(ev.TOUCH_END, function (e) { evh.handleMouseupOnSlideMovContainerRightArrow.call(evh, e); })
         .on(ev.MOUSEDOWN, function (e) { evh.handleMousedownOnSlideMovContainerRightArrow.call(evh, e); })
         .on(ev.MOUSEUP, function (e) { evh.handleMouseupOnSlideMovContainerRightArrow.call(evh, e); })
         .on(ev.CLICK, function (e) { evh.handleClickOnSlideMovContainerRightArrow.call(evh, e); });
