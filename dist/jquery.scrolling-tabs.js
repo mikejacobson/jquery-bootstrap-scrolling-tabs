@@ -309,6 +309,7 @@
   
     DATA_KEY_DDMENU_MODIFIED: 'scrtabsddmenumodified',
     DATA_KEY_IS_MOUSEDOWN: 'scrtabsismousedown',
+    DATA_KEY_BOOTSTRAP_TAB: 'bs.tab',
   
     CSS_CLASSES: {
       BOOTSTRAP4: 'scrtabs-bootstrap4',
@@ -1434,6 +1435,11 @@
   
   
   function wrapNavTabsInstanceInScroller($navTabsInstance, settings, readyCallback, attachTabContentToDomCallback) {
+    // Remove tab data stored by Bootstrap in order to fix tabs that were already visited
+    $navTabsInstance
+      .find('a[data-toggle="tab"]')
+      .removeData(CONSTANTS.DATA_KEY_BOOTSTRAP_TAB);
+    
     var $scroller = tabElements.getNewElScrollerElementWrappingNavTabsInstance($navTabsInstance.clone(true), settings), // use clone because we replaceWith later
         scrollingTabsControl = new ScrollingTabsControl($scroller),
         navTabsInstanceData = $navTabsInstance.data('scrtabs');
