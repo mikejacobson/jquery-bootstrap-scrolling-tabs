@@ -232,6 +232,11 @@ function buildNavTabsAndTabContentForTargetElementInstance($targetElInstance, se
 
 
 function wrapNavTabsInstanceInScroller($navTabsInstance, settings, readyCallback, attachTabContentToDomCallback) {
+  // Remove tab data stored by Bootstrap in order to fix tabs that were already visited
+  $navTabsInstance
+    .find('a[data-toggle="tab"]')
+    .removeData(CONSTANTS.DATA_KEY_BOOTSTRAP_TAB);
+  
   var $scroller = tabElements.getNewElScrollerElementWrappingNavTabsInstance($navTabsInstance.clone(true), settings), // use clone because we replaceWith later
       scrollingTabsControl = new ScrollingTabsControl($scroller),
       navTabsInstanceData = $navTabsInstance.data('scrtabs');

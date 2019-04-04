@@ -8,6 +8,7 @@ var CONSTANTS = {
 
   DATA_KEY_DDMENU_MODIFIED: 'scrtabsddmenumodified',
   DATA_KEY_IS_MOUSEDOWN: 'scrtabsismousedown',
+  DATA_KEY_BOOTSTRAP_TAB: 'bs.tab',
 
   CSS_CLASSES: {
     BOOTSTRAP4: 'scrtabs-bootstrap4',
