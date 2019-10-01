@@ -1246,10 +1246,14 @@
                         $rightArrow);
     }
   
-    function getNewElTabAnchor(tab, propNames) {
-      return $('<a role="tab" data-toggle="tab"></a>')
-              .attr('href', '#' + tab[propNames.paneId])
-              .html(tab[propNames.title]);
+    function getNewElTabAnchor(tab, propNames, options) {
+      var $a = $('<a role="tab" data-toggle="tab"></a>')
+                .attr('href', '#' + tab[propNames.paneId])
+                .html(tab[propNames.title]);
+      if (options['cssClassTabsA']) {
+          $a.addClass(options['cssClassTabsA']);
+      }
+      return $a;
     }
   
     function getNewElTabContent() {
@@ -1257,9 +1261,17 @@
     }
   
     function getNewElTabLi(tab, propNames, options) {
+      var aOptions = {
+        cssClassTabsA: options.cssClassTabsA,
+      };
+  
       var liContent = options.tabLiContent || '<li role="presentation" class=""></li>',
           $li = $(liContent),
-          $a = getNewElTabAnchor(tab, propNames).appendTo($li);
+          $a = getNewElTabAnchor(tab, propNames, aOptions).appendTo($li);
+  
+      if (options['cssClassTabsLi']) {
+          $li.addClass(options['cssClassTabsLi']);
+      }
   
       if (tab[propNames.disabled]) {
         $li.addClass('disabled');
@@ -1387,7 +1399,9 @@
       var options = {
         forceActiveTab: true,
         tabLiContent: settings.tabsLiContent && settings.tabsLiContent[index],
-        tabPostProcessor: settings.tabsPostProcessors && settings.tabsPostProcessors[index]
+        tabPostProcessor: settings.tabsPostProcessors && settings.tabsPostProcessors[index],
+        cssClassTabsLi: settings.cssClassTabsLi,
+        cssClassTabsA: settings.cssClassTabsA,
       };
   
       tabElements
@@ -1998,6 +2012,8 @@
     cssClassRightArrow: 'glyphicon glyphicon-chevron-right',
     leftArrowContent: '',
     rightArrowContent: '',
+    cssClassTabsLi: null,
+    cssClassTabsA: null,
     tabsLiContent: null,
     tabsPostProcessors: null,
     enableSwiping: false,

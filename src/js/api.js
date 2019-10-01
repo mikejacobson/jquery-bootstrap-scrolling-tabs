@@ -152,6 +152,8 @@ $.fn.scrollingTabs.defaults = {
   cssClassRightArrow: 'glyphicon glyphicon-chevron-right',
   leftArrowContent: '',
   rightArrowContent: '',
+  cssClassTabsLi: null,
+  cssClassTabsA: null,
   tabsLiContent: null,
   tabsPostProcessors: null,
   enableSwiping: false,
