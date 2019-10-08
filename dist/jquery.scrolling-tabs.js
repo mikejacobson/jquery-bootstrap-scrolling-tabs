@@ -295,10 +295,65 @@
  *
  */
 
+
+if (typeof jQuery === 'undefined') {
+  throw new Error('jquery-bootstrap-scrolling-tabs requires jQuery');
+}
+if (typeof jQuery.fn.tab === 'undefined' ||
+    typeof jQuery.fn.tab.Constructor === 'undefined' ||
+    typeof jQuery.fn.tab.Constructor.VERSION === 'undefined') {
+  throw new Error("jquery-bootstrap-scrolling-tabs requires Bootstrap's tab plugin for jQuery");
+}
+
 ;(function ($, window) {
   'use strict';
   /* jshint unused:false */
 
+  function _getActiveOwner($li, bsVersion) {
+    if (bsVersion == 4) {
+      return $li.find('a[role="tab"]');
+    } else {
+      return $li;
+    }
+  }
+  
+  function _getDisabledOwner($li, bsVersion) {
+    if (bsVersion == 4) {
+      return $li.find('a[role="tab"]');
+    } else {
+      return $li;
+    }
+  }
+  
+  function _getDataToggleOwner($li, bsVersion) {
+    return $li.find('a[role="tab"]');
+  }
+  
+  function isLiActive($li, bsVersion) {
+    return _getActiveOwner($li, bsVersion).hasClass('active');
+  }
+  
+  function isLiDisabled($li, bsVersion) {
+    return _getDisabledOwner($li, bsVersion).hasClass('disabled');
+  }
+  
+  function getActiveLi($scroller, bsVersion) {
+    if (bsVersion == 4) {
+      return $scroller.find('li[role="presentation"] > a[role="tab"].active');
+    } else {
+      return $scroller.find('li[role="presentation"].active');
+    }
+  }
+  
+  function setLiActive($li, state, bsVersion) {
+    _getActiveOwner($li, bsVersion)[state ? 'addClass' : 'removeClass']('active');
+  }
+  
+  function setLiDsiabled($li, state, bsVersion) {
+    _getActiveOwner($li, bsVersion)[state ? 'addClass' : 'removeClass']('disabled');
+    _getDataToggleOwner.attr('data-toggle', state ? '' : 'tab');
+  }
+  
   /* exported CONSTANTS */
   var CONSTANTS = {
     CONTINUOUS_SCROLLING_TIMEOUT_INTERVAL: 50, // timeout interval for repeatedly moving the tabs container
@@ -1250,7 +1305,7 @@
       var $a = $('<a role="tab" data-toggle="tab"></a>')
                 .attr('href', '#' + tab[propNames.paneId])
                 .html(tab[propNames.title]);
-      if (options.bootstrapVersion === 4) {
+      if (options.bootstrapVersion == 4) {
           $a.addClass('nav-link');
       }
       return $a;
@@ -1489,7 +1544,7 @@
   
     $scroller.initTabs();
   
-    listenForDropdownMenuTabs($scroller, scrollingTabsControl);
+    listenForDropdownMenuTabs($scroller, scrollingTabsControl, settings);
   
     return $scroller;
   }
@@ -1567,13 +1622,8 @@
   
     // update tab disabled state if necessary
     if (origTabData[propNames.disabled] !== newTabData[propNames.disabled]) {
-      if (newTabData[propNames.disabled]) { // enabled -> disabled
-        $li.addClass('disabled');
-        $li.find('a[role="tab"]').attr('data-toggle', '');
-      } else { // disabled -> enabled
-        $li.removeClass('disabled');
-        $li.find('a[role="tab"]').attr('data-toggle', 'tab');
-      }
+      setLiDsiabled($li, newTabData[propNames.disabled],
+                    refreshData.options.bootstrapVersion);
   
       origTabData[propNames.disabled] = newTabData[propNames.disabled];
       isInitTabsRequired = true;
@@ -1584,7 +1634,8 @@
       // set the active tab based on the tabs array regardless of the current
       // DOM state, which could have been changed by the user clicking a tab
       // without those changes being reflected back to the tab data
-      $li[newTabData[propNames.active] ? 'addClass' : 'removeClass']('active');
+      setLiActive($li, newTabData[propNames.active],
+                  refreshData.options.bootstrapVersion);
   
       $contentPane[newTabData[propNames.active] ? 'addClass' : 'removeClass']('active');
   
@@ -1613,13 +1664,13 @@
     }
   
     // if this was the active tab, make the closest enabled tab active
-    if ($li.hasClass('active')) {
+    var isActive = isLiActive($li, refreshData.options.bootstrapVersion);
+    if (isActive) {
   
       idxToMakeActive = tabUtils.getIndexOfClosestEnabledTab(refreshData.$currTabLis, tabLiData.currDomIdx);
       if (idxToMakeActive > -1) {
-        refreshData.$currTabLis
-          .eq(idxToMakeActive)
-          .addClass('active');
+        setLiActive(refreshData.$currTabLis.eq(idxToMakeActive),
+                    true, refreshData.options.bootstrapVersion);
   
         if (!ignoreTabPanes) {
           refreshData.$currTabContentPanes
@@ -1709,7 +1760,7 @@
     return isInitTabsRequired;
   }
   
-  function listenForDropdownMenuTabs($scroller, stc) {
+  function listenForDropdownMenuTabs($scroller, stc, options) {
     var $ddMenu;
   
     // for dropdown menus to show, we need to move them out of the
@@ -1726,7 +1777,7 @@
     function handleDropdownShow(e) {
       var $ddParentTabLi = $(e.target),
           ddLiOffset = $ddParentTabLi.offset(),
-          $currActiveTab = $scroller.find('li[role="presentation"].active'),
+          $currActiveTab = getActiveLi($scroller, options.bootstrapVersion),
           ddMenuRightX,
           tabsContainerMaxX,
           ddMenuTargetLeft;
@@ -1738,7 +1789,11 @@
       // if the dropdown's parent tab li isn't already active,
       // we need to deactivate any active menu item in the dropdown
       if ($currActiveTab[0] !== $ddParentTabLi[0]) {
-        $ddMenu.find('li.active').removeClass('active');
+        if (options.bootstrapVersion == 4) {
+          $ddMenu.find('li > a.active').removeClass('active');
+        } else {
+          $ddMenu.find('li.active').removeClass('active');
+        }
       }
   
       // we need to do our own click handling because the built-in
@@ -1770,23 +1825,45 @@
             $selectedMenuItemDropdownMenu = $selectedMenuItemLi.parent('.dropdown-menu'),
             targetPaneId = $selectedMenuItemAnc.attr('href');
   
-        if ($selectedMenuItemLi.hasClass('active')) {
-          return;
+        var isActive;
+        if (options.bootstrapVersion == 4) {
+          isActive = $selectedMenuItemLi.hasClass('active');
+        } else {
+          isActive = $selectedMenuItemLi.find('a').hasClass('active');
         }
+  
+        if (isActive) {
+           return;
+         }
   
         // once we select a menu item from the dropdown, deactivate
         // the current tab (unless it's our parent tab), deactivate
         // any active dropdown menu item, make our parent tab active
         // (if it's not already), and activate the selected menu item
-        $scroller
-          .find('li.active')
-          .not($ddParentTabLi)
-          .add($selectedMenuItemDropdownMenu.find('li.active'))
-          .removeClass('active');
+        if (options.bootstrapVersion == 4) {
+          $scroller
+            .find('li > a.active')
+            .parent('li')
+            .not($ddParentTabLi)
+            .add($selectedMenuItemDropdownMenu.find('li > a.active').parent('li'))
+            .find('a')
+            .removeClass('active');
   
-        $ddParentTabLi
-          .add($selectedMenuItemLi)
-          .addClass('active');
+          $ddParentTabLi
+            .add($selectedMenuItemLi)
+            .find('a')
+            .addClass('active');
+        } else {
+          $scroller
+            .find('li.active')
+            .not($ddParentTabLi)
+            .add($selectedMenuItemDropdownMenu.find('li.active'))
+            .removeClass('active');
+  
+          $ddParentTabLi
+            .add($selectedMenuItemLi)
+            .addClass('active');
+        }
   
         // manually deactivate current active pane and activate our pane
         $('.tab-content .tab-pane.active').removeClass('active');
@@ -1861,6 +1938,15 @@
     scrtabsData.scroller.scrollToActiveTab();
   }
   
+  var bsVersion = (
+    jQuery &&
+    jQuery.fn &&
+    jQuery.fn.tab &&
+    jQuery.fn.tab.Constructor &&
+    jQuery.fn.tab.Constructor.VERSION &&
+    parseInt(jQuery.fn.tab.Constructor.VERSION.split('.')[0])
+  );
+  
   var methods = {
     destroy: function() {
       var $targetEls = this;
@@ -1870,8 +1956,8 @@
   
     init: function(options) {
       if (options.bootstrapVersion != 3 && options.bootstrapVersion != 4) {
-          console.warning('bootstrapVersion =', options.bootstrapVersion,
-                          'is unsupported. Falling back to 3.');
+          console.warn('bootstrapVersion =', options.bootstrapVersion,
+                       'is unsupported. Falling back to 3.');
           options.bootstrapVersion = 3;
       }
       var $targetEls = this,
@@ -2027,9 +2113,11 @@
     enableSwiping: false,
     enableRtlSupport: false,
     handleDelayedScrollbar: false,
-    bootstrapVersion: 3,
+    bootstrapVersion: bsVersion || 3,
   };
   
 
 
-}(jQuery, window));
+}(jQuery,
+  window)
+);

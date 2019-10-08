@@ -47,7 +47,7 @@ var tabElements = (function () {
     var $a = $('<a role="tab" data-toggle="tab"></a>')
               .attr('href', '#' + tab[propNames.paneId])
               .html(tab[propNames.title]);
-    if (options.bootstrapVersion === 4) {
+    if (options.bootstrapVersion == 4) {
         $a.addClass('nav-link');
     }
     return $a;
@@ -286,7 +286,7 @@ function wrapNavTabsInstanceInScroller($navTabsInstance, settings, readyCallback
 
   $scroller.initTabs();
 
-  listenForDropdownMenuTabs($scroller, scrollingTabsControl);
+  listenForDropdownMenuTabs($scroller, scrollingTabsControl, settings);
 
   return $scroller;
 }

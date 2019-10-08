@@ -71,13 +71,8 @@ function checkForTabPropertiesUpdated(refreshData) {
 
   // update tab disabled state if necessary
   if (origTabData[propNames.disabled] !== newTabData[propNames.disabled]) {
-    if (newTabData[propNames.disabled]) { // enabled -> disabled
-      $li.addClass('disabled');
-      $li.find('a[role="tab"]').attr('data-toggle', '');
-    } else { // disabled -> enabled
-      $li.removeClass('disabled');
-      $li.find('a[role="tab"]').attr('data-toggle', 'tab');
-    }
+    setLiDsiabled($li, newTabData[propNames.disabled],
+                  refreshData.options.bootstrapVersion);
 
     origTabData[propNames.disabled] = newTabData[propNames.disabled];
     isInitTabsRequired = true;
@@ -88,7 +83,8 @@ function checkForTabPropertiesUpdated(refreshData) {
     // set the active tab based on the tabs array regardless of the current
     // DOM state, which could have been changed by the user clicking a tab
     // without those changes being reflected back to the tab data
-    $li[newTabData[propNames.active] ? 'addClass' : 'removeClass']('active');
+    setLiActive($li, newTabData[propNames.active],
+                refreshData.options.bootstrapVersion);
 
     $contentPane[newTabData[propNames.active] ? 'addClass' : 'removeClass']('active');
 
@@ -117,13 +113,13 @@ function checkForTabRemoved(refreshData) {
   }
 
   // if this was the active tab, make the closest enabled tab active
-  if ($li.hasClass('active')) {
+  var isActive = isLiActive($li, refreshData.options.bootstrapVersion);
+  if (isActive) {
 
     idxToMakeActive = tabUtils.getIndexOfClosestEnabledTab(refreshData.$currTabLis, tabLiData.currDomIdx);
     if (idxToMakeActive > -1) {
-      refreshData.$currTabLis
-        .eq(idxToMakeActive)
-        .addClass('active');
+      setLiActive(refreshData.$currTabLis.eq(idxToMakeActive),
+                  true, refreshData.options.bootstrapVersion);
 
       if (!ignoreTabPanes) {
         refreshData.$currTabContentPanes
@@ -213,7 +209,7 @@ function checkForTabsRemovedOrUpdated(refreshData) {
   return isInitTabsRequired;
 }
 
-function listenForDropdownMenuTabs($scroller, stc) {
+function listenForDropdownMenuTabs($scroller, stc, options) {
   var $ddMenu;
 
   // for dropdown menus to show, we need to move them out of the
@@ -230,7 +226,7 @@ function listenForDropdownMenuTabs($scroller, stc) {
   function handleDropdownShow(e) {
     var $ddParentTabLi = $(e.target),
         ddLiOffset = $ddParentTabLi.offset(),
-        $currActiveTab = $scroller.find('li[role="presentation"].active'),
+        $currActiveTab = getActiveLi($scroller, options.bootstrapVersion),
         ddMenuRightX,
         tabsContainerMaxX,
         ddMenuTargetLeft;
@@ -242,7 +238,11 @@ function listenForDropdownMenuTabs($scroller, stc) {
     // if the dropdown's parent tab li isn't already active,
     // we need to deactivate any active menu item in the dropdown
     if ($currActiveTab[0] !== $ddParentTabLi[0]) {
-      $ddMenu.find('li.active').removeClass('active');
+      if (options.bootstrapVersion == 4) {
+        $ddMenu.find('li > a.active').removeClass('active');
+      } else {
+        $ddMenu.find('li.active').removeClass('active');
+      }
     }
 
     // we need to do our own click handling because the built-in
@@ -274,23 +274,45 @@ function listenForDropdownMenuTabs($scroller, stc) {
           $selectedMenuItemDropdownMenu = $selectedMenuItemLi.parent('.dropdown-menu'),
           targetPaneId = $selectedMenuItemAnc.attr('href');
 
-      if ($selectedMenuItemLi.hasClass('active')) {
-        return;
+      var isActive;
+      if (options.bootstrapVersion == 4) {
+        isActive = $selectedMenuItemLi.hasClass('active');
+      } else {
+        isActive = $selectedMenuItemLi.find('a').hasClass('active');
       }
+
+      if (isActive) {
+         return;
+       }
 
       // once we select a menu item from the dropdown, deactivate
       // the current tab (unless it's our parent tab), deactivate
       // any active dropdown menu item, make our parent tab active
       // (if it's not already), and activate the selected menu item
-      $scroller
-        .find('li.active')
-        .not($ddParentTabLi)
-        .add($selectedMenuItemDropdownMenu.find('li.active'))
-        .removeClass('active');
+      if (options.bootstrapVersion == 4) {
+        $scroller
+          .find('li > a.active')
+          .parent('li')
+          .not($ddParentTabLi)
+          .add($selectedMenuItemDropdownMenu.find('li > a.active').parent('li'))
+          .find('a')
+          .removeClass('active');
 
-      $ddParentTabLi
-        .add($selectedMenuItemLi)
-        .addClass('active');
+        $ddParentTabLi
+          .add($selectedMenuItemLi)
+          .find('a')
+          .addClass('active');
+      } else {
+        $scroller
+          .find('li.active')
+          .not($ddParentTabLi)
+          .add($selectedMenuItemDropdownMenu.find('li.active'))
+          .removeClass('active');
+
+        $ddParentTabLi
+          .add($selectedMenuItemLi)
+          .addClass('active');
+      }
 
       // manually deactivate current active pane and activate our pane
       $('.tab-content .tab-pane.active').removeClass('active');

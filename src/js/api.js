@@ -1,3 +1,12 @@
+var bsVersion = (
+  jQuery &&
+  jQuery.fn &&
+  jQuery.fn.tab &&
+  jQuery.fn.tab.Constructor &&
+  jQuery.fn.tab.Constructor.VERSION &&
+  parseInt(jQuery.fn.tab.Constructor.VERSION.split('.')[0])
+);
+
 var methods = {
   destroy: function() {
     var $targetEls = this;
@@ -7,8 +16,8 @@ var methods = {
 
   init: function(options) {
     if (options.bootstrapVersion != 3 && options.bootstrapVersion != 4) {
-        console.warning('bootstrapVersion =', options.bootstrapVersion,
-                        'is unsupported. Falling back to 3.');
+        console.warn('bootstrapVersion =', options.bootstrapVersion,
+                     'is unsupported. Falling back to 3.');
         options.bootstrapVersion = 3;
     }
     var $targetEls = this,
@@ -164,5 +173,5 @@ $.fn.scrollingTabs.defaults = {
   enableSwiping: false,
   enableRtlSupport: false,
   handleDelayedScrollbar: false,
-  bootstrapVersion: 3,
+  bootstrapVersion: bsVersion || 3,
 };
