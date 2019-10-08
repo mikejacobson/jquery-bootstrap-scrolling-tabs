@@ -6,6 +6,11 @@ var methods = {
   },
 
   init: function(options) {
+    if (options.bootstrapVersion != 3 && options.bootstrapVersion != 4) {
+        console.warning('bootstrapVersion =', options.bootstrapVersion,
+                        'is unsupported. Falling back to 3.');
+        options.bootstrapVersion = 3;
+    }
     var $targetEls = this,
         targetElsLastIndex = $targetEls.length - 1,
         settings = $.extend({}, $.fn.scrollingTabs.defaults, options || {});
@@ -159,5 +164,5 @@ $.fn.scrollingTabs.defaults = {
   enableSwiping: false,
   enableRtlSupport: false,
   handleDelayedScrollbar: false,
-  bootstrapVersion: 3
+  bootstrapVersion: 3,
 };

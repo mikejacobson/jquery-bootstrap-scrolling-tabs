@@ -47,8 +47,8 @@ var tabElements = (function () {
     var $a = $('<a role="tab" data-toggle="tab"></a>')
               .attr('href', '#' + tab[propNames.paneId])
               .html(tab[propNames.title]);
-    if (options['cssClassTabsA']) {
-        $a.addClass(options['cssClassTabsA']);
+    if (options.bootstrapVersion === 4) {
+        $a.addClass('nav-link');
     }
     return $a;
   }
@@ -59,22 +59,26 @@ var tabElements = (function () {
 
   function getNewElTabLi(tab, propNames, options) {
     var aOptions = {
-      cssClassTabsA: options.cssClassTabsA,
+      bootstrapVersion: options.bootstrapVersion,
     };
 
     var liContent = options.tabLiContent || '<li role="presentation" class=""></li>',
         $li = $(liContent),
         $a = getNewElTabAnchor(tab, propNames, aOptions).appendTo($li);
 
-    if (options['cssClassTabsLi']) {
-        $li.addClass(options['cssClassTabsLi']);
+    if (options.bootstrapVersion == 4) {
+        $li.addClass('nav-item');
     }
 
     if (tab[propNames.disabled]) {
       $li.addClass('disabled');
       $a.attr('data-toggle', '');
     } else if (options.forceActiveTab && tab[propNames.active]) {
-      $li.addClass('active');
+      if (options.bootstrapVersion == 4) {
+        $a.addClass('active');
+      } else {
+        $li.addClass('active');
+      }
     }
 
     if (options.tabPostProcessor) {
@@ -197,8 +201,7 @@ function buildNavTabsAndTabContentForTargetElementInstance($targetElInstance, se
       forceActiveTab: true,
       tabLiContent: settings.tabsLiContent && settings.tabsLiContent[index],
       tabPostProcessor: settings.tabsPostProcessors && settings.tabsPostProcessors[index],
-      cssClassTabsLi: settings.cssClassTabsLi,
-      cssClassTabsA: settings.cssClassTabsA,
+      bootstrapVersion: settings.bootstrapVersion,
     };
 
     tabElements

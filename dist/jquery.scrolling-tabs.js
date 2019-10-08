@@ -1250,8 +1250,8 @@
       var $a = $('<a role="tab" data-toggle="tab"></a>')
                 .attr('href', '#' + tab[propNames.paneId])
                 .html(tab[propNames.title]);
-      if (options['cssClassTabsA']) {
-          $a.addClass(options['cssClassTabsA']);
+      if (options.bootstrapVersion === 4) {
+          $a.addClass('nav-link');
       }
       return $a;
     }
@@ -1262,22 +1262,26 @@
   
     function getNewElTabLi(tab, propNames, options) {
       var aOptions = {
-        cssClassTabsA: options.cssClassTabsA,
+        bootstrapVersion: options.bootstrapVersion,
       };
   
       var liContent = options.tabLiContent || '<li role="presentation" class=""></li>',
           $li = $(liContent),
           $a = getNewElTabAnchor(tab, propNames, aOptions).appendTo($li);
   
-      if (options['cssClassTabsLi']) {
-          $li.addClass(options['cssClassTabsLi']);
+      if (options.bootstrapVersion == 4) {
+          $li.addClass('nav-item');
       }
   
       if (tab[propNames.disabled]) {
         $li.addClass('disabled');
         $a.attr('data-toggle', '');
       } else if (options.forceActiveTab && tab[propNames.active]) {
-        $li.addClass('active');
+        if (options.bootstrapVersion == 4) {
+          $a.addClass('active');
+        } else {
+          $li.addClass('active');
+        }
       }
   
       if (options.tabPostProcessor) {
@@ -1400,8 +1404,7 @@
         forceActiveTab: true,
         tabLiContent: settings.tabsLiContent && settings.tabsLiContent[index],
         tabPostProcessor: settings.tabsPostProcessors && settings.tabsPostProcessors[index],
-        cssClassTabsLi: settings.cssClassTabsLi,
-        cssClassTabsA: settings.cssClassTabsA,
+        bootstrapVersion: settings.bootstrapVersion,
       };
   
       tabElements
@@ -1866,6 +1869,11 @@
     },
   
     init: function(options) {
+      if (options.bootstrapVersion != 3 && options.bootstrapVersion != 4) {
+          console.warning('bootstrapVersion =', options.bootstrapVersion,
+                          'is unsupported. Falling back to 3.');
+          options.bootstrapVersion = 3;
+      }
       var $targetEls = this,
           targetElsLastIndex = $targetEls.length - 1,
           settings = $.extend({}, $.fn.scrollingTabs.defaults, options || {});
@@ -2019,7 +2027,7 @@
     enableSwiping: false,
     enableRtlSupport: false,
     handleDelayedScrollbar: false,
-    bootstrapVersion: 3
+    bootstrapVersion: 3,
   };
   
 
