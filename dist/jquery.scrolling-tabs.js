@@ -349,7 +349,7 @@ if (typeof jQuery.fn.tab === 'undefined' ||
     _getActiveOwner($li, bsVersion)[state ? 'addClass' : 'removeClass']('active');
   }
   
-  function setLiDsiabled($li, state, bsVersion) {
+  function setLiDisabled($li, state, bsVersion) {
     _getActiveOwner($li, bsVersion)[state ? 'addClass' : 'removeClass']('disabled');
     _getDataToggleOwner.attr('data-toggle', state ? '' : 'tab');
   }
@@ -1622,7 +1622,7 @@ if (typeof jQuery.fn.tab === 'undefined' ||
   
     // update tab disabled state if necessary
     if (origTabData[propNames.disabled] !== newTabData[propNames.disabled]) {
-      setLiDsiabled($li, newTabData[propNames.disabled],
+      setLiDisabled($li, newTabData[propNames.disabled],
                     refreshData.options.bootstrapVersion);
   
       origTabData[propNames.disabled] = newTabData[propNames.disabled];
@@ -1823,18 +1823,18 @@ if (typeof jQuery.fn.tab === 'undefined' ||
         var $selectedMenuItemAnc = $(this),
             $selectedMenuItemLi = $selectedMenuItemAnc.parent('li'),
             $selectedMenuItemDropdownMenu = $selectedMenuItemLi.parent('.dropdown-menu'),
-            targetPaneId = $selectedMenuItemAnc.attr('href');
+            targetPaneId = $selectedMenuItemAnc.attr('href'),
+            isActive;
   
-        var isActive;
         if (options.bootstrapVersion == 4) {
-          isActive = $selectedMenuItemLi.hasClass('active');
-        } else {
           isActive = $selectedMenuItemLi.find('a').hasClass('active');
+        } else {
+          isActive = $selectedMenuItemLi.hasClass('active');
         }
   
         if (isActive) {
-           return;
-         }
+          return;
+        }
   
         // once we select a menu item from the dropdown, deactivate
         // the current tab (unless it's our parent tab), deactivate

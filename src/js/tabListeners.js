@@ -272,18 +272,18 @@ function listenForDropdownMenuTabs($scroller, stc, options) {
       var $selectedMenuItemAnc = $(this),
           $selectedMenuItemLi = $selectedMenuItemAnc.parent('li'),
           $selectedMenuItemDropdownMenu = $selectedMenuItemLi.parent('.dropdown-menu'),
-          targetPaneId = $selectedMenuItemAnc.attr('href');
+          targetPaneId = $selectedMenuItemAnc.attr('href'),
+          isActive;
 
-      var isActive;
       if (options.bootstrapVersion == 4) {
-        isActive = $selectedMenuItemLi.hasClass('active');
-      } else {
         isActive = $selectedMenuItemLi.find('a').hasClass('active');
+      } else {
+        isActive = $selectedMenuItemLi.hasClass('active');
       }
 
       if (isActive) {
-         return;
-       }
+        return;
+      }
 
       // once we select a menu item from the dropdown, deactivate
       // the current tab (unless it's our parent tab), deactivate
