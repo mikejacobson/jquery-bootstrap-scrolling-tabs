@@ -38,7 +38,7 @@ function setLiActive($li, state, bsVersion) {
   _getActiveOwner($li, bsVersion)[state ? 'addClass' : 'removeClass']('active');
 }
 
-function setLiDsiabled($li, state, bsVersion) {
+function setLiDisabled($li, state, bsVersion) {
   _getActiveOwner($li, bsVersion)[state ? 'addClass' : 'removeClass']('disabled');
   _getDataToggleOwner.attr('data-toggle', state ? '' : 'tab');
 }

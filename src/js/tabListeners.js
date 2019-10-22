@@ -71,7 +71,7 @@ function checkForTabPropertiesUpdated(refreshData) {
 
   // update tab disabled state if necessary
   if (origTabData[propNames.disabled] !== newTabData[propNames.disabled]) {
-    setLiDsiabled($li, newTabData[propNames.disabled],
+    setLiDisabled($li, newTabData[propNames.disabled],
                   refreshData.options.bootstrapVersion);
 
     origTabData[propNames.disabled] = newTabData[propNames.disabled];
