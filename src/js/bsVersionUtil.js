@@ -1,17 +1,9 @@
 function _getActiveOwner($li, bsVersion) {
-  if (bsVersion == 4) {
-    return $li.find('a[role="tab"]');
-  } else {
-    return $li;
-  }
+  return bsVersion == 4) ? $li.find('a[role="tab"]') : $li;
 }
 
 function _getDisabledOwner($li, bsVersion) {
-  if (bsVersion == 4) {
-    return $li.find('a[role="tab"]');
-  } else {
-    return $li;
-  }
+  return bsVersion == 4 ? $li.find('a[role="tab"]') : $li;
 }
 
 function _getDataToggleOwner($li, bsVersion) {
