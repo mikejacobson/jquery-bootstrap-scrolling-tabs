@@ -10,8 +10,15 @@ Here's what they look like:
 
 And here are plunks showing them working with:
 
-* <a href="http://plnkr.co/edit/iMJ435SFXjIX18YEM4Z4?p=preview" target="_blank">HTML-defined Tabs</a>
-* <a href="http://plnkr.co/edit/4SCaNOWyB8IsZSVlRXIz?p=preview" target="_blank">Data-driven Tabs</a>
+* <a href="https://plnkr.co/edit/iMJ435SFXjIX18YEM4Z4?p=preview" target="_blank">HTML-defined Tabs</a>
+* <a href="https://plnkr.co/edit/4SCaNOWyB8IsZSVlRXIz?p=preview" target="_blank">Data-driven Tabs</a>
+
+Or if you prefer CodePen:
+
+* <a href="https://codepen.io/mikejacobson/pen/jOyZGQN" target="_blank">HTML-defined Tabs</a>
+* <a href="https://codepen.io/mikejacobson/pen/vYgdWLV" target="_blank">Data-driven Tabs</a>
+
+
 
 Use Cases
 ---------
