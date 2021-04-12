@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="fa" dir="rtl">
+<html>
 
   <head>
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" href="../node_modules/bootstrap3/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../node_modules/bootstrap4/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="../dist/jquery.scrolling-tabs.css">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" />
 
@@ -11,18 +11,15 @@
       .left-side {
         width: 50%;
       }
-
       .right-side {
         width: 50%;
       }
-
       .st-demo-header {
         background-color: #666666;
         color: white;
         font-size: 24px;
         padding: 8px 24px;
       }
-
       .st-demo-header button {
         color: black;
         font-size: 12px;
@@ -32,10 +29,11 @@
 
   <body>
 
-    <div class="st-demo-header">jquery-bootstrap-scrolling-tabs Demo - Markup Only
+    <div class="st-demo-header">jquery-bootstrap-scrolling-tabs Demo - Markup Only BS4
         <button type="button" id="btn-destroy">Destroy</button>
         <button type="button" id="btn-refresh">Refresh</button>
     </div>
+
 
     <!-- Nav tabs -->
     <ul class="nav nav-tabs" role="tablist" style="display: none">
@@ -100,40 +98,32 @@
     </div>
 
     <script src="../node_modules/jquery/dist/jquery.min.js"></script>
-    <script src="../node_modules/bootstrap3/dist/js/bootstrap.min.js"></script>
+    <script src="../node_modules/bootstrap4/dist/js/bootstrap.min.js"></script>
     <script src="../dist/jquery.scrolling-tabs.js"></script>
 
     <script>
     ;(function($) {
       'use strict';
-
       $('#btn-destroy').click(destroy);
       $('#btn-refresh').click(refresh);
-
       $(activate);
-
-
       function activate() {
         $('.nav-tabs').scrollingTabs({
-          enableRtlSupport: true,
-          reverseScroll: true,
           enableSwiping: true,
           scrollToTabEdge: true,
-          disableScrollArrowsOnFullyScrolled: true
+          disableScrollArrowsOnFullyScrolled: true,
+          bootstrapVersion: 4,
         })
         .on('ready.scrtabs', function() {
           $('.tab-content').show();
         });
       }
-
       function destroy() {
         $('.nav-tabs').scrollingTabs('destroy');
       }
-
       function refresh() {
         $('.nav-tabs').scrollingTabs('refresh');
       }
-
     }(jQuery));
     </script>
   </body>

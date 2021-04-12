@@ -3,10 +3,21 @@
 
   <head>
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" href="../node_modules/bootstrap3/dist/css/bootstrap.min.css">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="stylesheet" href="../node_modules/bootstrap4/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="../dist/jquery.scrolling-tabs.css">
 
     <style>
+      /* bootstrap 4 fixes */
+      .scrtabs-tab-scroll-arrow {
+        padding-top: 9px;
+        padding-left: 0;
+      }
+
+      .scrtabs-tab-scroll-arrow > i.material-icons {
+        margin-left: -2px;
+      }
+
       .left-side {
         width: 50%;
       }
@@ -70,7 +81,7 @@
 
 
     <script src="../node_modules/jquery/dist/jquery.min.js"></script>
-    <script src="../node_modules/bootstrap3/dist/js/bootstrap.min.js"></script>
+    <script src="../node_modules/bootstrap4/dist/js/bootstrap.min.js"></script>
 
     <script src="../dist/jquery.scrolling-tabs.js"></script>
 
@@ -129,7 +140,19 @@
           //widthMultiplier: 0.7,
           tabClickHandler: function () {
             console.log("click!! ", Date.now());
-          }
+          },
+          // these options make it work with bootstrap 4 and material icons
+          leftArrowContent: [
+            '<div class="scrtabs-tab-scroll-arrow scrtabs-tab-scroll-arrow-left">',
+            '  <i class="material-icons">arrow_left</i>',
+            '</div>'
+          ].join(''),
+          rightArrowContent: [
+            '<div class="scrtabs-tab-scroll-arrow scrtabs-tab-scroll-arrow-left">',
+            '  <i class="material-icons">arrow_right</i>',
+            '</div>'
+          ].join(''),
+          bootstrapVersion: 4,
         });
 
         $('.btn-add-tab').click(addTab);

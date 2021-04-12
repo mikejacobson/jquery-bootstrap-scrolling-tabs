@@ -1,3 +1,12 @@
+var bsVersion = (
+  jQuery &&
+  jQuery.fn &&
+  jQuery.fn.tab &&
+  jQuery.fn.tab.Constructor &&
+  jQuery.fn.tab.Constructor.VERSION &&
+  parseInt(jQuery.fn.tab.Constructor.VERSION.split('.')[0])
+);
+
 var methods = {
   destroy: function() {
     var $targetEls = this;
@@ -152,10 +161,12 @@ $.fn.scrollingTabs.defaults = {
   cssClassRightArrow: 'glyphicon glyphicon-chevron-right',
   leftArrowContent: '',
   rightArrowContent: '',
+  cssClassTabsLi: null,
+  cssClassTabsA: null,
   tabsLiContent: null,
   tabsPostProcessors: null,
   enableSwiping: false,
   enableRtlSupport: false,
   handleDelayedScrollbar: false,
-  bootstrapVersion: 3
+  bootstrapVersion: bsVersion || 3,
 };

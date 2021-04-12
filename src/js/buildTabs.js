@@ -43,10 +43,14 @@ var tabElements = (function () {
                       $rightArrow);
   }
 
-  function getNewElTabAnchor(tab, propNames) {
-    return $('<a role="tab" data-toggle="tab"></a>')
-            .attr('href', '#' + tab[propNames.paneId])
-            .html(tab[propNames.title]);
+  function getNewElTabAnchor(tab, propNames, options) {
+    var $a = $('<a role="tab" data-toggle="tab"></a>')
+              .attr('href', '#' + tab[propNames.paneId])
+              .html(tab[propNames.title]);
+    if (options.bootstrapVersion == 4) {
+        $a.addClass('nav-link');
+    }
+    return $a;
   }
 
   function getNewElTabContent() {
@@ -54,15 +58,27 @@ var tabElements = (function () {
   }
 
   function getNewElTabLi(tab, propNames, options) {
+    var aOptions = {
+      bootstrapVersion: options.bootstrapVersion,
+    };
+
     var liContent = options.tabLiContent || '<li role="presentation" class=""></li>',
         $li = $(liContent),
-        $a = getNewElTabAnchor(tab, propNames).appendTo($li);
+        $a = getNewElTabAnchor(tab, propNames, aOptions).appendTo($li);
+
+    if (options.bootstrapVersion == 4) {
+        $li.addClass('nav-item');
+    }
 
     if (tab[propNames.disabled]) {
       $li.addClass('disabled');
       $a.attr('data-toggle', '');
     } else if (options.forceActiveTab && tab[propNames.active]) {
-      $li.addClass('active');
+      if (options.bootstrapVersion == 4) {
+        $a.addClass('active');
+      } else {
+        $li.addClass('active');
+      }
     }
 
     if (options.tabPostProcessor) {
@@ -184,7 +200,8 @@ function buildNavTabsAndTabContentForTargetElementInstance($targetElInstance, se
     var options = {
       forceActiveTab: true,
       tabLiContent: settings.tabsLiContent && settings.tabsLiContent[index],
-      tabPostProcessor: settings.tabsPostProcessors && settings.tabsPostProcessors[index]
+      tabPostProcessor: settings.tabsPostProcessors && settings.tabsPostProcessors[index],
+      bootstrapVersion: settings.bootstrapVersion,
     };
 
     tabElements
@@ -269,7 +286,7 @@ function wrapNavTabsInstanceInScroller($navTabsInstance, settings, readyCallback
 
   $scroller.initTabs();
 
-  listenForDropdownMenuTabs($scroller, scrollingTabsControl);
+  listenForDropdownMenuTabs($scroller, scrollingTabsControl, settings);
 
   return $scroller;
 }
